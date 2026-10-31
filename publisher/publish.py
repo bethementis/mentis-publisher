@@ -99,7 +99,8 @@ def ensure_jpegs(folder):
 
 
 def raw_url(path):
-    rel = path.relative_to(ROOT).as_posix()
+    from urllib.parse import quote
+    rel = quote(path.relative_to(ROOT).as_posix())
     return f"https://raw.githubusercontent.com/{REPO}/{BRANCH}/{rel}"
 
 
