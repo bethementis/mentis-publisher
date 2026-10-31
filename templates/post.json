@@ -1,5 +1,5 @@
 {
-  "platforms": ["instagram", "threads", "youtube"],
+  "platforms": ["instagram", "threads", "youtube", "tiktok", "naver", "xhs"],
   "caption": "인스타 캡션을 여기에 씁니다.\n\n줄바꿈은 \\n 으로.\n\n#남자피부관리 #남자자기관리 #맨티스",
   "threads": [
     "쓰레드 첫 글 (500자 이내).",
@@ -8,5 +8,13 @@
   "threads_with_cover": false,
   "youtube": {
     "title": "(선택) 쇼츠 제목. 비워두면 캡션 첫 줄을 씀"
+  },
+  "naver": {
+    "title": "(선택) 네이버 클립 제목. 비워두면 유튜브 제목을 씀"
+  },
+  "xhs": {
+    "title": "샤오홍슈 제목 (중국어 20자 이내)",
+    "body": "샤오홍슈 본문 (중국어). 중국어 카드는 이 폴더 안 zh/ 폴더에 넣기",
+    "tags": ["韩国男生护肤", "男生护肤", "韩系男生"]
   }
 }

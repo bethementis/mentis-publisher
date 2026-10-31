@@ -28,6 +28,7 @@ import platforms as P  # noqa: E402
 ROOT = Path(__file__).resolve().parent.parent
 QUEUE = ROOT / "queue"
 DONE = ROOT / "published"
+OUTBOX = ROOT / "outbox"   # 어사이드가 가져가서 올리는 파일 (네이버 클립, 샤오홍슈)
 KST = dt.timezone(dt.timedelta(hours=9))
 IMG_EXT = (".png", ".jpg", ".jpeg", ".webp")
 REPO = os.environ.get("GITHUB_REPOSITORY", "bethementis/mentis-publisher")
@@ -73,7 +74,7 @@ def load_post(folder):
     if not f.exists():
         raise SystemExit(f"{folder.name}: post.json 이 없어요")
     post = json.loads(f.read_text(encoding="utf-8"))
-    post.setdefault("platforms", ["instagram", "threads", "youtube", "tiktok"])
+    post.setdefault("platforms", ["instagram", "threads", "youtube", "tiktok", "naver", "xhs"])
     return post
 
 
@@ -172,6 +173,68 @@ def youtube_meta(post):
     return title, body, tags
 
 
+def zh_cards(folder):
+    z = folder / "zh"
+    if not z.is_dir():
+        return []
+    imgs = [p for p in z.iterdir() if p.suffix.lower() in IMG_EXT and not p.name.startswith(".")]
+    imgs.sort(key=lambda p: (0 if "cover" in p.name.lower() else 1, natural_key(p)))
+    return imgs[:18]
+
+
+def build_outbox(folder, post, get_video):
+    """네이버 클립(영상)·샤오홍슈(중국어 카드) 업로드 파일을 outbox/날짜_이름/ 에 만들어 둔다.
+    어사이드 루틴이 outbox/index.json 을 보고 가져가서 올린다."""
+    today = dt.datetime.now(KST).strftime("%Y-%m-%d")
+    name = folder.name if folder.name[:4].isdigit() else f"{today}_{folder.name}"
+    out = OUTBOX / name
+    out.mkdir(parents=True, exist_ok=True)
+    made, skipped = [], []
+
+    if "naver" in post["platforms"]:
+        nv = post.get("naver") or {}
+        title, body, tags = youtube_meta(post)
+        d = out / "naver"; d.mkdir(exist_ok=True)
+        shutil.copy(get_video()["path"], d / "short.mp4")
+        (d / "upload.json").write_text(json.dumps({
+            "title": (nv.get("title") or title)[:40],
+            "body": nv.get("body") or body,
+            "tags": (nv.get("tags") or tags)[:10],
+        }, ensure_ascii=False, indent=2), encoding="utf-8")
+        made.append("naver")
+
+    if "xhs" in post["platforms"]:
+        x = post.get("xhs") or {}
+        cards = zh_cards(folder)
+        if not cards or not x.get("title") or not x.get("body"):
+            skipped.append("샤오홍슈: zh/ 중국어 카드나 post.json 의 xhs 제목·본문이 없어서 건너뜀")
+        else:
+            d = out / "xhs"; d.mkdir(exist_ok=True)
+            for i, c in enumerate(cards, 1):
+                Image.open(c).convert("RGB").save(d / f"{i:02d}.jpg", "JPEG", quality=92)
+            tags = x.get("tags") or []
+            body = x["body"].rstrip() + ("\n\n" + " ".join("#" + t.lstrip("#") for t in tags) if tags else "")
+            (d / "upload.json").write_text(json.dumps({
+                "title": x["title"][:20], "body": body[:1000], "images": len(cards),
+            }, ensure_ascii=False, indent=2), encoding="utf-8")
+            made.append("xhs")
+
+    # 목록 갱신 + 14일 지난 항목 정리
+    cutoff = (dt.datetime.now(KST) - dt.timedelta(days=14)).strftime("%Y-%m-%d")
+    entries = []
+    for d in sorted(OUTBOX.iterdir()):
+        if not d.is_dir():
+            continue
+        if d.name[:10] < cutoff:
+            shutil.rmtree(d); continue
+        plats = [k for k in ("naver", "xhs") if (d / k / "upload.json").exists()]
+        entries.append({"date": d.name[:10], "folder": d.name, "platforms": plats,
+                        "base_url": f"https://raw.githubusercontent.com/{REPO}/{BRANCH}/outbox/{d.name}/"})
+    (OUTBOX / "index.json").write_text(json.dumps({"items": entries[::-1]}, ensure_ascii=False, indent=2),
+                                       encoding="utf-8")
+    return {"path": f"outbox/{name}", "platforms": made, "skipped": skipped}
+
+
 def cmd_preview():
     items = due_items()
     if not items:
@@ -266,6 +329,17 @@ def cmd_publish():
             except Exception as e:  # noqa: BLE001
                 result["tiktok"] = {"ok": False, "error": str(e)[:500]}; failed = True
                 log(f"✗ 틱톡 실패: {e}")
+
+    if any(k in post["platforms"] for k in ("naver", "xhs")) and not result.get("outbox", {}).get("ok"):
+        try:
+            r = build_outbox(folder, post, get_video)
+            result["outbox"] = {"ok": True, **r}
+            log(f"✓ 어사이드용 파일 준비: {r['path']} ({', '.join(r['platforms']) or '없음'})")
+            for msg in r.get("skipped", []):
+                log(f"- {msg}")
+        except Exception as e:  # noqa: BLE001
+            result["outbox"] = {"ok": False, "error": str(e)[:500]}; failed = True
+            log(f"✗ 어사이드용 파일 준비 실패: {e}")
 
     result["updated_at"] = dt.datetime.now(KST).isoformat(timespec="seconds")
     result_f.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
