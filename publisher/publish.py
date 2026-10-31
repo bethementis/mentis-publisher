@@ -120,7 +120,10 @@ def cmd_check():
             me = fn(tok)
             log(f"✓ {name}: @{me.get('username')} 연결됨")
         except P.PublishError as e:
-            log(f"✗ {name}: {e}"); ok = False
+            kind = "페이스북 로그인형(EAA)" if tok.strip().startswith("EAA") else \
+                   "인스타 로그인형(IG)" if tok.strip().startswith("IG") else "알 수 없는 형식"
+            log(f"✗ {name}: {e} / 토큰 형식: {kind}, 길이 {len(tok.strip())}자"); ok = False
+            continue
     return 0 if ok else 1
 
 

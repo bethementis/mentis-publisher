@@ -2,7 +2,12 @@
 import time
 import requests
 
+import os
+
 IG_API = "https://graph.instagram.com/v23.0"
+FB_API = "https://graph.facebook.com/v23.0"
+# 메타 앱 대시보드에 표시된 @bethementis 인스타 계정 ID (페이스북 로그인 방식 토큰일 때 사용)
+IG_USER_ID = os.environ.get("IG_USER_ID", "17841423316407295")
 TH_API = "https://graph.threads.net/v1.0"
 TIMEOUT = 60
 
@@ -24,14 +29,25 @@ def _check(r):
 
 
 # ───────────────────────── Instagram ─────────────────────────
+def _ig_base(token):
+    """토큰 종류에 따라 API 주소가 다름: IGAA… = 인스타 로그인, EAA… = 페이스북(비즈니스) 로그인"""
+    return FB_API if token.startswith("EAA") else IG_API
+
+
 def ig_me(token):
+    token = token.strip()
+    base = _ig_base(token)
+    if base == FB_API:
+        d = _check(requests.get(f"{FB_API}/{IG_USER_ID}", params={
+            "fields": "id,username", "access_token": token}, timeout=TIMEOUT))
+        return {"user_id": d["id"], "username": d.get("username")}
     return _check(requests.get(f"{IG_API}/me", params={
         "fields": "user_id,username", "access_token": token}, timeout=TIMEOUT))
 
 
 def _ig_wait(container_id, token, tries=30):
     for _ in range(tries):
-        d = _check(requests.get(f"{IG_API}/{container_id}", params={
+        d = _check(requests.get(f"{_ig_base(token)}/{container_id}", params={
             "fields": "status_code,status", "access_token": token}, timeout=TIMEOUT))
         code = d.get("status_code")
         if code == "FINISHED":
@@ -43,40 +59,46 @@ def _ig_wait(container_id, token, tries=30):
 
 
 def ig_publish_carousel(token, image_urls, caption):
+    token = token.strip()
+    IG = _ig_base(token)
     me = ig_me(token)
     uid = me["user_id"]
     if len(image_urls) == 1:
-        c = _check(requests.post(f"{IG_API}/{uid}/media", data={
+        c = _check(requests.post(f"{IG}/{uid}/media", data={
             "image_url": image_urls[0], "caption": caption, "access_token": token}, timeout=TIMEOUT))
         creation_id = c["id"]
     else:
         children = []
         for url in image_urls:
-            c = _check(requests.post(f"{IG_API}/{uid}/media", data={
+            c = _check(requests.post(f"{IG}/{uid}/media", data={
                 "image_url": url, "is_carousel_item": "true", "access_token": token}, timeout=TIMEOUT))
             children.append(c["id"])
         for cid in children:
             _ig_wait(cid, token)
-        c = _check(requests.post(f"{IG_API}/{uid}/media", data={
+        c = _check(requests.post(f"{IG}/{uid}/media", data={
             "media_type": "CAROUSEL", "children": ",".join(children),
             "caption": caption, "access_token": token}, timeout=TIMEOUT))
         creation_id = c["id"]
     _ig_wait(creation_id, token)
-    p = _check(requests.post(f"{IG_API}/{uid}/media_publish", data={
+    p = _check(requests.post(f"{IG}/{uid}/media_publish", data={
         "creation_id": creation_id, "access_token": token}, timeout=TIMEOUT))
     media_id = p["id"]
-    link = _check(requests.get(f"{IG_API}/{media_id}", params={
+    link = _check(requests.get(f"{IG}/{media_id}", params={
         "fields": "permalink", "access_token": token}, timeout=TIMEOUT)).get("permalink")
     return {"media_id": media_id, "permalink": link}
 
 
 def ig_refresh(token):
+    token = token.strip()
+    if token.startswith("EAA"):
+        raise PublishError("페이스북 로그인 방식 토큰은 이 방법으로 연장하지 않아요 (만료 없는 토큰이면 연장 불필요)")
     return _check(requests.get("https://graph.instagram.com/refresh_access_token", params={
         "grant_type": "ig_refresh_token", "access_token": token}, timeout=TIMEOUT))
 
 
 # ───────────────────────── Threads ─────────────────────────
 def th_me(token):
+    token = token.strip()
     return _check(requests.get(f"{TH_API}/me", params={
         "fields": "id,username", "access_token": token}, timeout=TIMEOUT))
 
@@ -91,6 +113,7 @@ def _th_create_and_publish(token, params):
 
 
 def th_publish(token, posts, image_url=None):
+    token = token.strip()
     """posts: 글 목록. 2개 이상이면 첫 글에 답글로 이어 붙여 연결 스레드로 올림."""
     first = {"media_type": "IMAGE", "image_url": image_url, "text": posts[0]} if image_url \
         else {"media_type": "TEXT", "text": posts[0]}
