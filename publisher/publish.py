@@ -73,7 +73,7 @@ def load_post(folder):
     if not f.exists():
         raise SystemExit(f"{folder.name}: post.json 이 없어요")
     post = json.loads(f.read_text(encoding="utf-8"))
-    post.setdefault("platforms", ["instagram", "threads"])
+    post.setdefault("platforms", ["instagram", "threads", "youtube"])
     return post
 
 
@@ -125,7 +125,30 @@ def cmd_check():
                    "인스타 로그인형(IG)" if tok.strip().startswith("IG") else "알 수 없는 형식"
             log(f"✗ {name}: {e} / 토큰 형식: {kind}, 길이 {len(tok.strip())}자"); ok = False
             continue
+    if has_youtube():
+        try:
+            import youtube as Y
+            log(f"✓ 유튜브: {Y.yt_me().get('username')} 채널 연결됨")
+        except Exception as e:  # noqa: BLE001
+            log(f"✗ 유튜브: {e}"); ok = False
+    else:
+        log("- 유튜브: 아직 연결 안 됨 (YT_ 비밀값 없음)")
     return 0 if ok else 1
+
+
+def has_youtube():
+    return all(os.environ.get(k) for k in ("YT_CLIENT_ID", "YT_CLIENT_SECRET", "YT_REFRESH_TOKEN"))
+
+
+def youtube_meta(post):
+    yt = post.get("youtube") or {}
+    caption = post.get("caption", "")
+    first = next((ln.strip() for ln in caption.splitlines() if ln.strip()), "맨티스")
+    title = yt.get("title") or first
+    body = yt.get("description") or re.sub(r"\n{3,}", "\n\n", caption)
+    body += "\n\n더 많은 남자 자기관리 루틴은 인스타 @bethementis"
+    tags = yt.get("tags") or [t.lstrip("#") for t in re.findall(r"#\S+", caption)]
+    return title, body, tags
 
 
 def cmd_preview():
@@ -177,6 +200,24 @@ def cmd_publish():
         except Exception as e:  # noqa: BLE001
             result["threads"] = {"ok": False, "error": str(e)}; failed = True
             log(f"✗ 쓰레드 실패: {e}")
+
+    if "youtube" in post["platforms"] and not result.get("youtube", {}).get("ok"):
+        if not has_youtube():
+            log("- 유튜브: 아직 연결 안 돼서 건너뜀")
+        else:
+            try:
+                import shorts
+                import youtube as Y
+                video = Path("/tmp") / f"{folder.name}.mp4"
+                info = shorts.build_short(card_images(folder), video)
+                log(f"쇼츠 영상 생성: {info['seconds']}초, 음악 {info['music'] or '없음'}")
+                title, desc, tags = youtube_meta(post)
+                r = Y.yt_upload(video, title, desc, tags)
+                result["youtube"] = {"ok": True, **r, "music": info["music"]}
+                log(f"✓ 유튜브 업로드: {r['url']} ({r.get('privacy')})")
+            except Exception as e:  # noqa: BLE001
+                result["youtube"] = {"ok": False, "error": str(e)[:500]}; failed = True
+                log(f"✗ 유튜브 실패: {e}")
 
     result["updated_at"] = dt.datetime.now(KST).isoformat(timespec="seconds")
     result_f.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")

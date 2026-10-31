@@ -1,9 +1,12 @@
 {
-  "platforms": ["instagram", "threads"],
+  "platforms": ["instagram", "threads", "youtube"],
   "caption": "인스타 캡션을 여기에 씁니다.\n\n줄바꿈은 \\n 으로.\n\n#남자피부관리 #남자자기관리 #맨티스",
   "threads": [
     "쓰레드 첫 글 (500자 이내).",
     "두 번째 글부터는 첫 글에 답글로 이어집니다. 하나만 쓰고 싶으면 이 줄을 지우세요."
   ],
-  "threads_with_cover": false
+  "threads_with_cover": false,
+  "youtube": {
+    "title": "(선택) 쇼츠 제목. 비워두면 캡션 첫 줄을 씀"
+  }
 }
