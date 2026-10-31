@@ -15,6 +15,8 @@ for name, env, fn, key in [("인스타그램", "IG_ACCESS_TOKEN", P.ig_refresh, 
     tok = os.environ.get(env)
     if not tok:
         print(f"- {name}: 토큰 없음, 건너뜀"); continue
+    if tok.strip().startswith("EAA"):
+        print(f"- {name}: 페이스북(비즈니스) 로그인형 토큰이라 연장이 필요 없어요"); continue
     try:
         new = fn(tok)[key]
         if can_save:

@@ -113,8 +113,8 @@ def _th_create_and_publish(token, params):
 
 
 def th_publish(token, posts, image_url=None):
-    token = token.strip()
     """posts: 글 목록. 2개 이상이면 첫 글에 답글로 이어 붙여 연결 스레드로 올림."""
+    token = token.strip()
     first = {"media_type": "IMAGE", "image_url": image_url, "text": posts[0]} if image_url \
         else {"media_type": "TEXT", "text": posts[0]}
     root_id = _th_create_and_publish(token, first)
@@ -127,5 +127,6 @@ def th_publish(token, posts, image_url=None):
 
 
 def th_refresh(token):
+    token = token.strip()
     return _check(requests.get("https://graph.threads.net/refresh_access_token", params={
         "grant_type": "th_refresh_token", "access_token": token}, timeout=TIMEOUT))
