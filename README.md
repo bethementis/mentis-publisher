@@ -33,3 +33,12 @@
 ## 앞으로 붙일 것
 - 틱톡 (초안함으로 보내기)
 - 네이버 클립, 샤오홍슈 (어사이드 루틴)
+
+## 틱톡 연결 (남은 단계 — 맨티스 틱톡 계정 로그인 필요)
+설정 완료: 개발자 앱 "Mentis Publisher" 샌드박스(mentis), video.upload 권한, TT_CLIENT_KEY / TT_CLIENT_SECRET 비밀값.
+남은 것:
+1. 틱톡 개발자 포털 → 샌드박스 mentis → 대상 사용자 → 계정 추가 → 맨티스 틱톡 계정 로그인
+2. 아래 주소에서 맨티스 계정으로 로그인 → 허용
+   https://www.tiktok.com/v2/auth/authorize/?client_key=sbaw5jw5z13g1r1kox&scope=user.info.basic,video.upload&response_type=code&redirect_uri=https%3A%2F%2Fgithub.com%2Fbethementis%2Fmentis-publisher&state=mentis
+3. 돌아온 주소의 code 값으로 Actions → "틱톡 연결 (최초 1회)" 실행 → TT_REFRESH_TOKEN 자동 저장
+연결 전에는 발행 시 틱톡만 자동으로 건너뜀.
