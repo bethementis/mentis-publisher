@@ -1,0 +1,40 @@
+name: 맨티스 자동 발행
+
+on:
+  schedule:
+    # 매일 한국시간 저녁 7시 무렵 (UTC 10:00). 아래에서 0~25분 랜덤 지연을 줘서 매일 시간이 조금씩 달라짐
+    - cron: "0 10 * * *"
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "check = 토큰 확인 / preview = 다음 게시물 미리보기 / publish = 지금 발행"
+        required: true
+        default: check
+        type: choice
+        options: [check, preview, publish]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: publish
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -q requests pillow
+      - name: 랜덤 지연 (자동 발행일 때만)
+        if: github.event_name == 'schedule'
+        run: sleep $(( RANDOM % 1500 ))
+      - name: 실행
+        env:
+          IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
+          THREADS_ACCESS_TOKEN: ${{ secrets.THREADS_ACCESS_TOKEN }}
+        run: python publisher/publish.py ${{ github.event.inputs.mode || 'publish' }}

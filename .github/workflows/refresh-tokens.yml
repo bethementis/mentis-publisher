@@ -1,0 +1,24 @@
+name: 토큰 연장 (매주)
+
+# 인스타·쓰레드 토큰은 60일이면 만료돼서, 매주 자동으로 연장하고 GitHub 비밀값을 새 토큰으로 바꿔둔다.
+# 필요: 저장소 비밀값 GH_PAT (이 저장소의 Secrets 쓰기 권한이 있는 GitHub 토큰)
+on:
+  schedule:
+    - cron: "0 3 * * 1"
+  workflow_dispatch:
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -q requests
+      - name: 토큰 연장
+        env:
+          IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
+          THREADS_ACCESS_TOKEN: ${{ secrets.THREADS_ACCESS_TOKEN }}
+          GH_TOKEN: ${{ secrets.GH_PAT }}
+        run: python publisher/refresh_tokens.py
