@@ -73,7 +73,7 @@ def load_post(folder):
     if not f.exists():
         raise SystemExit(f"{folder.name}: post.json 이 없어요")
     post = json.loads(f.read_text(encoding="utf-8"))
-    post.setdefault("platforms", ["instagram", "threads", "youtube"])
+    post.setdefault("platforms", ["instagram", "threads", "youtube", "tiktok"])
     return post
 
 
@@ -146,6 +146,14 @@ def cmd_check():
             log(f"✗ 유튜브: {e}"); ok = False
     else:
         log("- 유튜브: 아직 연결 안 됨 (YT_ 비밀값 없음)")
+    import tiktok as T
+    if T.has_tiktok():
+        try:
+            log(f"✓ 틱톡: {T.tt_me().get('username')} 연결됨")
+        except Exception as e:  # noqa: BLE001
+            log(f"✗ 틱톡: {e}"); ok = False
+    else:
+        log("- 틱톡: 아직 연결 안 됨 (TT_ 비밀값 없음)")
     return 0 if ok else 1
 
 
@@ -219,23 +227,45 @@ def cmd_publish():
             result["threads"] = {"ok": False, "error": str(e)}; failed = True
             log(f"✗ 쓰레드 실패: {e}")
 
+    video_info = {}
+
+    def get_video():
+        if not video_info:
+            import shorts
+            video = Path("/tmp") / f"{folder.name}.mp4"
+            info = shorts.build_short(card_images(folder), video)
+            log(f"쇼츠 영상 생성: {info['seconds']}초, 음악 {info['music'] or '없음'}")
+            video_info.update(info, path=video)
+        return video_info
+
     if "youtube" in post["platforms"] and not result.get("youtube", {}).get("ok"):
         if not has_youtube():
             log("- 유튜브: 아직 연결 안 돼서 건너뜀")
         else:
             try:
-                import shorts
                 import youtube as Y
-                video = Path("/tmp") / f"{folder.name}.mp4"
-                info = shorts.build_short(card_images(folder), video)
-                log(f"쇼츠 영상 생성: {info['seconds']}초, 음악 {info['music'] or '없음'}")
+                v = get_video()
                 title, desc, tags = youtube_meta(post)
-                r = Y.yt_upload(video, title, desc, tags)
-                result["youtube"] = {"ok": True, **r, "music": info["music"]}
+                r = Y.yt_upload(v["path"], title, desc, tags)
+                result["youtube"] = {"ok": True, **r, "music": v["music"]}
                 log(f"✓ 유튜브 업로드: {r['url']} ({r.get('privacy')})")
             except Exception as e:  # noqa: BLE001
                 result["youtube"] = {"ok": False, "error": str(e)[:500]}; failed = True
                 log(f"✗ 유튜브 실패: {e}")
+
+    if "tiktok" in post["platforms"] and not result.get("tiktok", {}).get("ok"):
+        import tiktok as T
+        if not T.has_tiktok():
+            log("- 틱톡: 아직 연결 안 돼서 건너뜀")
+        else:
+            try:
+                v = get_video()
+                r = T.tt_upload_draft(v["path"])
+                result["tiktok"] = {"ok": True, **r, "mode": "inbox"}
+                log("✓ 틱톡 임시저장함으로 전송 — 앱 알림에서 음악 고르고 게시하세요")
+            except Exception as e:  # noqa: BLE001
+                result["tiktok"] = {"ok": False, "error": str(e)[:500]}; failed = True
+                log(f"✗ 틱톡 실패: {e}")
 
     result["updated_at"] = dt.datetime.now(KST).isoformat(timespec="seconds")
     result_f.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")

@@ -1,0 +1,22 @@
+name: 틱톡 연결 (최초 1회)
+
+on:
+  workflow_dispatch:
+    inputs:
+      code:
+        description: "틱톡 로그인 후 주소창의 code 값"
+        required: true
+
+jobs:
+  auth:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: pip install -q requests
+      - name: 코드 → refresh token 교환 후 비밀값 저장
+        env:
+          TT_CLIENT_KEY: ${{ secrets.TT_CLIENT_KEY }}
+          TT_CLIENT_SECRET: ${{ secrets.TT_CLIENT_SECRET }}
+          TT_CODE: ${{ github.event.inputs.code }}
+          GH_TOKEN: ${{ secrets.GH_PAT }}
+        run: python publisher/tiktok_auth.py
