@@ -84,6 +84,19 @@ def card_images(folder):
     return imgs[:10]
 
 
+def size_warnings(folder):
+    """인스타 피드 권장 비율(4:5, 1080x1350)과 다른 카드를 찾아 경고 문구로 돌려준다."""
+    out = []
+    for p in card_images(folder):
+        with Image.open(p) as im:
+            w, h = im.size
+        if abs(w / h - 0.8) > 0.01:
+            out.append(f"⚠ {p.name}: {w}x{h} (비율 {w/h:.2f}) → 4:5(1080x1350)가 아니라 인스타·쇼츠에서 잘리거나 여백이 생길 수 있어요")
+        elif w < 1080:
+            out.append(f"⚠ {p.name}: {w}x{h} → 해상도가 낮아요 (1080x1350 권장)")
+    return out
+
+
 def ensure_jpegs(folder):
     """인스타 API는 JPEG만 받기 때문에 _jpg 폴더에 변환본을 만든다."""
     out = folder / "_jpg"
@@ -158,6 +171,8 @@ def cmd_preview():
     f = items[0]; post = load_post(f)
     log(f"다음 발행: {f.name}")
     log(f"  카드 {len(card_images(f))}장 / 플랫폼 {post['platforms']}")
+    for w in size_warnings(f):
+        log("  " + w)
     log(f"  인스타 캡션: {post.get('caption','')[:80]}…")
     th = threads_posts(post)
     log(f"  쓰레드: {len(th) if th else 0}개 글")
@@ -174,6 +189,9 @@ def cmd_publish():
     result_f = folder / "result.json"
     result = json.loads(result_f.read_text()) if result_f.exists() else {}
     log(f"발행 시작: {folder.name}")
+    for w in size_warnings(folder):
+        log(w)
+        print(f"::warning::{w}", flush=True)
 
     jpgs = ensure_jpegs(folder)
     if commit_push(f"prepare: {folder.name} 이미지 변환"):
