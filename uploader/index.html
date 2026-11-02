@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>맨티스 업로드</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top">
+  <h1>MENTIS <span>업로드</span></h1>
+  <div id="who"></div>
+</header>
+
+<main>
+  <!-- 로그인 전 -->
+  <section id="login" class="panel center" hidden>
+    <p>맨티스 저장소에 게시물을 예약하려면 GitHub 계정으로 로그인하세요.</p>
+    <a id="loginBtn" class="btn primary big" href="#">GitHub로 로그인</a>
+    <p id="loginMsg" class="msg"></p>
+  </section>
+
+  <!-- 로그인 후 -->
+  <div id="app" hidden>
+    <nav class="tabs">
+      <button data-tab="new" class="on">새 게시물</button>
+      <button data-tab="schedule">예약 목록</button>
+      <button data-tab="results">발행 결과</button>
+      <button data-tab="tools">도구</button>
+    </nav>
+
+    <!-- 새 게시물 / 수정 -->
+    <section id="tab-new" class="tab">
+      <div class="panel">
+        <div class="row between">
+          <h2 id="editTitle">새 게시물</h2>
+          <button id="cancelEdit" class="btn ghost" hidden>수정 취소</button>
+        </div>
+
+        <h3>카드 <small>첫 장이 표지 · 끌어서 순서 변경 · 최대 10장 · 1080×1350(4:5)</small></h3>
+        <div id="cards" class="cards"></div>
+        <label class="drop" id="drop">
+          <input type="file" id="fileInput" accept="image/png,image/jpeg,image/webp" multiple hidden>
+          이미지를 여기로 끌어다 놓거나 <u>눌러서 선택</u>
+        </label>
+        <p id="cardWarn" class="warn"></p>
+
+        <div class="grid2">
+          <label>발행 날짜
+            <input type="date" id="date">
+          </label>
+          <label>주제 (폴더 이름)
+            <input type="text" id="slug" placeholder="예: face-peeling 또는 얼굴각질">
+          </label>
+        </div>
+        <p id="dateWarn" class="warn"></p>
+
+        <label>인스타 캡션
+          <textarea id="caption" rows="10" placeholder="Claude에서 만든 캡션을 붙여넣으세요"></textarea>
+        </label>
+        <label>쓰레드 글 <small>이어지는 글은 한 줄에 <code>---</code> 만 써서 나누기</small>
+          <textarea id="threads" rows="7" placeholder="첫 글&#10;---&#10;두 번째 글(답글)"></textarea>
+        </label>
+        <label class="check"><input type="checkbox" id="threadsCover"> 쓰레드 첫 글에 표지 이미지 붙이기</label>
+
+        <div class="grid2">
+          <label>유튜브 쇼츠 제목 <small>(비우면 캡션 첫 줄)</small>
+            <input type="text" id="ytTitle">
+          </label>
+          <label>네이버 클립 제목 <small>(비우면 유튜브 제목)</small>
+            <input type="text" id="nvTitle">
+          </label>
+        </div>
+
+        <details id="xhsBox">
+          <summary>샤오홍슈 (중국어 카드 · 제목 · 본문 · 태그)</summary>
+          <h3>중국어 카드 <small>(선택) 최대 18장</small></h3>
+          <div id="zhCards" class="cards"></div>
+          <label class="drop small" id="zhDrop">
+            <input type="file" id="zhInput" accept="image/png,image/jpeg,image/webp" multiple hidden>
+            중국어 카드를 끌어다 놓거나 <u>눌러서 선택</u>
+          </label>
+          <label>제목 <small id="xhsCount">0/20</small>
+            <input type="text" id="xhsTitle">
+          </label>
+          <label>본문
+            <textarea id="xhsBody" rows="5"></textarea>
+          </label>
+          <label>태그 <small>쉼표로 구분</small>
+            <input type="text" id="xhsTags" placeholder="韩国男生护肤, 男生护肤, 韩系男生">
+          </label>
+        </details>
+
+        <h3>올릴 곳</h3>
+        <div id="platforms" class="chips"></div>
+        <p id="platWarn" class="warn"></p>
+
+        <div class="row end">
+          <button id="deletePost" class="btn danger" hidden>삭제</button>
+          <button id="save" class="btn primary">예약하기</button>
+        </div>
+        <p id="saveMsg" class="msg"></p>
+      </div>
+    </section>
+
+    <!-- 예약 목록 -->
+    <section id="tab-schedule" class="tab" hidden>
+      <div class="panel">
+        <div class="row between">
+          <button class="btn ghost" id="prevMonth">‹</button>
+          <h2 id="monthLabel"></h2>
+          <button class="btn ghost" id="nextMonth">›</button>
+        </div>
+        <p class="hint">게시물을 누르면 수정, 다른 날짜로 끌어 놓으면 날짜 변경, 빈 날짜를 누르면 그날 새 게시물.</p>
+        <div id="calendar" class="calendar"></div>
+        <h3>목록</h3>
+        <div id="queueList" class="list"></div>
+      </div>
+    </section>
+
+    <!-- 발행 결과 -->
+    <section id="tab-results" class="tab" hidden>
+      <div class="panel">
+        <h2>발행 결과</h2>
+        <p class="hint">실패한 곳은 다음 날 자동 발행 때 다시 시도해요.</p>
+        <div id="resultList" class="list"></div>
+      </div>
+    </section>
+
+    <!-- 도구 -->
+    <section id="tab-tools" class="tab" hidden>
+      <div class="panel">
+        <h2>도구</h2>
+        <div class="tools">
+          <button class="btn" data-run="check">토큰 상태 확인</button>
+          <button class="btn" data-run="preview">다음 게시물 미리보기</button>
+          <button class="btn danger" data-run="publish">지금 발행</button>
+        </div>
+        <p id="runMsg" class="msg"></p>
+        <h3>최근 실행 <button class="btn ghost small" id="refreshRuns">새로고침</button></h3>
+        <div id="runs" class="list"></div>
+      </div>
+    </section>
+  </div>
+</main>
+
+<div id="toast" class="toast" hidden></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.2/Sortable.min.js"></script>
+<script src="config.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

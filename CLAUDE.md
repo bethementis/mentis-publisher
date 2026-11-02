@@ -1,7 +1,7 @@
 # 맨티스(Mentis) 프로젝트 — Claude Code용 안내
 
 이 파일은 Claude Code가 이 저장소를 열었을 때 가장 먼저 읽는 프로젝트 메모다.
-다음 할 일: **[docs/next-projects.md](docs/next-projects.md)** (① 업로드 툴 ② 전략비서 에이전트)
+다음 할 일: **[docs/next-projects.md](docs/next-projects.md)** (① 업로드 툴: 코드 완성, 설정 대기 → [docs/uploader-setup.md](docs/uploader-setup.md) ② 전략비서 에이전트)
 
 ## 누구 / 무엇
 - 사용자: 조성현(GitHub 계정 bethementis 운영). 친구와 둘이 남성 자기관리 매거진 채널 '맨티스'를 운영. 레퍼런스: 세르칸(@iamtheserkan).
@@ -43,6 +43,9 @@ published/           # 발행 완료 + result.json (플랫폼별 링크/ID)
 outbox/              # 어사이드가 가져가는 파일 (naver/short.mp4, xhs/중국어 카드) + index.json, 14일 후 삭제
 assets/music/        # 배경음 5곡 (60초, 음량 정규화). 유튜브·네이버 클립용
 docs/aside-routines.md  # 어사이드 루틴 프롬프트
+uploader/               # 업로드 툴 웹페이지 (GitHub Pages, 빌드 없음, GitHub API로 queue/ 에 커밋)
+worker/                 # 업로드 툴 로그인 중계 (Cloudflare Worker, GitHub App OAuth code→토큰 교환만)
+docs/uploader-setup.md  # 업로드 툴 최초 설정 순서 (사용자가 직접)
 templates/post.json     # 게시물 설정 양식
 ```
 
@@ -65,4 +68,5 @@ queue/2026-11-05_주제/
 - 유튜브 업로드 채널 확인: `publish.py check` 로그에 "✓ 유튜브: Mentis 채널 연결됨".
 - 틱톡 inbox 업로드는 캡션을 못 보냄 → 사용자가 앱에서 입력 (틱톡용 캡션 자동 준비는 미구현).
 - 인스타 캐러셀은 API로 음악 불가.
+- 캡션·쓰레드 글은 사용자가 Claude 앱에서 만들어 업로드 툴에 붙여넣음 (Claude API 자동 생성은 비용 때문에 안 쓰기로 함, 2026-11-02).
 - 피드(카드) 자동 생성기는 아직 없음. 카드는 사용자가 디자인 툴에서 만들어 넣는 중.

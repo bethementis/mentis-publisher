@@ -1,0 +1,12 @@
+name = "mentis-uploader-auth"
+main = "src/index.js"
+compatibility_date = "2026-10-01"
+
+[vars]
+# GitHub App 의 Client ID (비밀 아님). docs/uploader-setup.md 3단계에서 채움
+GITHUB_CLIENT_ID = "여기에_Client_ID"
+# 로그인 후 돌아갈 업로드 툴 주소
+APP_URL = "https://bethementis.github.io/mentis-publisher/"
+
+# GITHUB_CLIENT_SECRET 은 여기 쓰지 말고 Cloudflare 대시보드
+# (Workers → mentis-uploader-auth → Settings → Variables and Secrets)에 직접 넣는다.
