@@ -1,0 +1,49 @@
+name: 전략비서 숫자 수집
+
+# probe = 지금 토큰으로 받을 수 있는 숫자 점검 (metrics/probe.json)
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "probe = 권한 점검"
+        required: true
+        default: probe
+        type: choice
+        options: [probe]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: metrics
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -q requests google-api-python-client google-auth
+      - name: 실행
+        env:
+          IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
+          THREADS_ACCESS_TOKEN: ${{ secrets.THREADS_ACCESS_TOKEN }}
+          YT_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
+          YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
+          YT_REFRESH_TOKEN: ${{ secrets.YT_REFRESH_TOKEN }}
+          TT_CLIENT_KEY: ${{ secrets.TT_CLIENT_KEY }}
+          TT_CLIENT_SECRET: ${{ secrets.TT_CLIENT_SECRET }}
+          TT_REFRESH_TOKEN: ${{ secrets.TT_REFRESH_TOKEN }}
+          GH_TOKEN: ${{ secrets.GH_PAT }}   # 틱톡 refresh token 이 바뀌면 비밀값 갱신용
+        run: python publisher/metrics.py ${{ github.event.inputs.mode || 'probe' }}
+      - name: 결과 저장
+        run: |
+          git add metrics/
+          git diff --cached --quiet && exit 0
+          git -c user.name=mentis-bot -c user.email=bot@users.noreply.github.com commit -m "metrics: ${{ github.event.inputs.mode || 'probe' }}"
+          git pull --rebase -q origin main
+          git push origin HEAD:main
