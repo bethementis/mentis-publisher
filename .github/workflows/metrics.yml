@@ -45,5 +45,5 @@ jobs:
           git add metrics/
           git diff --cached --quiet && exit 0
           git -c user.name=mentis-bot -c user.email=bot@users.noreply.github.com commit -m "metrics: ${{ github.event.inputs.mode || 'probe' }}"
-          git pull --rebase -q origin main
+          git pull --rebase --autostash -q origin main
           git push origin HEAD:main
