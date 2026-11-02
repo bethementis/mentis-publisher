@@ -290,16 +290,17 @@ def cmd_publish():
             result["threads"] = {"ok": False, "error": str(e)}; failed = True
             log(f"✗ 쓰레드 실패: {e}")
 
-    video_info = {}
+    videos = {}
 
-    def get_video():
-        if not video_info:
+    def get_video(silent=False):
+        key = "silent" if silent else "music"
+        if key not in videos:
             import shorts
-            video = Path("/tmp") / f"{folder.name}.mp4"
-            info = shorts.build_short(card_images(folder), video)
-            log(f"쇼츠 영상 생성: {info['seconds']}초, 음악 {info['music'] or '없음'}")
-            video_info.update(info, path=video)
-        return video_info
+            video = Path("/tmp") / f"{folder.name}{'_silent' if silent else ''}.mp4"
+            info = shorts.build_short(card_images(folder), video, music=False if silent else None)
+            log(f"쇼츠 영상 생성({'무음' if silent else '배경음악'}): {info['seconds']}초, 음악 {info['music'] or '없음'}")
+            videos[key] = {**info, "path": video}
+        return videos[key]
 
     if "youtube" in post["platforms"] and not result.get("youtube", {}).get("ok"):
         if not has_youtube():
@@ -322,7 +323,7 @@ def cmd_publish():
             log("- 틱톡: 아직 연결 안 돼서 건너뜀")
         else:
             try:
-                v = get_video()
+                v = get_video(silent=True)
                 r = T.tt_upload_draft(v["path"])
                 result["tiktok"] = {"ok": True, **r, "mode": "inbox"}
                 log("✓ 틱톡 임시저장함으로 전송 — 앱 알림에서 음악 고르고 게시하세요")

@@ -56,7 +56,9 @@ def build_short(cards, out_path, sec=3.5, cover_sec=2.5, end_sec=1.5, music=None
             f.write(f"file '{p}'\nduration {d}\n")
         f.write(f"file '{seq[-1][0]}'\n")
 
-    if music is None:
+    if music is False:          # 음악 없는 버전 (틱톡: 앱에서 트렌드 사운드를 직접 고름)
+        music = None
+    elif music is None:
         tracks = sorted(MUSIC.glob("*.mp3")) if MUSIC.exists() else []
         music = random.choice(tracks) if tracks else None
 
