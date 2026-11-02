@@ -3,8 +3,8 @@ main = "src/index.js"
 compatibility_date = "2026-10-01"
 
 [vars]
-# GitHub App 의 Client ID (비밀 아님). docs/uploader-setup.md 3단계에서 채움
-GITHUB_CLIENT_ID = "여기에_Client_ID"
+# GitHub App "Mentis Uploader" 의 Client ID (비밀 아님)
+GITHUB_CLIENT_ID = "Iv23li1MN87GhBWNagem"
 # 로그인 후 돌아갈 업로드 툴 주소
 APP_URL = "https://bethementis.github.io/mentis-publisher/"
 
