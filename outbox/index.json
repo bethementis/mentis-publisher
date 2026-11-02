@@ -1,0 +1,13 @@
+{
+  "items": [
+    {
+      "date": "2026-11-02",
+      "folder": "2026-11-02_TEST-face-peeling",
+      "platforms": [
+        "naver",
+        "xhs"
+      ],
+      "base_url": "https://raw.githubusercontent.com/bethementis/mentis-publisher/main/outbox/2026-11-02_TEST-face-peeling/"
+    }
+  ]
+}
