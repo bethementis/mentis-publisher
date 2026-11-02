@@ -1,0 +1,196 @@
+{
+  "checked_at": "2026-11-02T21:34:34+09:00",
+  "instagram": {
+    "permissions": {
+      "ok": true,
+      "detail": [
+        "ads_management",
+        "ads_read",
+        "instagram_basic",
+        "instagram_content_publish",
+        "instagram_manage_comments",
+        "instagram_manage_messages",
+        "public_profile"
+      ]
+    },
+    "media_list": {
+      "ok": true,
+      "detail": [
+        {
+          "id": "18113471897166961",
+          "timestamp": "2026-10-31T07:07:07+0000",
+          "media_type": "CAROUSEL_ALBUM",
+          "like_count": 0,
+          "comments_count": 0
+        },
+        {
+          "id": "18110867036258591",
+          "timestamp": "2026-10-31T05:52:34+0000",
+          "media_type": "CAROUSEL_ALBUM",
+          "like_count": 0,
+          "comments_count": 0
+        },
+        {
+          "id": "18003600765007145",
+          "timestamp": "2026-10-03T09:14:34+0000",
+          "media_type": "CAROUSEL_ALBUM",
+          "like_count": 0,
+          "comments_count": 0
+        }
+      ]
+    },
+    "media_insight.reach": {
+      "ok": false,
+      "detail": "HTTP 400: (#10) Application does not have permission for this action"
+    },
+    "media_insight.views": {
+      "ok": false,
+      "detail": "HTTP 400: (#10) Application does not have permission for this action"
+    },
+    "media_insight.likes": {
+      "ok": false,
+      "detail": "HTTP 400: (#10) Application does not have permission for this action"
+    },
+    "media_insight.comments": {
+      "ok": false,
+      "detail": "HTTP 400: (#10) Application does not have permission for this action"
+    },
+    "media_insight.shares": {
+      "ok": false,
+      "detail": "HTTP 400: (#10) Application does not have permission for this action"
+    },
+    "media_insight.saved": {
+      "ok": false,
+      "detail": "HTTP 400: (#10) Application does not have permission for this action"
+    },
+    "media_insight.follows": {
+      "ok": false,
+      "detail": "HTTP 400: (#10) Application does not have permission for this action"
+    },
+    "media_insight.profile_visits": {
+      "ok": false,
+      "detail": "HTTP 400: (#10) Application does not have permission for this action"
+    },
+    "media_insight.total_interactions": {
+      "ok": false,
+      "detail": "HTTP 400: (#10) Application does not have permission for this action"
+    },
+    "comments": {
+      "ok": true,
+      "detail": "0개 읽음"
+    },
+    "account.follower_count": {
+      "ok": false,
+      "detail": "HTTP 400: (#10) Application does not have permission for this action"
+    },
+    "account.online_followers": {
+      "ok": false,
+      "detail": "HTTP 400: (#10) Application does not have permission for this action"
+    },
+    "account.reach": {
+      "ok": false,
+      "detail": "HTTP 400: (#10) Application does not have permission for this action"
+    },
+    "account.views": {
+      "ok": false,
+      "detail": "HTTP 400: (#10) Application does not have permission for this action"
+    },
+    "account.profile_views": {
+      "ok": false,
+      "detail": "HTTP 400: (#10) Application does not have permission for this action"
+    },
+    "account.follows_and_unfollows": {
+      "ok": false,
+      "detail": "HTTP 400: (#10) Application does not have permission for this action"
+    },
+    "account.accounts_engaged": {
+      "ok": false,
+      "detail": "HTTP 400: (#10) Application does not have permission for this action"
+    },
+    "business_discovery.iamtheserkan": {
+      "ok": false,
+      "detail": "HTTP 400: (#10) Application does not have permission for this action"
+    }
+  },
+  "threads": {
+    "post_list": {
+      "ok": true,
+      "detail": [
+        {
+          "id": "17997514116045697",
+          "timestamp": "2026-10-31T07:07:45+0000"
+        }
+      ]
+    },
+    "post_insights": {
+      "ok": true,
+      "detail": {
+        "views": 9,
+        "likes": 0,
+        "replies": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "shares": 0
+      }
+    },
+    "replies": {
+      "ok": true,
+      "detail": "0개 읽음"
+    },
+    "account.followers_count": {
+      "ok": true,
+      "detail": {
+        "value": 0
+      }
+    }
+  },
+  "youtube": {
+    "channel_statistics": {
+      "ok": true,
+      "detail": {
+        "title": "Mentis",
+        "viewCount": "74",
+        "subscriberCount": "40",
+        "hiddenSubscriberCount": false,
+        "videoCount": "1",
+        "uploads": "UUwYtKaHKBjeb526d7aPG8Zw"
+      }
+    },
+    "video_list": {
+      "ok": true,
+      "detail": [
+        "Nim9T1Mcuu0",
+        "9EqoSIHnhLQ",
+        "TKr2xr6f2j4"
+      ]
+    },
+    "video_statistics": {
+      "ok": true,
+      "detail": {
+        "viewCount": "76",
+        "likeCount": "0",
+        "dislikeCount": "0",
+        "favoriteCount": "0",
+        "commentCount": "0"
+      }
+    },
+    "comments": {
+      "ok": false,
+      "detail": "<HttpError 403 when requesting https://youtube.googleapis.com/youtube/v3/commentThreads?part=snippet&videoId=Nim9T1Mcuu0&maxResults=20&alt=json returned \"Request had insufficient authentication scopes.\". Details: \"[{'message': 'Insufficient Permission', 'domain': 'global', 'reason': 'insufficientPer"
+    }
+  },
+  "tiktok": {
+    "token": {
+      "ok": true,
+      "detail": "갱신 성공"
+    },
+    "user_stats": {
+      "ok": false,
+      "detail": "HTTP 401: {'code': 'scope_not_authorized', 'message': 'The user did not authorize the scope required for completing this request.', 'log_id': '20261102203449629F186232A7DBDA6376'}"
+    },
+    "video_list": {
+      "ok": false,
+      "detail": "HTTP 401: {'code': 'scope_not_authorized', 'message': 'The user did not authorize the scope required for completing this request.', 'log_id': '202611022034491B0B3B21B20893B055EF'}"
+    }
+  }
+}
