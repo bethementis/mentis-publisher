@@ -48,7 +48,7 @@
    없으면 "오늘 올릴 샤오홍슈 게시물 없음" 이라고 보고하고 끝내.
 3. 각 항목마다:
    a. {base_url}xhs/upload.json 을 열어 title, body, images(장수) 를 읽어.
-   b. 샤오홍슈 크리에이터 센터(creator.xiaohongshu.com, 맨티스 계정)에 접속해서
+   b. 샤오홍슈 크리에이터 센터(creator.rednote.com 또는 creator.xiaohongshu.com, 맨티스 계정)에 접속해서
       같은 제목의 노트가 이미 있으면 건너뛰어.
    c. {base_url}xhs/01.jpg 부터 images 장수만큼(02.jpg, 03.jpg …) 순서대로 내려받아.
    d. "上传图文"(이미지 노트)로 새 노트를 만들고 이미지를 01번부터 순서대로 올려.
