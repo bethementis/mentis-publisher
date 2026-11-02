@@ -82,7 +82,7 @@ def card_images(folder):
     imgs = [p for p in folder.iterdir() if p.suffix.lower() in IMG_EXT and not p.name.startswith(".")
             and p.parent.name != "_jpg"]
     imgs.sort(key=lambda p: (0 if "cover" in p.name.lower() else 1, natural_key(p)))
-    return imgs[:10]
+    return imgs[:20]   # 인스타 캐러셀 최대 20장
 
 
 def size_warnings(folder):

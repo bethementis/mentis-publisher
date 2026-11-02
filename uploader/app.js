@@ -512,7 +512,7 @@
 
   // ---------- 연결 ----------
   document.querySelectorAll(".tabs button").forEach((b) => (b.onclick = () => showTab(b.dataset.tab)));
-  setupDrop($("drop"), $("fileInput"), () => cards, 10);
+  setupDrop($("drop"), $("fileInput"), () => cards, 20);
   setupDrop($("zhDrop"), $("zhInput"), () => zhCards, 18);
   sortableFor($("cards"), { sort: (f) => cards.sort(f) });
   sortableFor($("zhCards"), { sort: (f) => zhCards.sort(f) });

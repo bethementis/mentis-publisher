@@ -52,7 +52,7 @@ templates/post.json     # 게시물 설정 양식
 ### 게시물 폴더 형식
 ```
 queue/2026-11-05_주제/
-  00_cover.png, 01.png ...   # 한국어 카드 1080x1350(4:5), cover 가 맨 앞, 최대 10장
+  00_cover.png, 01.png ...   # 한국어 카드 1080x1350(4:5), cover 가 맨 앞, 최대 20장 (인스타 API 캐러셀 한도. 17장 이상이면 쇼츠 60초 초과)
   zh/00_cover.png ...        # (선택) 샤오홍슈용 중국어 카드. 폰트 Noto Sans SC 등
   post.json                  # caption, threads[], threads_with_cover, youtube.title, naver.title, xhs{title(20자), body, tags}
 ```
