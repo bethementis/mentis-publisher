@@ -224,7 +224,7 @@ def collect_instagram():
         if not _recent(m["timestamp"], POST_DAYS):
             continue
         p = {k: m.get(k) for k in ("id", "timestamp", "permalink", "media_type", "like_count", "comments_count")}
-        p["caption_head"] = _head(m.get("caption"))
+        p["caption_head"] = _head(m.get("caption"), 2200)   # DM 키워드 이벤트 문구가 끝에 있어서 캡션 전체
         try:
             p["insights"] = {d["name"]: d["values"][0]["value"] for d in _get(
                 f"{B}/{m['id']}/insights", metric=",".join(IG_MEDIA_METRICS), access_token=tok)["data"]}
