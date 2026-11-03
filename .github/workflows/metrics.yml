@@ -1,15 +1,20 @@
 name: 전략비서 숫자 수집
 
-# probe = 지금 토큰으로 받을 수 있는 숫자 점검 (metrics/probe.json)
+# collect = 매일 06:00 KST 플랫폼 숫자 수집 → metrics/YYYY-MM-DD.json
+# check   = 매일 21:20 KST 저녁 점검 (발행·어사이드 끝난 뒤) → metrics/checks/YYYY-MM-DD.json
+# probe   = 지금 토큰으로 받을 수 있는 숫자 점검 → metrics/probe.json
 on:
+  schedule:
+    - cron: "0 21 * * *"    # 06:00 KST
+    - cron: "20 12 * * *"   # 21:20 KST
   workflow_dispatch:
     inputs:
       mode:
-        description: "probe = 권한 점검"
+        description: "collect = 숫자 수집 / check = 저녁 점검 / probe = 권한 점검"
         required: true
-        default: probe
+        default: collect
         type: choice
-        options: [probe]
+        options: [collect, check, probe]
 
 permissions:
   contents: write
@@ -22,12 +27,14 @@ jobs:
   run:
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    env:
+      MODE: ${{ github.event.inputs.mode || (github.event.schedule == '20 12 * * *' && 'check' || 'collect') }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: pip install -q requests google-api-python-client google-auth
+      - run: pip install -q requests pillow google-api-python-client google-auth
       - name: 실행
         env:
           IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
@@ -40,11 +47,12 @@ jobs:
           TT_CLIENT_SECRET: ${{ secrets.TT_CLIENT_SECRET }}
           TT_REFRESH_TOKEN: ${{ secrets.TT_REFRESH_TOKEN }}
           GH_TOKEN: ${{ secrets.GH_PAT }}   # 틱톡 refresh token 이 바뀌면 비밀값 갱신용
-        run: python publisher/metrics.py ${{ github.event.inputs.mode || 'probe' }}
+        run: |
+          if [ "$MODE" = "check" ]; then python publisher/checks.py; else python publisher/metrics.py "$MODE"; fi
       - name: 결과 저장
         run: |
           git add metrics/
           git diff --cached --quiet && exit 0
-          git -c user.name=mentis-bot -c user.email=bot@users.noreply.github.com commit -m "metrics: ${{ github.event.inputs.mode || 'probe' }}"
+          git -c user.name=mentis-bot -c user.email=bot@users.noreply.github.com commit -m "metrics: $MODE $(TZ=Asia/Seoul date +%F)"
           git pull --rebase --autostash -q origin main
           git push origin HEAD:main
