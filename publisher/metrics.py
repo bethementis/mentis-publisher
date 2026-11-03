@@ -297,7 +297,7 @@ def collect_youtube():
     import youtube as Y
     yt = Y._client()
     ch = yt.channels().list(part="statistics,contentDetails", mine=True).execute()["items"][0]
-    out = {"channel": {k: int(v) for k, v in ch["statistics"].items() if v.isdigit()}}
+    out = {"channel": {k: int(v) for k, v in ch["statistics"].items() if str(v).isdigit()}}
     ids = [i["contentDetails"]["videoId"] for i in yt.playlistItems().list(
         part="contentDetails", playlistId=ch["contentDetails"]["relatedPlaylists"]["uploads"],
         maxResults=25).execute()["items"]]
@@ -307,7 +307,7 @@ def collect_youtube():
             continue
         videos.append({"id": v["id"], "title": v["snippet"]["title"], "published_at": v["snippet"]["publishedAt"],
                        "url": f"https://youtube.com/shorts/{v['id']}",
-                       "statistics": {k: int(x) for k, x in v["statistics"].items() if x.isdigit()}})
+                       "statistics": {k: int(x) for k, x in v["statistics"].items() if str(x).isdigit()}})
     out["videos"] = videos
     return out
 
