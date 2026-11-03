@@ -59,6 +59,7 @@ queue/2026-11-05_주제/
   zh/00_cover.png ...        # (선택) 샤오홍슈용 중국어 카드. 폰트 Noto Sans SC 등
   post.json                  # caption, threads[], threads_with_cover, youtube.title, naver.title, xhs{title(20자), body, tags}
 ```
+- **릴스 게시물**: 카드 대신 `reel.mp4`(9:16, 95MB 이하) + post.json `"type": "reel"`. 인스타 릴스(resumable 업로드, share_to_feed) + 유튜브 쇼츠·틱톡·네이버 클립·샤오홍슈 영상 노트에 같은 영상(소리 그대로). 쓰레드 제외. xhs 는 zh 카드 없이 제목·본문만 있으면 됨 (outbox xhs/video.mp4, upload.json type=video).
 - 플랫폼 기본값: instagram, threads, youtube, tiktok, naver, xhs. 실패한 플랫폼만 다음 날 재시도(result.json).
 - 4:5 가 아닌 카드는 경고(카드 5 AHA/BHA 처럼 잘림 방지).
 

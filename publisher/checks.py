@@ -166,6 +166,17 @@ def check_upcoming(today):
             add("problem", "예약 게시물", f"{d.name}: post.json 을 읽을 수 없어요 ({e})")
             continue
         plats = post["platforms"]
+        reel = PB.reel_video(d)
+        if reel:
+            mb = reel.stat().st_size / 1048576
+            if mb > 95:
+                add("problem", "예약 게시물", f"{d.name}: 릴스 영상이 {mb:.0f}MB 라 너무 커요 (95MB 이하).")
+            if "instagram" in plats and not post.get("caption", "").strip():
+                add("problem", "예약 게시물", f"{d.name}: 인스타 캡션이 비어 있어요.")
+            x = post.get("xhs") or {}
+            if "xhs" in plats and (not x.get("title") or not x.get("body")):
+                add("warn", "예약 게시물", f"{d.name}: 샤오홍슈 중국어 제목·본문이 없어서 샤오홍슈는 건너뛰어요.")
+            continue
         if not PB.card_images(d):
             add("problem", "예약 게시물", f"{d.name}: 카드 이미지가 없어요.")
             continue

@@ -80,6 +80,28 @@ def ig_publish_carousel(token, image_urls, caption):
             "caption": caption, "access_token": token}, timeout=TIMEOUT))
         creation_id = c["id"]
     _ig_wait(creation_id, token)
+    return _ig_publish(IG, uid, creation_id, token)
+
+
+def ig_publish_reel(token, video_path, caption):
+    """릴스: 영상 파일을 메타 서버로 직접 올린다(resumable 업로드). 피드에도 같이 보이게 share_to_feed."""
+    token = token.strip()
+    IG = _ig_base(token)
+    uid = ig_me(token)["user_id"]
+    c = _check(requests.post(f"{IG}/{uid}/media", data={
+        "media_type": "REELS", "upload_type": "resumable", "caption": caption,
+        "share_to_feed": "true", "access_token": token}, timeout=TIMEOUT))
+    size = os.path.getsize(video_path)
+    with open(video_path, "rb") as f:
+        r = requests.post(c["uri"], data=f, timeout=600, headers={
+            "Authorization": f"OAuth {token}", "offset": "0", "file_size": str(size)})
+    if r.status_code >= 400:
+        raise PublishError(f"릴스 영상 전송 실패 HTTP {r.status_code}: {r.text[:300]}")
+    _ig_wait(c["id"], token, tries=90)   # 영상은 처리 시간이 길다 (최대 약 6분)
+    return _ig_publish(IG, uid, c["id"], token)
+
+
+def _ig_publish(IG, uid, creation_id, token):
     p = _check(requests.post(f"{IG}/{uid}/media_publish", data={
         "creation_id": creation_id, "access_token": token}, timeout=TIMEOUT))
     media_id = p["id"]

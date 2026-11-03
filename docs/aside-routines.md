@@ -46,12 +46,13 @@
 2. items 중 date 가 오늘 또는 어제이고 platforms 에 "xhs" 가 있는 항목만 골라. folder 이름에 TEST 가 들어간 항목은 제외해.
    없으면 업로드는 하지 말고 5~6번(숫자 읽기·보고 댓글, upload 는 "none")만 하고 끝내.
 3. 각 항목마다:
-   a. {base_url}xhs/upload.json 을 열어 title, body, images(장수) 를 읽어.
+   a. {base_url}xhs/upload.json 을 열어 type, title, body, images(장수) 를 읽어. type 이 "video" 면 영상 노트, 아니면 이미지 노트야.
    b. 샤오홍슈 크리에이터 센터(creator.rednote.com 또는 creator.xiaohongshu.com)에 접속해서 로그인된 계정이
       맨티스 계정(User6AE6A4F3 또는 닉네임에 "Mentis")인지 확인해. 아니면 올리지 말고 멈춰.
    c. 같은 제목의 노트가 이미 있으면 건너뛰어.
-   d. {base_url}xhs/01.jpg 부터 images 장수만큼(02.jpg, 03.jpg …) 순서대로 내려받아.
-   e. "上传图文"(이미지 노트)로 새 노트를 만들고 이미지를 01번부터 순서대로 올려.
+   d. 이미지 노트: {base_url}xhs/01.jpg 부터 images 장수만큼(02.jpg, 03.jpg …) 순서대로 내려받아
+      "上传图文"(이미지 노트)로 새 노트를 만들고 이미지를 01번부터 순서대로 올려.
+   e. 영상 노트(type "video"): {base_url}xhs/video.mp4 를 내려받아 "上传视频"(영상 노트)로 새 노트를 만들어 올려. 표지는 기본값 그대로 둬.
    f. 제목(标题) = title, 본문(正文) = body 를 그대로 붙여 넣어. 내용은 바꾸지 마. 샤오홍슈가 추천하는 태그·话题는 추가하지 마.
    g. 공개 범위는 公开可见(전체 공개)로 하고 발행(发布) 해.
 4. 끝나면 올린 노트 제목과 링크를 보고해.

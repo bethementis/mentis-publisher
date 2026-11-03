@@ -37,12 +37,29 @@
           <button id="cancelEdit" class="btn ghost" hidden>수정 취소</button>
         </div>
 
-        <h3>카드 <small>첫 장이 표지 · 끌어서 순서 변경 · 최대 20장 · 1080×1350(4:5)</small></h3>
-        <div id="cards" class="cards"></div>
-        <label class="drop" id="drop">
-          <input type="file" id="fileInput" accept="image/png,image/jpeg,image/webp" multiple hidden>
-          이미지를 여기로 끌어다 놓거나 <u>눌러서 선택</u>
-        </label>
+        <div class="seg" id="format">
+          <button data-format="carousel" class="on">카드 (캐러셀)</button>
+          <button data-format="reel">릴스 (영상)</button>
+        </div>
+        <p class="hint" id="formatHint"></p>
+
+        <div id="carouselBox">
+          <h3>카드 <small>첫 장이 표지 · 끌어서 순서 변경 · 최대 20장 · 1080×1350(4:5)</small></h3>
+          <div id="cards" class="cards"></div>
+          <label class="drop" id="drop">
+            <input type="file" id="fileInput" accept="image/png,image/jpeg,image/webp" multiple hidden>
+            이미지를 여기로 끌어다 놓거나 <u>눌러서 선택</u>
+          </label>
+        </div>
+
+        <div id="reelBox" hidden>
+          <h3>릴스 영상 <small>mp4 · 세로 9:16(1080×1920) · 3분 이내 · 95MB 이하</small></h3>
+          <div id="reelPreview"></div>
+          <label class="drop" id="reelDrop">
+            <input type="file" id="reelInput" accept="video/mp4" hidden>
+            영상(mp4)을 여기로 끌어다 놓거나 <u>눌러서 선택</u>
+          </label>
+        </div>
         <p id="cardWarn" class="warn"></p>
 
         <div class="grid2">
@@ -58,10 +75,12 @@
         <label>인스타 캡션
           <textarea id="caption" rows="10" placeholder="Claude에서 만든 캡션을 붙여넣으세요"></textarea>
         </label>
+        <div id="threadsBox">
         <label>쓰레드 글 <small>이어지는 글은 한 줄에 <code>---</code> 만 써서 나누기</small>
           <textarea id="threads" rows="7" placeholder="첫 글&#10;---&#10;두 번째 글(답글)"></textarea>
         </label>
         <label class="check"><input type="checkbox" id="threadsCover"> 쓰레드 첫 글에 표지 이미지 붙이기</label>
+        </div>
 
         <div class="grid2">
           <label>유튜브 쇼츠 제목 <small>(비우면 캡션 첫 줄)</small>
@@ -74,12 +93,14 @@
 
         <details id="xhsBox">
           <summary>샤오홍슈 (중국어 카드 · 제목 · 본문 · 태그)</summary>
+          <div id="zhBox">
           <h3>중국어 카드 <small>(선택) 최대 18장</small></h3>
           <div id="zhCards" class="cards"></div>
           <label class="drop small" id="zhDrop">
             <input type="file" id="zhInput" accept="image/png,image/jpeg,image/webp" multiple hidden>
             중국어 카드를 끌어다 놓거나 <u>눌러서 선택</u>
           </label>
+          </div>
           <label>제목 <small id="xhsCount">0/20</small>
             <input type="text" id="xhsTitle">
           </label>

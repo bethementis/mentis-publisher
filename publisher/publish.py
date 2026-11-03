@@ -31,6 +31,7 @@ DONE = ROOT / "published"
 OUTBOX = ROOT / "outbox"   # 어사이드가 가져가서 올리는 파일 (네이버 클립, 샤오홍슈)
 KST = dt.timezone(dt.timedelta(hours=9))
 IMG_EXT = (".png", ".jpg", ".jpeg", ".webp")
+REEL = "reel.mp4"          # 이 파일이 있으면 릴스 게시물 (인스타 릴스 + 유튜브·틱톡·네이버·샤오홍슈 영상, 쓰레드 제외)
 REPO = os.environ.get("GITHUB_REPOSITORY", "bethementis/mentis-publisher")
 BRANCH = os.environ.get("GITHUB_REF_NAME", "main")
 
@@ -76,6 +77,11 @@ def load_post(folder):
     post = json.loads(f.read_text(encoding="utf-8"))
     post.setdefault("platforms", ["instagram", "threads", "youtube", "tiktok", "naver", "xhs"])
     return post
+
+
+def reel_video(folder):
+    v = folder / REEL
+    return v if v.exists() else None
 
 
 def card_images(folder):
@@ -203,7 +209,21 @@ def build_outbox(folder, post, get_video):
         }, ensure_ascii=False, indent=2), encoding="utf-8")
         made.append("naver")
 
-    if "xhs" in post["platforms"]:
+    reel = reel_video(folder)
+    if "xhs" in post["platforms"] and reel:
+        x = post.get("xhs") or {}
+        if not x.get("title") or not x.get("body"):
+            skipped.append("샤오홍슈: post.json 의 xhs 제목·본문이 없어서 건너뜀")
+        else:
+            d = out / "xhs"; d.mkdir(exist_ok=True)
+            shutil.copy(reel, d / "video.mp4")
+            tags = x.get("tags") or []
+            body = x["body"].rstrip() + ("\n\n" + " ".join("#" + t.lstrip("#") for t in tags) if tags else "")
+            (d / "upload.json").write_text(json.dumps({
+                "type": "video", "title": x["title"][:20], "body": body[:1000],
+            }, ensure_ascii=False, indent=2), encoding="utf-8")
+            made.append("xhs")
+    elif "xhs" in post["platforms"]:
         x = post.get("xhs") or {}
         cards = zh_cards(folder)
         if not cards or not x.get("title") or not x.get("body"):
@@ -215,7 +235,7 @@ def build_outbox(folder, post, get_video):
             tags = x.get("tags") or []
             body = x["body"].rstrip() + ("\n\n" + " ".join("#" + t.lstrip("#") for t in tags) if tags else "")
             (d / "upload.json").write_text(json.dumps({
-                "title": x["title"][:20], "body": body[:1000], "images": len(cards),
+                "type": "images", "title": x["title"][:20], "body": body[:1000], "images": len(cards),
             }, ensure_ascii=False, indent=2), encoding="utf-8")
             made.append("xhs")
 
@@ -241,7 +261,8 @@ def cmd_preview():
         log("발행할 게시물이 없어요 (queue 비어 있음 또는 날짜 전)"); return 0
     f = items[0]; post = load_post(f)
     log(f"다음 발행: {f.name}")
-    log(f"  카드 {len(card_images(f))}장 / 플랫폼 {post['platforms']}")
+    kind = "릴스 영상" if reel_video(f) else f"카드 {len(card_images(f))}장"
+    log(f"  {kind} / 플랫폼 {post['platforms']}")
     for w in size_warnings(f):
         log("  " + w)
     log(f"  인스타 캡션: {post.get('caption','')[:80]}…")
@@ -264,15 +285,23 @@ def cmd_publish():
         log(w)
         print(f"::warning::{w}", flush=True)
 
-    jpgs = ensure_jpegs(folder)
-    if commit_push(f"prepare: {folder.name} 이미지 변환"):
-        log("이미지 업로드 대기 20초"); time.sleep(20)
-    urls = [raw_url(p) for p in jpgs]
+    reel = reel_video(folder)
+    if reel:
+        post["platforms"] = [p for p in post["platforms"] if p != "threads"]   # 릴스는 쓰레드 제외
+        urls = []
+    else:
+        jpgs = ensure_jpegs(folder)
+        if commit_push(f"prepare: {folder.name} 이미지 변환"):
+            log("이미지 업로드 대기 20초"); time.sleep(20)
+        urls = [raw_url(p) for p in jpgs]
 
     failed = False
     if "instagram" in post["platforms"] and not result.get("instagram", {}).get("ok"):
         try:
-            r = P.ig_publish_carousel(os.environ["IG_ACCESS_TOKEN"], urls, post.get("caption", ""))
+            if reel:
+                r = P.ig_publish_reel(os.environ["IG_ACCESS_TOKEN"], reel, post.get("caption", ""))
+            else:
+                r = P.ig_publish_carousel(os.environ["IG_ACCESS_TOKEN"], urls, post.get("caption", ""))
             result["instagram"] = {"ok": True, **r}
             log(f"✓ 인스타 발행: {r.get('permalink')}")
         except Exception as e:  # noqa: BLE001
@@ -293,6 +322,8 @@ def cmd_publish():
     videos = {}
 
     def get_video(silent=False):
+        if reel:   # 직접 만든 릴스 영상은 소리 포함 그대로 쓴다
+            return {"path": reel, "music": None, "seconds": None}
         key = "silent" if silent else "music"
         if key not in videos:
             import shorts
@@ -326,7 +357,7 @@ def cmd_publish():
                 v = get_video(silent=True)
                 r = T.tt_upload_draft(v["path"])
                 result["tiktok"] = {"ok": True, **r, "mode": "inbox"}
-                log("✓ 틱톡 임시저장함으로 전송 — 앱 알림에서 음악 고르고 게시하세요")
+                log("✓ 틱톡 임시저장함으로 전송 — 앱 알림에서 확인하고 게시하세요")
             except Exception as e:  # noqa: BLE001
                 result["tiktok"] = {"ok": False, "error": str(e)[:500]}; failed = True
                 log(f"✗ 틱톡 실패: {e}")

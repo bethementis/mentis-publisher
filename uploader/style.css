@@ -94,6 +94,20 @@ summary { cursor: pointer; font-weight: 600; }
 .btn.big { padding: 13px 26px; font-size: 16px; margin-top: 10px; }
 .btn:disabled { opacity: .5; cursor: wait; }
 
+.seg { display: flex; gap: 0; margin: 4px 0 6px; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+.seg button {
+  flex: 1; padding: 10px; border: 0; background: var(--panel); color: var(--text); font: inherit; cursor: pointer;
+}
+.seg button.on { background: var(--accent); color: var(--accent-text); }
+.reel { display: flex; gap: 12px; align-items: flex-start; margin-top: 10px; }
+.reel video { width: 140px; aspect-ratio: 9 / 16; object-fit: cover; border-radius: 8px; background: #000; }
+.reel .meta { font-size: 13px; color: var(--muted); }
+.reelthumb {
+  display: flex; align-items: center; justify-content: center; aspect-ratio: 4 / 5; width: 100%;
+  background: var(--chip); font-size: 20px;
+}
+.item .reelthumb { width: 52px; flex: none; border-radius: 6px; }
+
 .drop {
   display: block; margin-top: 10px; padding: 22px; text-align: center; font-weight: 400;
   border: 2px dashed var(--line); border-radius: 10px; color: var(--muted); cursor: pointer;

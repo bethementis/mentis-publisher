@@ -16,6 +16,10 @@
   let posts = [];         // 저장소의 게시물 폴더들
   let editing = null;     // 수정 중인 게시물 (없으면 새 게시물)
   let cards = [], zhCards = [];
+  let format = "carousel";   // "carousel" = 카드, "reel" = 릴스 영상
+  let reel = null;           // { src, file?, sha?, w, h, sec, size }
+  const REEL = "reel.mp4";
+  const REEL_MAX_MB = 95;    // GitHub 파일 한도 100MB
   let month = new Date(); month.setDate(1);
 
   // ---------- 공통 ----------
@@ -122,6 +126,10 @@
       .sort((a, b) => (/cover/i.test(b) - /cover/i.test(a)) || natural(a, b));
   }
   const coverUrl = (post) => { const f = cardFiles(post)[0]; return f ? rawUrl(`${post.folder}/${f}`) : ""; };
+  const isReel = (post) => !!post.files[REEL];
+  // 목록·달력 썸네일: 릴스는 영상 표시, 카드는 표지 이미지
+  const thumb = (post) => isReel(post) ? `<span class="reelthumb">🎬</span>`
+    : `<img src="${esc(coverUrl(post))}" alt="" loading="lazy">`;
 
   const blobCache = new Map();
   async function readJson(post, file) {
@@ -148,7 +156,7 @@
     for (const c of changes) {
       let sha = c.sha;
       if (c.file) {
-        progress?.(`이미지 올리는 중 ${++n}/${changes.filter((x) => x.file).length}`);
+        progress?.(`파일 올리는 중 ${++n}/${changes.filter((x) => x.file).length}${c.file.size > 5e6 ? " (영상은 1~2분 걸릴 수 있어요)" : ""}`);
         sha = (await gh(`/repos/${CFG.repo}/git/blobs`, { method: "POST", body: { content: await fileB64(c.file), encoding: "base64" } })).sha;
       } else if (c.text != null) {
         sha = (await gh(`/repos/${CFG.repo}/git/blobs`, { method: "POST", body: { content: c.text, encoding: "utf-8" } })).sha;
@@ -208,13 +216,65 @@
     }));
   }
 
+  function setReel(src, extra) {
+    reel = { src, w: 0, h: 0, sec: 0, ...extra };
+    const v = document.createElement("video");
+    v.preload = "metadata"; v.muted = true; v.src = src;
+    v.onloadedmetadata = () => { reel.w = v.videoWidth; reel.h = v.videoHeight; reel.sec = v.duration; renderReel(); };
+    renderReel();
+  }
+
+  function renderReel() {
+    const box = $("reelPreview");
+    if (!reel) { box.innerHTML = ""; $("reelDrop").hidden = false; checkMedia(); return; }
+    const mb = reel.size ? `${(reel.size / 1048576).toFixed(1)}MB · ` : "";
+    box.innerHTML = `<div class="reel"><video src="${esc(reel.src)}" controls muted playsinline></video>
+      <div class="meta">${reel.w ? `${reel.w}×${reel.h} · ${Math.round(reel.sec)}초` : "불러오는 중…"}<br>${mb}reel.mp4<br>
+      <button class="btn ghost small" id="reelRemove">영상 빼기</button></div></div>`;
+    $("reelRemove").onclick = () => { reel = null; renderReel(); };
+    $("reelDrop").hidden = true;
+    checkMedia();
+  }
+
+  function addReel(list) {
+    const f = [...list].find((x) => /\.mp4$/i.test(x.name) || x.type === "video/mp4");
+    if (!f) return toast("mp4 영상만 올릴 수 있어요");
+    if (f.size > REEL_MAX_MB * 1048576) return toast(`영상이 ${REEL_MAX_MB}MB 를 넘어요. 용량을 줄여 주세요.`, 5000);
+    setReel(URL.createObjectURL(f), { file: f, size: f.size });
+  }
+
+  function setFormat(f) {
+    format = f;
+    document.querySelectorAll("#format button").forEach((b) => b.classList.toggle("on", b.dataset.format === f));
+    $("carouselBox").hidden = f !== "carousel";
+    $("reelBox").hidden = f !== "reel";
+    $("threadsBox").hidden = f === "reel";
+    $("zhBox").hidden = f === "reel";
+    $("formatHint").textContent = f === "reel"
+      ? "인스타 릴스 + 유튜브 쇼츠·틱톡·네이버 클립·샤오홍슈(영상 노트)에 같은 영상이 올라가요. 쓰레드는 제외."
+      : "인스타 캐러셀 + 쓰레드 글 + 카드로 만든 영상(유튜브·틱톡·네이버) + 샤오홍슈 이미지 노트.";
+    renderPlatforms(selectedPlatforms().length ? selectedPlatforms() : PLATFORMS.map(([k]) => k));
+    checkMedia();
+  }
+
+  function checkMedia() {
+    if (format === "reel") {
+      const w = [];
+      if (reel?.w && Math.abs(reel.w / reel.h - 9 / 16) > 0.02) w.push(`영상이 ${reel.w}×${reel.h} 이에요. 세로 9:16(1080×1920)이 아니면 릴스·쇼츠에서 잘리거나 여백이 생겨요.`);
+      if (reel?.sec > 180) w.push(`영상이 ${Math.round(reel.sec)}초예요. 유튜브 쇼츠는 3분까지만 쇼츠로 올라가요.`);
+      $("cardWarn").textContent = w.join("\n");
+    } else {
+      const warns = cards.filter((c) => c.w && (Math.abs(c.w / c.h - 0.8) > 0.01 || c.w < 1080))
+        .map((c) => `카드 ${cards.indexOf(c) === 0 ? "표지" : cards.indexOf(c)}: ${c.w}×${c.h} → 4:5(1080×1350)가 아니라 인스타·쇼츠에서 잘리거나 여백이 생길 수 있어요`);
+      $("cardWarn").textContent = warns.join("\n");
+    }
+    checkPlatforms();
+  }
+
   function renderCards() {
     renderCardList($("cards"), cards, true);
     renderCardList($("zhCards"), zhCards, false);
-    const warns = cards.filter((c) => c.w && (Math.abs(c.w / c.h - 0.8) > 0.01 || c.w < 1080))
-      .map((c) => `카드 ${cards.indexOf(c) === 0 ? "표지" : cards.indexOf(c)}: ${c.w}×${c.h} → 4:5(1080×1350)가 아니라 인스타·쇼츠에서 잘리거나 여백이 생길 수 있어요`);
-    $("cardWarn").textContent = warns.join("\n");
-    checkPlatforms();
+    checkMedia();
   }
 
   function sortableFor(el, list) {
@@ -237,7 +297,7 @@
   }
 
   function renderPlatforms(selected) {
-    $("platforms").innerHTML = PLATFORMS.map(([k, label]) =>
+    $("platforms").innerHTML = PLATFORMS.filter(([k]) => !(format === "reel" && k === "threads")).map(([k, label]) =>
       `<label><input type="checkbox" value="${k}" ${selected.includes(k) ? "checked" : ""}> ${label}</label>`).join("");
     $("platforms").querySelectorAll("input").forEach((i) => (i.onchange = checkPlatforms));
   }
@@ -245,8 +305,10 @@
 
   function checkPlatforms() {
     const p = selectedPlatforms(), w = [];
-    if (p.includes("xhs") && (!zhCards.length || !$("xhsTitle").value.trim() || !$("xhsBody").value.trim())) {
-      w.push("샤오홍슈: 중국어 카드·제목·본문이 모두 있어야 올라가요. 없으면 그 날은 건너뛰어요.");
+    const zhOk = format === "reel" || zhCards.length;
+    if (p.includes("xhs") && (!zhOk || !$("xhsTitle").value.trim() || !$("xhsBody").value.trim())) {
+      w.push(format === "reel" ? "샤오홍슈: 중국어 제목·본문이 있어야 올라가요. 없으면 그 날은 건너뛰어요."
+        : "샤오홍슈: 중국어 카드·제목·본문이 모두 있어야 올라가요. 없으면 그 날은 건너뛰어요.");
     }
     if (p.includes("threads") && !$("threads").value.trim()) w.push("쓰레드: 글이 비어 있어서 건너뛰어요.");
     $("platWarn").textContent = w.join("\n");
@@ -261,7 +323,7 @@
   }
 
   function resetEditor(date) {
-    editing = null; cards = []; zhCards = [];
+    editing = null; cards = []; zhCards = []; reel = null;
     $("editTitle").textContent = "새 게시물";
     $("cancelEdit").hidden = true; $("deletePost").hidden = true;
     $("save").textContent = "예약하기";
@@ -269,9 +331,11 @@
     $("threadsCover").checked = false;
     $("date").value = date || nextFreeDate();
     $("xhsBox").open = false;
+    format = "carousel";
     renderPlatforms(PLATFORMS.map(([k]) => k));
+    setFormat("carousel");
     setMsg($("saveMsg"), "");
-    renderCards(); checkDate(); updateXhsCount();
+    renderCards(); renderReel(); checkDate(); updateXhsCount();
   }
 
   function nextFreeDate() {
@@ -299,7 +363,12 @@
     $("xhsTitle").value = data.xhs?.title || "";
     $("xhsBody").value = data.xhs?.body || "";
     $("xhsTags").value = (data.xhs?.tags || []).join(", ");
+    format = isReel(post) ? "reel" : "carousel";
     renderPlatforms(data.platforms || PLATFORMS.map(([k]) => k));
+    setFormat(format);
+    reel = null;
+    if (isReel(post)) setReel(rawUrl(`${post.folder}/${REEL}`), { sha: post.files[REEL] });
+    else renderReel();
     const load = (f) => makeCard(rawUrl(`${post.folder}/${f}`), { sha: post.files[f], ext: f.split(".").pop().toLowerCase() });
     cards = cardFiles(post).map(load);
     zhCards = cardFiles(post, "zh").map(load);
@@ -317,9 +386,13 @@
 
   function buildPostJson() {
     const post = { platforms: selectedPlatforms(), caption: $("caption").value.trim() };
-    const threads = $("threads").value.split(/^\s*---\s*$/m).map((s) => s.trim()).filter(Boolean);
-    if (threads.length) post.threads = threads;
-    post.threads_with_cover = $("threadsCover").checked;
+    if (format === "reel") {
+      post.type = "reel";
+    } else {
+      const threads = $("threads").value.split(/^\s*---\s*$/m).map((s) => s.trim()).filter(Boolean);
+      if (threads.length) post.threads = threads;
+      post.threads_with_cover = $("threadsCover").checked;
+    }
     if ($("ytTitle").value.trim()) post.youtube = { title: $("ytTitle").value.trim() };
     if ($("nvTitle").value.trim()) post.naver = { title: $("nvTitle").value.trim() };
     const tags = $("xhsTags").value.split(/[,，\n]/).map((t) => t.trim().replace(/^#/, "")).filter(Boolean);
@@ -332,7 +405,8 @@
   async function save() {
     const date = $("date").value, slug = slugify($("slug").value);
     const err = (t) => setMsg($("saveMsg"), t, "err");
-    if (!cards.length) return err("카드를 1장 이상 넣어 주세요.");
+    if (format === "reel" && !reel) return err("릴스 영상(mp4)을 넣어 주세요.");
+    if (format === "carousel" && !cards.length) return err("카드를 1장 이상 넣어 주세요.");
     if (!date) return err("발행 날짜를 골라 주세요.");
     if (!slug) return err("주제(폴더 이름)를 적어 주세요.");
     if (!selectedPlatforms().length) return err("올릴 곳을 하나 이상 골라 주세요.");
@@ -344,8 +418,12 @@
 
     const want = new Map(); // path → change
     const put = (path, c) => want.set(path, { path, ...c });
-    cards.forEach((c, i) => put(`${folder}/${i === 0 ? "00_cover" : pad(i)}.${c.ext}`, c.file ? { file: c.file } : { sha: c.sha }));
-    zhCards.forEach((c, i) => put(`${folder}/zh/${i === 0 ? "00_cover" : pad(i)}.${c.ext}`, c.file ? { file: c.file } : { sha: c.sha }));
+    if (format === "reel") {
+      put(`${folder}/${REEL}`, reel.file ? { file: reel.file } : { sha: reel.sha });
+    } else {
+      cards.forEach((c, i) => put(`${folder}/${i === 0 ? "00_cover" : pad(i)}.${c.ext}`, c.file ? { file: c.file } : { sha: c.sha }));
+      zhCards.forEach((c, i) => put(`${folder}/zh/${i === 0 ? "00_cover" : pad(i)}.${c.ext}`, c.file ? { file: c.file } : { sha: c.sha }));
+    }
     put(`${folder}/post.json`, { text: JSON.stringify(buildPostJson(), null, 2) + "\n" });
     // 일부 플랫폼만 성공한 게시물이면 기록(result.json)을 같이 옮겨서 성공한 곳에 두 번 올라가지 않게 한다
     if (editing?.files["result.json"]) put(`${folder}/result.json`, { sha: editing.files["result.json"] });
@@ -416,7 +494,7 @@
         <div class="num">${d.getDate()}</div>
         ${list.map((p) => `<span class="post ${p.area === "published" ? "done" : ""} ${p.area === "queue" && queued.length > 1 ? "dup" : ""}"
           data-folder="${esc(p.folder)}" draggable="${p.area === "queue"}" title="${esc(p.name)}">
-          <img src="${esc(coverUrl(p))}" alt="" loading="lazy"></span>`).join("")}
+          ${thumb(p)}</span>`).join("")}
       </div>`;
     }
     $("calendar").innerHTML = html;
@@ -444,9 +522,9 @@
     const queue = posts.filter((p) => p.area === "queue").sort((a, b) => natural(a.name, b.name));
     $("queueList").innerHTML = queue.length ? queue.map((p) => `
       <div class="item click" data-folder="${esc(p.folder)}">
-        <img src="${esc(coverUrl(p))}" alt="" loading="lazy">
+        ${thumb(p)}
         <div class="body"><div class="name">${esc(p.slug)}</div>
-          <div class="sub">${p.date || "날짜 없음 (이름 순서대로 발행)"} · 카드 ${cardFiles(p).length}장${p.files["result.json"] ? " · 일부 실패, 재시도 대기" : ""}</div></div>
+          <div class="sub">${p.date || "날짜 없음 (이름 순서대로 발행)"} · ${isReel(p) ? "릴스" : `카드 ${cardFiles(p).length}장`}${p.files["result.json"] ? " · 일부 실패, 재시도 대기" : ""}</div></div>
       </div>`).join("") : `<p class="hint">예약된 게시물이 없어요.</p>`;
     $("queueList").querySelectorAll(".item").forEach((el) => (el.onclick = () => openPost(posts.find((p) => p.folder === el.dataset.folder))));
   }
@@ -470,7 +548,7 @@
       const errors = Object.entries(RESULT_LABEL).filter(([k]) => r[k] && !r[k].ok)
         .map(([k, label]) => `${label}: ${String(r[k].error).slice(0, 160)}`).join("<br>");
       return `<div class="item">
-        <img src="${esc(coverUrl(p))}" alt="" loading="lazy">
+        ${thumb(p)}
         <div class="body"><div class="name">${esc(p.name)}</div>
           <div class="sub">${p.area === "queue" ? "일부 실패 · 다음 자동 발행 때 재시도" : "완료"}${r.updated_at ? " · " + esc(r.updated_at.replace("T", " ").slice(0, 16)) : ""}</div>
           <div class="plats">${plats}</div>
@@ -514,6 +592,11 @@
   document.querySelectorAll(".tabs button").forEach((b) => (b.onclick = () => showTab(b.dataset.tab)));
   setupDrop($("drop"), $("fileInput"), () => cards, 20);
   setupDrop($("zhDrop"), $("zhInput"), () => zhCards, 18);
+  $("reelInput").onchange = () => { addReel($("reelInput").files); $("reelInput").value = ""; };
+  $("reelDrop").ondragover = (e) => { e.preventDefault(); $("reelDrop").classList.add("over"); };
+  $("reelDrop").ondragleave = () => $("reelDrop").classList.remove("over");
+  $("reelDrop").ondrop = (e) => { e.preventDefault(); $("reelDrop").classList.remove("over"); addReel(e.dataTransfer.files); };
+  document.querySelectorAll("#format button").forEach((b) => (b.onclick = () => setFormat(b.dataset.format)));
   sortableFor($("cards"), { sort: (f) => cards.sort(f) });
   sortableFor($("zhCards"), { sort: (f) => zhCards.sort(f) });
   $("save").onclick = save;
