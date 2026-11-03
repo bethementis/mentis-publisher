@@ -31,6 +31,7 @@ jobs:
       - name: 실행
         env:
           IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
+          IG_INSIGHTS_TOKEN: ${{ secrets.IG_INSIGHTS_TOKEN }}   # 숫자 수집 전용 인스타 토큰
           THREADS_ACCESS_TOKEN: ${{ secrets.THREADS_ACCESS_TOKEN }}
           YT_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
           YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}

@@ -11,6 +11,7 @@ repo = os.environ.get("GITHUB_REPOSITORY", "bethementis/mentis-publisher")
 can_save = bool(os.environ.get("GH_TOKEN"))
 status = 0
 for name, env, fn, key in [("인스타그램", "IG_ACCESS_TOKEN", P.ig_refresh, "access_token"),
+                           ("인스타그램(숫자 수집용)", "IG_INSIGHTS_TOKEN", P.ig_refresh, "access_token"),
                            ("쓰레드", "THREADS_ACCESS_TOKEN", P.th_refresh, "access_token")]:
     tok = os.environ.get(env)
     if not tok:

@@ -39,16 +39,25 @@ def _try(results, key, fn):
 
 
 # ───────────────────────── 인스타 ─────────────────────────
+def ig_token():
+    """숫자 수집용 인스타 토큰. 발행용(IG_ACCESS_TOKEN)과 따로 받은 IG_INSIGHTS_TOKEN 이 있으면 그걸 쓴다."""
+    for env in ("IG_INSIGHTS_TOKEN", "IG_ACCESS_TOKEN"):
+        tok = os.environ.get(env, "").strip()
+        if tok:
+            return env, tok
+    return None, ""
+
+
 def probe_instagram():
-    tok = os.environ.get("IG_ACCESS_TOKEN", "").strip()
+    env, tok = ig_token()
     if not tok:
-        return {"token": {"ok": False, "detail": "IG_ACCESS_TOKEN 없음"}}
-    if not tok.startswith("EAA"):
-        return {"token": {"ok": False, "detail": "페이스북 로그인형(EAA) 토큰이 아님 — 점검 항목을 바꿔야 함"}}
-    B, uid, r = P.FB_API, P.IG_USER_ID, {}
-    print("인스타그램", flush=True)
-    _try(r, "permissions", lambda: sorted(
-        p["permission"] for p in _get(f"{B}/me/permissions", access_token=tok)["data"] if p["status"] == "granted"))
+        return {"token": {"ok": False, "detail": "IG_INSIGHTS_TOKEN / IG_ACCESS_TOKEN 없음"}}
+    B, r = P._ig_base(tok), {"token": {"ok": True, "detail": f"{env} 사용"}}
+    uid = P.ig_me(tok)["user_id"]
+    print(f"인스타그램 ({env})", flush=True)
+    if B == P.FB_API:
+        _try(r, "permissions", lambda: sorted(
+            p["permission"] for p in _get(f"{B}/me/permissions", access_token=tok)["data"] if p["status"] == "granted"))
     media = _try(r, "media_list", lambda: [
         {k: m.get(k) for k in ("id", "timestamp", "media_type", "like_count", "comments_count")}
         for m in _get(f"{B}/{uid}/media", fields="id,timestamp,media_type,like_count,comments_count",
