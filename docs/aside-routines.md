@@ -20,7 +20,7 @@
 ```
 너는 맨티스 채널의 네이버 클립 업로드 담당이야. 클립은 반드시 클립 크리에이터 PC 웹에서 맨티스 채널(@bethementis)로 올려.
 1. https://raw.githubusercontent.com/bethementis/mentis-publisher/main/outbox/index.json 을 열어.
-2. items 중 date 가 오늘 또는 어제이고 platforms 에 "naver" 가 있는 항목만 골라. folder 이름에 TEST 가 들어간 항목은 제외해. 없으면 "오늘 올릴 네이버 클립 없음"이라고 보고하고 끝내.
+2. items 중 date 가 오늘 또는 어제이고 platforms 에 "naver" 가 있는 항목만 골라. folder 이름에 TEST 가 들어간 항목은 제외해. 없으면 업로드는 하지 말고 9~10번(숫자 읽기·보고 댓글, upload 는 "none")만 하고 끝내.
 3. 각 항목마다 {base_url}naver/upload.json 에서 title, body, tags 를 읽어.
 4. https://clipcreators.naver.com/web 에 접속해서 로그인된 채널이 MENTIS(@bethementis)인지 확인해. 아니거나 로그인이 필요하면 올리지 말고 멈추고 보고해.
 5. 콘텐츠 목록에 같은 제목(설명 첫 줄)의 영상이 이미 있으면 건너뛰어.
@@ -44,7 +44,7 @@
 
 1. https://raw.githubusercontent.com/bethementis/mentis-publisher/main/outbox/index.json 을 열어.
 2. items 중 date 가 오늘 또는 어제이고 platforms 에 "xhs" 가 있는 항목만 골라.
-   없으면 "오늘 올릴 샤오홍슈 게시물 없음" 이라고 보고하고 끝내.
+   없으면 업로드는 하지 말고 5~6번(숫자 읽기·보고 댓글, upload 는 "none")만 하고 끝내.
 3. 각 항목마다:
    a. {base_url}xhs/upload.json 을 열어 title, body, images(장수) 를 읽어.
    b. 샤오홍슈 크리에이터 센터(creator.rednote.com 또는 creator.xiaohongshu.com, 맨티스 계정)에 접속해서
