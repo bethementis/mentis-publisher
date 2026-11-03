@@ -4,7 +4,7 @@
 어사이드 루틴은 **매일 20:30** 에 돌리고, 아래 프롬프트를 그대로 붙여 넣는다.
 처음 1~2번은 루틴 대신 직접 실행해서 화면을 지켜보고, 문제없으면 루틴으로 돌린다.
 
-**보고 이슈:** 루틴은 끝에 GitHub 이슈 {보고 이슈 주소} 에 ```json 보고 댓글을 남긴다.
+**보고 이슈:** 루틴은 끝에 GitHub 이슈 https://github.com/bethementis/mentis-publisher/issues/1 에 ```json 보고 댓글을 남긴다.
 21:20 저녁 점검이 이 댓글로 "올라갔는지/실패했는지"를 확인하고, 다음 날 06:00 숫자 수집이 조회·좋아요 등을 가져간다.
 (이슈 번호는 metrics/settings.json 의 aside_issue. 브라우저에 GitHub bethementis 로그인 필요)
 
@@ -28,7 +28,7 @@
 7. 설명 = title + 빈 줄 + body, 정보 태그 = tags (가능한 만큼). 카테고리는 '뷰티' 또는 '패션·뷰티' 계열로, 공개 설정은 전체 공개로 등록해.
 8. 올린 클립 제목과 링크를 보고해.
 9. 클립 크리에이터 콘텐츠 목록(또는 통계 화면)에서 최근 7일 안에 올린 클립들의 조회수·좋아요·댓글 수를 읽어. 화면에 없는 숫자는 null 로 둬. 숫자를 추측하지 마.
-10. 마지막으로 보고 이슈 {보고 이슈 주소} 를 열고, 아래 형식 그대로 댓글을 하나 남겨 (```json 줄과 ``` 줄 포함). 올릴 게 없었거나 멈췄어도 반드시 남겨.
+10. 마지막으로 보고 이슈 https://github.com/bethementis/mentis-publisher/issues/1 를 열고, 아래 형식 그대로 댓글을 하나 남겨 (```json 줄과 ``` 줄 포함). 올릴 게 없었거나 멈췄어도 반드시 남겨.
 ```json
 {"aside": "naver", "date": "오늘 날짜 YYYY-MM-DD", "upload": "ok 또는 skip(이미 있음) 또는 none(올릴 것 없음) 또는 fail", "title": "올린 클립 제목", "url": "올린 클립 링크", "reason": "fail·skip 이면 이유, 아니면 빈칸", "stats": [{"title": "클립 제목", "posted": "YYYY-MM-DD", "views": 0, "likes": 0, "comments": 0}]}
 ```
@@ -56,7 +56,7 @@
 4. 끝나면 올린 노트 제목과 링크를 보고해.
 5. 크리에이터 센터의 노트 관리(笔记管理) 또는 데이터(数据) 화면에서 최근 7일 안에 올린 노트들의
    조회(浏览/观看)·좋아요(点赞)·저장(收藏)·댓글(评论)·공유(分享) 수를 읽어. 화면에 없는 숫자는 null. 추측하지 마.
-6. 마지막으로 보고 이슈 {보고 이슈 주소} 를 열고, 아래 형식 그대로 댓글을 하나 남겨 (```json 줄과 ``` 줄 포함).
+6. 마지막으로 보고 이슈 https://github.com/bethementis/mentis-publisher/issues/1 를 열고, 아래 형식 그대로 댓글을 하나 남겨 (```json 줄과 ``` 줄 포함).
    올릴 게 없었거나 멈췄어도 반드시 남겨.
 ```json
 {"aside": "xhs", "date": "오늘 날짜 YYYY-MM-DD", "upload": "ok 또는 skip(이미 있음) 또는 none(올릴 것 없음) 또는 fail", "title": "올린 노트 제목", "url": "올린 노트 링크", "reason": "fail·skip 이면 이유, 아니면 빈칸", "stats": [{"title": "노트 제목", "posted": "YYYY-MM-DD", "views": 0, "likes": 0, "saves": 0, "comments": 0, "shares": 0}]}

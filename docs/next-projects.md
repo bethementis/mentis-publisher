@@ -42,11 +42,11 @@
 > - `publisher/checks.py` — 매일 21:20 KST → `metrics/checks/YYYY-MM-DD.json` (예약 공백 3일, 발행 실패·2일 연속, 토큰 5종, 7일 내 예약 게시물 검사)
 > - 클라우드 루틴 "맨티스 저녁 점검" (trig_01LyknQcGxXMGmueTwVQ2Ufw) 매일 22:00 KST → 점검 파일 읽고 보고 + 폰 푸시
 > - 클라우드 루틴 "맨티스 일간 리포트" (trig_01FE7tuV1Qq4QzL1rgJ1rgYF) 매일 08:00 KST → 어제 발행·반응·팔로워·댓글 답글 초안·DM 키워드 + 폰 푸시 (2단계 완료)
-> - metrics/settings.json: queue_runway_alert(준비 단계라 false), aside_issue(어사이드 보고 이슈 번호), monthly_goal
+> - metrics/settings.json: queue_runway_alert(true, 사용자는 준비 단계 알림 무시), aside_issue=1 (issues/1), monthly_goal
 > - 어사이드: 루틴 끝에 보고 이슈에 ```json 댓글 → checks.py 가 업로드 성공/실패 확인, 다음 날 collect 가 stats 수집 (docs/aside-routines.md)
 > - 인스타 숫자는 `IG_INSIGHTS_TOKEN`(구성 4101848936789162 로 새로 발급, insights 권한 포함, EAA). 발행용 `IG_ACCESS_TOKEN` 은 그대로.
 > - 인스타 팔로워 수 추이·online_followers 는 팔로워 100명 이상부터 제공 → 그 전엔 followers_count 일별 스냅샷으로 비교
-> - 남은 것: 틱톡 재인증(샌드박스 scope user.info.stats·video.list 추가 완료, 본인확인 시도 제한으로 대기), 어사이드 보고 이슈 생성 + 루틴 문구 교체, 유튜브 댓글(필요 시 force-ssl 재인증), 1~2주 뒤 주간·한 달 뒤 월간
+> - 남은 것: 틱톡 재인증(샌드박스 scope user.info.stats·video.list 추가 완료, 본인확인 시도 제한으로 대기), 어사이드 앱에 새 루틴 문구 붙여넣기(사용자), 유튜브 댓글(필요 시 force-ssl 재인증), 1~2주 뒤 주간·한 달 뒤 월간
 
 ### 목적
 모든 기능의 결론은 하나: **인스타 @bethementis 유입을 늘리려면 뭘 바꿔야 하는가.**
