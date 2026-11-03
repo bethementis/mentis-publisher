@@ -1,9 +1,8 @@
 {
   "date": "2026-11-03",
-  "collected_at": "2026-11-03T20:00:16+09:00",
+  "collected_at": "2026-11-03T20:01:51+09:00",
   "errors": {
-    "youtube": "'bool' object has no attribute 'isdigit'",
-    "tiktok": "HTTP 401: {'code': 'scope_not_authorized', 'message': 'The user did not authorize the scope required for completing this request.', 'log_id': '202611031900326A8738F132FB7A1062D7'}"
+    "tiktok": "HTTP 401: {'code': 'scope_not_authorized', 'message': 'The user did not authorize the scope required for completing this request.', 'log_id': '20261103190204A70772CB6E4B200F56CF'}"
   },
   "instagram": {
     "token": "IG_INSIGHTS_TOKEN",
@@ -73,7 +72,7 @@
             "timestamp": "2026-11-03T06:25:10+0000",
             "permalink": "https://www.instagram.com/p/DfRO5XPoSkl/",
             "media_type": "CAROUSEL_ALBUM",
-            "like_count": 449,
+            "like_count": 451,
             "comments_count": 2,
             "caption_head": "구석구석 못생겨지는 습관 8가지 🔎  트리트먼트까지는 사뒀는데 쓰지도 않고, 수건으로 머리를 박박 비빕니다. 선크림은 목까지 발랐는데, 클렌징 제품은 얼굴에만 쓰죠. 챙겨 바르는 제품은 늘어도 습관이 움직이는 방식은"
           },
@@ -81,7 +80,7 @@
             "timestamp": "2026-11-03T02:53:16+0000",
             "permalink": "https://www.instagram.com/reel/DfQ2jQDvCjh/",
             "media_type": "VIDEO",
-            "like_count": 128,
+            "like_count": 130,
             "comments_count": 2,
             "caption_head": "러닝 기록 단축을 위한 호흡법 💨  달리다 숨이 턱까지 차오른다면, 잠시 속도를 늦추고 호흡을 가다듬어보세요.   ① 입으로 ‘후—’ 하고 길게 내쉬기 ② 이어서 ‘흡, 흡’ 두 번에 나눠 들이마시기 ③ 다시 천천히"
           },
@@ -113,7 +112,7 @@
             "timestamp": "2026-10-31T05:00:02+0000",
             "permalink": "https://www.instagram.com/p/DfJWzmDmjO3/",
             "media_type": "CAROUSEL_ALBUM",
-            "like_count": 823,
+            "like_count": 825,
             "comments_count": 5,
             "caption_head": "이번 주의 소홀함을 다음 주로 넘기지 않도록 📆  주말 이틀로 평일의 관리를 전부 만회하려는 건 욕심이겠죠. 하지만 바쁘다는 이유로 미뤄둔 것까지 다음 주로 넘길 필요는 없습니다. 몸을 정돈하고, 쌓인 생각을 비우고"
           },
@@ -191,7 +190,28 @@
     ],
     "replies": []
   },
-  "youtube": null,
+  "youtube": {
+    "channel": {
+      "viewCount": 76,
+      "subscriberCount": 40,
+      "videoCount": 1
+    },
+    "videos": [
+      {
+        "id": "Nim9T1Mcuu0",
+        "title": "얼굴 때를 왜 밀어 | 남자 각질 관리 3가지 #Shorts",
+        "published_at": "2026-10-31T09:38:57Z",
+        "url": "https://youtube.com/shorts/Nim9T1Mcuu0",
+        "statistics": {
+          "viewCount": 76,
+          "likeCount": 0,
+          "dislikeCount": 0,
+          "favoriteCount": 0,
+          "commentCount": 0
+        }
+      }
+    ]
+  },
   "tiktok": null,
   "naver": null,
   "xhs": null
