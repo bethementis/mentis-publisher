@@ -37,22 +37,23 @@
 
 ---
 
-## 2. 샤오홍슈 루틴
+## 2. 샤오홍슈 루틴 (매일 20:30)
 
 ```
-너는 맨티스 채널의 샤오홍슈(小红书) 업로드 담당이야.
+너는 맨티스 채널의 샤오홍슈(小红书) 업로드 담당이야. 반드시 맨티스 계정(User6AE6A4F3, 또는 닉네임에 "Mentis"가 들어간 계정)으로만 올려.
 
 1. https://raw.githubusercontent.com/bethementis/mentis-publisher/main/outbox/index.json 을 열어.
-2. items 중 date 가 오늘 또는 어제이고 platforms 에 "xhs" 가 있는 항목만 골라.
+2. items 중 date 가 오늘 또는 어제이고 platforms 에 "xhs" 가 있는 항목만 골라. folder 이름에 TEST 가 들어간 항목은 제외해.
    없으면 업로드는 하지 말고 5~6번(숫자 읽기·보고 댓글, upload 는 "none")만 하고 끝내.
 3. 각 항목마다:
    a. {base_url}xhs/upload.json 을 열어 title, body, images(장수) 를 읽어.
-   b. 샤오홍슈 크리에이터 센터(creator.rednote.com 또는 creator.xiaohongshu.com, 맨티스 계정)에 접속해서
-      같은 제목의 노트가 이미 있으면 건너뛰어.
-   c. {base_url}xhs/01.jpg 부터 images 장수만큼(02.jpg, 03.jpg …) 순서대로 내려받아.
-   d. "上传图文"(이미지 노트)로 새 노트를 만들고 이미지를 01번부터 순서대로 올려.
-   e. 제목(标题) = title, 본문(正文) = body 를 그대로 붙여 넣어. 내용은 바꾸지 마.
-   f. 발행(发布) 해.
+   b. 샤오홍슈 크리에이터 센터(creator.rednote.com 또는 creator.xiaohongshu.com)에 접속해서 로그인된 계정이
+      맨티스 계정(User6AE6A4F3 또는 닉네임에 "Mentis")인지 확인해. 아니면 올리지 말고 멈춰.
+   c. 같은 제목의 노트가 이미 있으면 건너뛰어.
+   d. {base_url}xhs/01.jpg 부터 images 장수만큼(02.jpg, 03.jpg …) 순서대로 내려받아.
+   e. "上传图文"(이미지 노트)로 새 노트를 만들고 이미지를 01번부터 순서대로 올려.
+   f. 제목(标题) = title, 본문(正文) = body 를 그대로 붙여 넣어. 내용은 바꾸지 마. 샤오홍슈가 추천하는 태그·话题는 추가하지 마.
+   g. 공개 범위는 公开可见(전체 공개)로 하고 발행(发布) 해.
 4. 끝나면 올린 노트 제목과 링크를 보고해.
 5. 크리에이터 센터의 노트 관리(笔记管理) 또는 데이터(数据) 화면에서 최근 7일 안에 올린 노트들의
    조회(浏览/观看)·좋아요(点赞)·저장(收藏)·댓글(评论)·공유(分享) 수를 읽어. 화면에 없는 숫자는 null. 추측하지 마.
@@ -62,7 +63,8 @@
 {"aside": "xhs", "date": "오늘 날짜 YYYY-MM-DD", "upload": "ok 또는 skip(이미 있음) 또는 none(올릴 것 없음) 또는 fail", "title": "올린 노트 제목", "url": "올린 노트 링크", "reason": "fail·skip 이면 이유, 아니면 빈칸", "stats": [{"title": "노트 제목", "posted": "YYYY-MM-DD", "views": 0, "likes": 0, "saves": 0, "comments": 0, "shares": 0}]}
 ```
 
-주의: 로그인·인증(휴대폰 인증, 슬라이드 퍼즐) 화면이 나오면 업로드는 멈추고, upload 를 "fail", reason 에 무슨 화면이었는지 적어서 6번 보고는 남겨.
+주의: 로그인·인증(휴대폰 인증, 슬라이드 퍼즐) 화면이 나오거나 맨티스 계정이 아니면 업로드는 멈추고,
+upload 를 "fail", reason 에 무슨 화면이었는지 적어서 6번 보고는 남겨. 다른 계정으로 올리지 마.
 ```
 
 ---
