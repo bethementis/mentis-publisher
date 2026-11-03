@@ -1,6 +1,10 @@
 {
-  "checked_at": "2026-11-02T21:34:34+09:00",
+  "checked_at": "2026-11-03T19:44:15+09:00",
   "instagram": {
+    "token": {
+      "ok": true,
+      "detail": "IG_INSIGHTS_TOKEN 사용"
+    },
     "permissions": {
       "ok": true,
       "detail": [
@@ -9,6 +13,7 @@
         "instagram_basic",
         "instagram_content_publish",
         "instagram_manage_comments",
+        "instagram_manage_insights",
         "instagram_manage_messages",
         "public_profile"
       ]
@@ -40,40 +45,40 @@
       ]
     },
     "media_insight.reach": {
-      "ok": false,
-      "detail": "HTTP 400: (#10) Application does not have permission for this action"
+      "ok": true,
+      "detail": 4
     },
     "media_insight.views": {
-      "ok": false,
-      "detail": "HTTP 400: (#10) Application does not have permission for this action"
+      "ok": true,
+      "detail": 6
     },
     "media_insight.likes": {
-      "ok": false,
-      "detail": "HTTP 400: (#10) Application does not have permission for this action"
+      "ok": true,
+      "detail": 0
     },
     "media_insight.comments": {
-      "ok": false,
-      "detail": "HTTP 400: (#10) Application does not have permission for this action"
+      "ok": true,
+      "detail": 0
     },
     "media_insight.shares": {
-      "ok": false,
-      "detail": "HTTP 400: (#10) Application does not have permission for this action"
+      "ok": true,
+      "detail": 0
     },
     "media_insight.saved": {
-      "ok": false,
-      "detail": "HTTP 400: (#10) Application does not have permission for this action"
+      "ok": true,
+      "detail": 0
     },
     "media_insight.follows": {
-      "ok": false,
-      "detail": "HTTP 400: (#10) Application does not have permission for this action"
+      "ok": true,
+      "detail": 0
     },
     "media_insight.profile_visits": {
-      "ok": false,
-      "detail": "HTTP 400: (#10) Application does not have permission for this action"
+      "ok": true,
+      "detail": 0
     },
     "media_insight.total_interactions": {
-      "ok": false,
-      "detail": "HTTP 400: (#10) Application does not have permission for this action"
+      "ok": true,
+      "detail": 0
     },
     "comments": {
       "ok": true,
@@ -81,35 +86,46 @@
     },
     "account.follower_count": {
       "ok": false,
-      "detail": "HTTP 400: (#10) Application does not have permission for this action"
+      "detail": "list index out of range"
     },
     "account.online_followers": {
       "ok": false,
-      "detail": "HTTP 400: (#10) Application does not have permission for this action"
+      "detail": "list index out of range"
     },
     "account.reach": {
-      "ok": false,
-      "detail": "HTTP 400: (#10) Application does not have permission for this action"
+      "ok": true,
+      "detail": {
+        "value": 2
+      }
     },
     "account.views": {
-      "ok": false,
-      "detail": "HTTP 400: (#10) Application does not have permission for this action"
+      "ok": true,
+      "detail": {
+        "value": 10
+      }
     },
     "account.profile_views": {
-      "ok": false,
-      "detail": "HTTP 400: (#10) Application does not have permission for this action"
+      "ok": true,
+      "detail": {
+        "value": 5
+      }
     },
     "account.follows_and_unfollows": {
       "ok": false,
-      "detail": "HTTP 400: (#10) Application does not have permission for this action"
+      "detail": "list index out of range"
     },
     "account.accounts_engaged": {
-      "ok": false,
-      "detail": "HTTP 400: (#10) Application does not have permission for this action"
+      "ok": true,
+      "detail": {
+        "value": 0
+      }
     },
     "business_discovery.iamtheserkan": {
-      "ok": false,
-      "detail": "HTTP 400: (#10) Application does not have permission for this action"
+      "ok": true,
+      "detail": {
+        "followers_count": 123832,
+        "media_count": 251
+      }
     }
   },
   "threads": {
@@ -149,7 +165,7 @@
       "ok": true,
       "detail": {
         "title": "Mentis",
-        "viewCount": "74",
+        "viewCount": "76",
         "subscriberCount": "40",
         "hiddenSubscriberCount": false,
         "videoCount": "1",
@@ -186,11 +202,11 @@
     },
     "user_stats": {
       "ok": false,
-      "detail": "HTTP 401: {'code': 'scope_not_authorized', 'message': 'The user did not authorize the scope required for completing this request.', 'log_id': '20261102203449629F186232A7DBDA6376'}"
+      "detail": "HTTP 401: {'code': 'scope_not_authorized', 'message': 'The user did not authorize the scope required for completing this request.', 'log_id': '20261103184433428F5A1291CFB90EF318'}"
     },
     "video_list": {
       "ok": false,
-      "detail": "HTTP 401: {'code': 'scope_not_authorized', 'message': 'The user did not authorize the scope required for completing this request.', 'log_id': '202611022034491B0B3B21B20893B055EF'}"
+      "detail": "HTTP 401: {'code': 'scope_not_authorized', 'message': 'The user did not authorize the scope required for completing this request.', 'log_id': '20261103184434D08FA9F5AFF11A0E7AA9'}"
     }
   }
 }
