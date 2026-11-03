@@ -26,6 +26,8 @@ RUNWAY_DAYS = 3        # 앞으로 3일 안에 빈 날이 생기면 알림
 UPCOMING_DAYS = 7      # 7일 안에 올라갈 게시물을 미리 검사
 
 problems = []
+SETTINGS_FILE = ROOT / "metrics" / "settings.json"
+SETTINGS = json.loads(SETTINGS_FILE.read_text(encoding="utf-8")) if SETTINGS_FILE.exists() else {}
 
 
 def add(level, area, msg):
@@ -40,6 +42,8 @@ def folder_date(d):
 
 def check_runway(today):
     """앞으로 RUNWAY_DAYS일 동안 매일 올릴 게시물이 있는지. 날짜 없는 폴더는 빈 날을 순서대로 채운다."""
+    if not SETTINGS.get("queue_runway_alert", True):
+        return     # 준비 단계라 꺼둠 (metrics/settings.json)
     folders = [p for p in PB.QUEUE.iterdir() if p.is_dir()] if PB.QUEUE.exists() else []
     dated = {folder_date(p) for p in folders if folder_date(p)}
     spare = sum(1 for p in folders if not folder_date(p))
@@ -80,6 +84,43 @@ def check_today(today, yesterday_fails):
                          for p in (PB.QUEUE.iterdir() if PB.QUEUE.exists() else []) if p.is_dir()):
         add("problem", "발행", "오늘 올라갔어야 할 게시물이 있는데 발행 기록이 없어요 (자동 발행이 안 돌았을 수 있음).")
     return fails
+
+
+def aside_reports(day):
+    """어사이드가 GitHub 이슈에 남긴 보고(```json 블록) 중 그날 것. {platform: report}"""
+    issue = SETTINGS.get("aside_issue")
+    if not issue:
+        return None
+    r = requests.get(f"https://api.github.com/repos/{REPO}/issues/{issue}/comments",
+                     params={"per_page": 50, "since": f"{day - dt.timedelta(days=2)}T00:00:00Z"}, timeout=30)
+    out = {}
+    for c in r.json() if r.ok else []:
+        m = re.search(r"```json\s*(\{.*?\})\s*```", c.get("body", ""), re.S)
+        try:
+            rep = json.loads(m.group(1)) if m else None
+        except ValueError:
+            rep = None
+        if rep and rep.get("date") == day.isoformat() and rep.get("aside"):
+            out[rep["aside"]] = rep      # 같은 날 여러 번이면 마지막 보고
+    return out
+
+
+def check_aside(today):
+    """오늘 outbox 에 네이버/샤오홍슈 파일이 준비됐는데 어사이드 보고가 없거나 실패면 알림."""
+    reports = aside_reports(today)
+    if reports is None:
+        return     # 아직 보고 이슈 연결 전
+    idx = PB.OUTBOX / "index.json"
+    items = json.loads(idx.read_text(encoding="utf-8")).get("items", []) if idx.exists() else []
+    need = {p for it in items if it.get("date") == today.isoformat() and "TEST" not in it.get("folder", "")
+            for p in it.get("platforms", [])}
+    names = {"naver": "네이버 클립", "xhs": "샤오홍슈"}
+    for plat in sorted(need):
+        rep = reports.get(plat)
+        if not rep:
+            add("problem", "어사이드", f"{names[plat]} 업로드 보고가 없어요 (루틴이 안 돌았거나 PC가 꺼져 있었을 수 있음).")
+        elif rep.get("upload") == "fail":
+            add("problem", "어사이드", f"{names[plat]} 업로드 실패: {rep.get('reason') or '이유 없음'}")
 
 
 def check_tokens():
@@ -152,7 +193,7 @@ def main():
     fails = check_today(today, yesterday_fails)
     check_tokens()
     check_upcoming(today)
-    # 어사이드(네이버 클립·샤오홍슈) 결과는 루틴이 기록을 남기도록 바꾼 뒤 점검에 추가한다
+    check_aside(today)
 
     result = {"date": today.isoformat(), "checked_at": now.isoformat(timespec="seconds"),
               "status": "문제 있음" if any(p["level"] == "problem" for p in problems) else

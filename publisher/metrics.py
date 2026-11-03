@@ -339,8 +339,14 @@ def cmd_collect():
             result[name] = None
             result["errors"][name] = str(e)[:300]
             print(f"✗ {name}: {e}", flush=True)
-    # 네이버 클립·샤오홍슈는 API가 없어 어사이드 루틴이 따로 채운다 (아직 연결 전)
-    result["naver"] = result["xhs"] = None
+    # 네이버 클립·샤오홍슈는 API가 없어 어사이드가 GitHub 이슈에 남긴 어제 보고(숫자 포함)를 옮겨 담는다
+    try:
+        import checks
+        reps = checks.aside_reports(now.date() - dt.timedelta(days=1)) or {}
+    except Exception as e:  # noqa: BLE001
+        reps = {}
+        result["errors"]["aside"] = str(e)[:200]
+    result["naver"], result["xhs"] = reps.get("naver"), reps.get("xhs")
     OUT.mkdir(exist_ok=True)
     (OUT / f"{result['date']}.json").write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
     print(f"저장: metrics/{result['date']}.json")

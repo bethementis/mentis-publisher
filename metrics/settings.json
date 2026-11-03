@@ -1,0 +1,6 @@
+{
+  "_설명": "전략비서 설정. queue_runway_alert: 예약 공백 알림 켜기(준비 단계라 꺼둠). aside_issue: 어사이드가 보고를 남기는 GitHub 이슈 번호. monthly_goal: 월간 목표(월간 리포트용, 예: {\"instagram_followers\": 500}).",
+  "queue_runway_alert": false,
+  "aside_issue": null,
+  "monthly_goal": null
+}
