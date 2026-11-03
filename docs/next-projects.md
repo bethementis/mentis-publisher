@@ -37,6 +37,14 @@
 
 ## ② 맨티스 전략비서 에이전트
 
+> **진행 상황 (2026-11-03): 1단계(수집 + 문제 알림) 가동 중**
+> - `publisher/metrics.py collect` — 매일 06:00 KST → `metrics/YYYY-MM-DD.json` (인스타·쓰레드·유튜브 + 세르칸 business_discovery. 틱톡은 재인증 전이라 errors 에 기록)
+> - `publisher/checks.py` — 매일 21:20 KST → `metrics/checks/YYYY-MM-DD.json` (예약 공백 3일, 발행 실패·2일 연속, 토큰 5종, 7일 내 예약 게시물 검사)
+> - 클라우드 루틴 "맨티스 저녁 점검" (trig_01LyknQcGxXMGmueTwVQ2Ufw) 매일 22:00 KST → 점검 파일 읽고 보고 + 폰 푸시
+> - 인스타 숫자는 `IG_INSIGHTS_TOKEN`(구성 4101848936789162 로 새로 발급, insights 권한 포함, EAA). 발행용 `IG_ACCESS_TOKEN` 은 그대로.
+> - 인스타 팔로워 수 추이·online_followers 는 팔로워 100명 이상부터 제공 → 그 전엔 followers_count 일별 스냅샷으로 비교
+> - 남은 것: 틱톡 재인증(샌드박스 scope user.info.stats·video.list 추가 완료, 본인확인 시도 제한으로 대기), 어사이드 결과 기록(네이버·샤오홍슈), 유튜브 댓글(필요 시 force-ssl 재인증)
+
 ### 목적
 모든 기능의 결론은 하나: **인스타 @bethementis 유입을 늘리려면 뭘 바꿔야 하는가.**
 

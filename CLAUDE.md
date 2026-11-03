@@ -33,11 +33,14 @@ publisher/
   tiktok.py         # 틱톡 inbox 업로드 (무음 영상)
   tiktok_auth.py    # 최초 1회 code→refresh token 교환 (workflow: tiktok-auth.yml)
   shorts.py         # 카드 → 9:16 쇼츠 (1080x1920, 카드 1080x1350 at y=215, 표지 2.5s/카드 3.5s/엔딩 1.5s, 배경음 랜덤)
-  refresh_tokens.py # 쓰레드 토큰 주간 연장
+  refresh_tokens.py # 쓰레드(+IG_INSIGHTS_TOKEN 이 IGAA면) 토큰 주간 연장
+  metrics.py        # 전략비서 숫자 수집 collect / 권한 점검 probe
+  checks.py         # 전략비서 저녁 점검 (문제 있을 때만 알림 재료)
 .github/workflows/
   publish.yml        # 매일 UTC 10:00 (~19:00 KST) + 0~25분 랜덤 지연. 수동: check/preview/publish
   refresh-tokens.yml # 매주 월
-  tiktok-auth.yml    # 최초 연결용
+  tiktok-auth.yml    # 최초 연결용 (scope 추가 시 재인증에도 사용)
+  metrics.yml        # 06:00 collect, 21:20 check (KST)
 queue/               # 발행 대기. 폴더 1개 = 게시물 1개. 이름 앞 YYYY-MM-DD 면 그날 발행
 published/           # 발행 완료 + result.json (플랫폼별 링크/ID)
 outbox/              # 어사이드가 가져가는 파일 (naver/short.mp4, xhs/중국어 카드) + index.json, 14일 후 삭제
