@@ -22,7 +22,7 @@
 1. https://raw.githubusercontent.com/bethementis/mentis-publisher/main/outbox/index.json 을 열어.
 2. items 중 date 가 오늘 또는 어제이고 platforms 에 "naver" 가 있는 항목만 골라. folder 이름에 TEST 가 들어간 항목은 제외해. 없으면 업로드는 하지 말고 9~10번(숫자 읽기·보고 댓글, upload 는 "none")만 하고 끝내.
 3. 각 항목마다 {base_url}naver/upload.json 에서 title, body, tags 를 읽어.
-4. https://clipcreators.naver.com/web 에 접속해서 로그인된 채널이 MENTIS(@bethementis)인지 확인해. 아니거나 로그인이 필요하면 올리지 말고 멈추고 보고해.
+4. https://clipcreators.naver.com/web 에 접속해서 로그인된 채널이 MENTIS(@bethementis)인지 확인해. 아니거나 로그인이 필요하면 올리지 말고 멈추고 보고해. 로그인 화면에 다른 아이디가 자동으로 채워져 있어도 절대 로그인하지 마.
 5. 콘텐츠 목록에 같은 제목(설명 첫 줄)의 영상이 이미 있으면 건너뛰어.
 6. {base_url}naver/short.mp4 를 내려받아 우측 상단 [+ 업로드] → [동영상 업로드] → [파일 선택]으로 올려.
 7. 설명 = title + 빈 줄 + body, 정보 태그 = tags (가능한 만큼). 카테고리는 '뷰티' 또는 '패션·뷰티' 계열로, 공개 설정은 전체 공개로 등록해.
