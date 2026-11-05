@@ -1,1 +1,6 @@
-{"step":"subs","state":"queued"}
+{
+  "step": "subs",
+  "state": "error",
+  "at": "2026-11-05T17:17:20+09:00",
+  "error": "open() got an unexpected keyword argument 'metadata_errors'"
+}
