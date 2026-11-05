@@ -21,12 +21,12 @@
     },
     {
       "start": 6.0,
-      "end": 8.04,
+      "end": 8.02,
       "text": "등이 굽는 것을 방지하는 데 도움이 될 것입니다.",
       "src": "it will help you not be so hunched over."
     },
     {
-      "start": 8.04,
+      "start": 8.02,
       "end": 10.0,
       "text": "하루에 1분씩 이 자세를 유지할 수 있다면,",
       "src": "If you can hold this for one minute a day,"
@@ -39,7 +39,7 @@
     }
   ],
   "steps": [],
-  "hook": "",
+  "hook": "거북목, *12초*면펴져요",
   "title": "",
   "credit": "영상: @drrodpt"
 }
