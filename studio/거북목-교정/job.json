@@ -1,17 +1,17 @@
 {
   "style": "overseas",
-  "corner": "Body",
+  "corner": "",
   "fit": "auto",
   "audio": "original",
   "music": "none",
   "lang": "en",
   "raw": "raw.mp4",
   "lines": "",
-  "created_at": "2026-11-05T18:16:22+09:00",
-  "hook": "",
+  "created_at": "2026-11-05T18:18:10+09:00",
+  "hook": "거북목, *12초*면펴져요",
   "cover_band": false,
   "credit": {
     "handle": "@drrodpt",
-    "permission": "1105 틱톡"
+    "permission": "11/3"
   }
 }
