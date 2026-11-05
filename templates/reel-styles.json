@@ -3,14 +3,14 @@
   "common": {
     "logo": {
       "file": "assets/logo.png",
-      "width": 220,
-      "y": 290,
+      "width": 170,
+      "y": 300,
       "opacity": 0.9,
       "fallback_text": "Mentis",
       "fallback_size": 78
     },
     "corner": {
-      "y": 375,
+      "y": 398,
       "size": 34,
       "color": "#FFFFFFCC"
     },

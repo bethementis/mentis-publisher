@@ -27,7 +27,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
 ROOT = Path(__file__).resolve().parent.parent
 FONTS = ROOT / "assets" / "fonts"
@@ -278,7 +278,12 @@ def static_layer(job, style, subs):
         lg = Image.open(logo_file).convert("RGBA")
         lg = lg.resize((c["logo"]["width"], round(lg.height * c["logo"]["width"] / lg.width)), Image.LANCZOS)
         lg.putalpha(lg.getchannel("A").point(lambda a: round(a * c["logo"]["opacity"])))
-        img.alpha_composite(lg, ((W - lg.width) // 2, round(c["logo"]["y"] - lg.height / 2)))
+        pos = ((W - lg.width) // 2, round(c["logo"]["y"] - lg.height / 2))
+        # 밝은 영상에서도 가는 선이 보이게 옅은 그림자
+        shadow = Image.new("RGBA", lg.size, (0, 0, 0, 0))
+        shadow.putalpha(lg.getchannel("A").point(lambda a: round(a * 0.6)).filter(ImageFilter.GaussianBlur(3)))
+        img.alpha_composite(shadow, pos)
+        img.alpha_composite(lg, pos)
     else:   # 로고 파일을 받기 전에는 글자 로고
         draw_text(img, c["logo"]["fallback_text"], {"y": c["logo"]["y"], "size": c["logo"]["fallback_size"],
                                                      "color": "#FFFFFFE6", "stroke": 2, "family": "logo"})
