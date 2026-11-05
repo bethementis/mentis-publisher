@@ -1,0 +1,244 @@
+{
+  "date": "2026-11-06",
+  "collected_at": "2026-11-06T06:34:02+09:00",
+  "errors": {
+    "tiktok": "HTTP 401: {'code': 'scope_not_authorized', 'message': 'The user did not authorize the scope required for completing this request.', 'log_id': '20261106053421F9C71A7849FC727AF4DC'}"
+  },
+  "instagram": {
+    "token": "IG_INSIGHTS_TOKEN",
+    "account": {
+      "followers_count": 0,
+      "follows_count": 13,
+      "media_count": 4,
+      "yesterday": {
+        "reach": 0,
+        "views": 0,
+        "profile_views": 0,
+        "accounts_engaged": 0,
+        "total_interactions": 0
+      },
+      "online_followers": null
+    },
+    "posts": [
+      {
+        "id": "18113471897166961",
+        "timestamp": "2026-10-31T07:07:07+0000",
+        "permalink": "https://www.instagram.com/p/DfJlTCAILAq/",
+        "media_type": "CAROUSEL_ALBUM",
+        "like_count": 0,
+        "comments_count": 0,
+        "caption_head": "얼굴 때를 왜 밀어  세안을 아무리 잘해도 피부가 칙칙하고 거칠다면, 쌓인 각질 때문일 확률이 높다.  피부는 약 28일마다 새로 바뀌는데, 20대 후반부터 이 주기가 느려진다. 떨어져야 할 각질이 그대로 남아 모공을 막고, 뭘 발라도 흡수가 안 되는 이유다.  관리 방법은 세 가지. ① 스크럽·필링젤: 주 1회, 코·이마 위주로 가볍게 ② AHA/BHA 앰플: 자극이 적어서 꾸준히 쓰기 좋다 ③ 레티놀: 턴오버 주기 자체를 앞당긴다  단, 셋을 한 번에 하는 건 절대 금지.  주간 각질 관리 루틴표 무료로 나눠줄 예정. 필요한 사람은 DM으로 '각질' 보내줘.  #남자피부관리 #남자스킨케어 #남자자기관리 #각질관리 #각질제거 #레티놀 #맨티스",
+        "insights": {
+          "reach": 5,
+          "views": 8,
+          "likes": 0,
+          "comments": 0,
+          "shares": 0,
+          "saved": 0,
+          "follows": 0,
+          "profile_visits": 0,
+          "total_interactions": 0
+        }
+      },
+      {
+        "id": "18110867036258591",
+        "timestamp": "2026-10-31T05:52:34+0000",
+        "permalink": "https://www.instagram.com/p/DfJcx6yk8cL/",
+        "media_type": "CAROUSEL_ALBUM",
+        "like_count": 0,
+        "comments_count": 0,
+        "caption_head": "피부과에 돈 쏟아붓기 전에 이것부터 봐. 남자한테 가성비 확실한 시술 5개만 골랐다.  1. 레이저 제모: 수염자국 있으면 필수 2. 턱보톡스: 가격, 효과 둘 다 가성비 1황 3. 인모드: 얼굴살 고민이면 이거 4. 울쎄라: 비싸도 라인은 확실하게 5. 스킨보톡스: 피부결, 모공 한 번에  다 할 필요 없어. 지금 내 얼굴에 제일 필요한 것 하나만 골라.  너라면 뭐부터 받을래? 번호로 댓글 남겨줘 👇 나중에 피부과 갈 때 보려면 저장해둬.  *시술 효과와 부작용은 사람마다 달라. 받기 전에 꼭 전문의랑 상담하고 결정해. 남자의 자기관리, Mentis  #남자시술 #턱보톡스 #남자피부관리 #맨즈뷰티 #Mentis",
+        "insights": {
+          "reach": 5,
+          "views": 10,
+          "likes": 0,
+          "comments": 0,
+          "shares": 0,
+          "saved": 0,
+          "follows": 0,
+          "profile_visits": 0,
+          "total_interactions": 0
+        }
+      }
+    ],
+    "comments": [],
+    "reference": [
+      {
+        "username": "iamtheserkan",
+        "followers_count": 123821,
+        "media_count": 253,
+        "media": [
+          {
+            "timestamp": "2026-11-05T06:00:02+0000",
+            "permalink": "https://www.instagram.com/p/DfWVtDWmu1o/",
+            "media_type": "CAROUSEL_ALBUM",
+            "like_count": null,
+            "comments_count": 2,
+            "caption_head": "아침에 잘해두면 미스트 쓸 일 없어집니다 🌧️  토너 레이어링 하는 법 3단계  1️⃣ 손바닥으로 얇게 펴 바르기 세안 후 물기를 가볍게 닦고, 보습 토너를 손바닥에 소량 덜어 얼굴에 얇게 펴 발라주세요. 손바닥에 "
+          },
+          {
+            "timestamp": "2026-11-05T01:00:07+0000",
+            "permalink": "https://www.instagram.com/reel/DfVzXDhx-wp/",
+            "media_type": "VIDEO",
+            "like_count": 205,
+            "comments_count": 2,
+            "caption_head": "뒤척이는 밤을 줄이고 싶다면 🛌  잠들기 전, 편안한 밤을 위한 루틴을 챙겨보세요. 마그네슘 글리시네이트, 따뜻한 캐모마일 한 잔, 키위 2개. 수면 관리를 위해 고려해볼 수 있는 세 가지 선택지입니다.   세 가지"
+          },
+          {
+            "timestamp": "2026-11-04T06:00:07+0000",
+            "permalink": "https://www.instagram.com/p/DfTw50JGqKF/",
+            "media_type": "CAROUSEL_ALBUM",
+            "like_count": null,
+            "comments_count": 3,
+            "caption_head": "얼굴의 좌우 차이가 신경 쓰일 때 확인할 것 🚩  1️⃣ 눈가 주변 움직이기 👀 시선을 움직일 때 이마와 미간까지 잔뜩 힘주지 말고, 편안한 범위에서 천천히 움직이세요. 눈 운동으로 눈높이나 짝눈이 교정된다고 기대하"
+          },
+          {
+            "timestamp": "2026-11-03T06:25:10+0000",
+            "permalink": "https://www.instagram.com/p/DfRO5XPoSkl/",
+            "media_type": "CAROUSEL_ALBUM",
+            "like_count": 703,
+            "comments_count": 4,
+            "caption_head": "구석구석 못생겨지는 습관 8가지 🔎  트리트먼트까지는 사뒀는데 쓰지도 않고, 수건으로 머리를 박박 비빕니다. 선크림은 목까지 발랐는데, 클렌징 제품은 얼굴에만 쓰죠. 챙겨 바르는 제품은 늘어도 습관이 움직이는 방식은"
+          },
+          {
+            "timestamp": "2026-11-03T02:53:16+0000",
+            "permalink": "https://www.instagram.com/reel/DfQ2jQDvCjh/",
+            "media_type": "VIDEO",
+            "like_count": 197,
+            "comments_count": 2,
+            "caption_head": "러닝 기록 단축을 위한 호흡법 💨  달리다 숨이 턱까지 차오른다면, 잠시 속도를 늦추고 호흡을 가다듬어보세요.   ① 입으로 ‘후—’ 하고 길게 내쉬기 ② 이어서 ‘흡, 흡’ 두 번에 나눠 들이마시기 ③ 다시 천천히"
+          },
+          {
+            "timestamp": "2026-11-01T08:20:39+0000",
+            "permalink": "https://www.instagram.com/reel/DfMSWcXv_z0/",
+            "media_type": "VIDEO",
+            "like_count": null,
+            "comments_count": 11,
+            "caption_head": "오늘도 자신의 한계를 시험하는 사람들 ☔  2026 JTBC 서울마라톤을 찾았습니다. 첫 완주를 꿈꾸는 사람부터 자신의 기록을 넘어서려는 사람까지. 지금보다 한 걸음 더 나아가려는 이들이 어떤 마음으로 어려운 도전을"
+          },
+          {
+            "timestamp": "2026-11-01T06:00:03+0000",
+            "permalink": "https://www.instagram.com/p/DfMCh_cGhve/",
+            "media_type": "CAROUSEL_ALBUM",
+            "like_count": null,
+            "comments_count": 2,
+            "caption_head": "⏱️ 폼롤러 2분, 천천히 제대로 굴려보세요  허벅지 뒤에 폼롤러를 한쪽당 2분과 10분 사용한 연구에서, 10분 사용의 추가 이점은 확인되지 않았습니다. 시간을 늘리기 전, 풀어주는 방법부터 살펴보세요.  1️⃣ "
+          },
+          {
+            "timestamp": "2026-11-01T01:00:06+0000",
+            "permalink": "https://www.instagram.com/reel/DfLgL_pxlpi/",
+            "media_type": "VIDEO",
+            "like_count": 152,
+            "comments_count": 0,
+            "caption_head": "1년 뒤의 나를 바꾸는 오늘의 선택 🗓️  되고 싶은 모습은 다짐만으로 만들어지지 않습니다. 운동하고, 건강한 식사를 챙기고, 나를 돌보는 행동이 쌓여야 하죠. 매일 의욕이 넘칠 필요는 없습니다. 지친 날에는 할 수"
+          },
+          {
+            "timestamp": "2026-10-31T05:00:02+0000",
+            "permalink": "https://www.instagram.com/p/DfJWzmDmjO3/",
+            "media_type": "CAROUSEL_ALBUM",
+            "like_count": 867,
+            "comments_count": 5,
+            "caption_head": "이번 주의 소홀함을 다음 주로 넘기지 않도록 📆  주말 이틀로 평일의 관리를 전부 만회하려는 건 욕심이겠죠. 하지만 바쁘다는 이유로 미뤄둔 것까지 다음 주로 넘길 필요는 없습니다. 몸을 정돈하고, 쌓인 생각을 비우고"
+          },
+          {
+            "timestamp": "2026-10-30T01:00:07+0000",
+            "permalink": "https://www.instagram.com/reel/DfGWgxwR8oe/",
+            "media_type": "VIDEO",
+            "like_count": 383,
+            "comments_count": 8,
+            "caption_head": "식단도 지키고 운동도 하는데, 왜 체중은 그대로일까요?   체지방이 줄어도 체내 수분 변화 때문에 체중계 숫자는 잠시 그대로일 수 있습니다. 수분이 빠지면서 체중이 한꺼번에 줄어 보이기도 하죠.  그러니 하루의 몸무"
+          },
+          {
+            "timestamp": "2026-10-30T01:00:03+0000",
+            "permalink": "https://www.instagram.com/p/DfGWjhDmuDf/",
+            "media_type": "CAROUSEL_ALBUM",
+            "like_count": null,
+            "comments_count": 10,
+            "caption_head": "얼굴 근육은 따로 키울 필요 없습니다 🛘  운동 중 표정이 많이 달라진다면, 습관 교정이 필요한 때입니다. 세트 사이에는 위아래 이를 살짝 떼고, 턱도 편안하게 쉬게 해주세요. 운동하지 않을 때도 이를 꽉 물고 있다"
+          },
+          {
+            "timestamp": "2026-10-28T06:00:55+0000",
+            "permalink": "https://www.instagram.com/p/DfBvTIRmmqV/",
+            "media_type": "CAROUSEL_ALBUM",
+            "like_count": null,
+            "comments_count": 6,
+            "caption_head": "#광고 | 필요하다면 확실하게: 기초 메이크업 🖌️  누군가에게 잘 보이고 싶은 날이 있습니다. 머리도 한 번 더 만지고, 입으려던 옷도 다시 꺼내보게 되는 날이죠. 얼굴 역시 조금 더 말끔했으면 하는 마음이 듭니다"
+          }
+        ]
+      }
+    ]
+  },
+  "threads": {
+    "account": {
+      "followers_count": 0
+    },
+    "posts": [
+      {
+        "id": "17997514116045697",
+        "timestamp": "2026-10-31T07:07:45+0000",
+        "permalink": "https://www.threads.com/@bethementis/post/DfJlUm0FtBy",
+        "text_head": "얼굴 각질 관리, 이 3개만 기억하면 끝  1. 스크럽은 주 1회, 코·이마만 2. 매일 쓸 거면 AHA/BHA 앰플 3. 근본적으로 바꾸려면 레티놀 (주 2회부터)  셋 다 한 번에 하는 사람 생각보다 많음. 피부",
+        "insights": {
+          "views": 9,
+          "likes": 0,
+          "replies": 0,
+          "reposts": 0,
+          "quotes": 0,
+          "shares": 0
+        }
+      }
+    ],
+    "replies": []
+  },
+  "youtube": {
+    "channel": {
+      "viewCount": 80,
+      "subscriberCount": 39,
+      "videoCount": 1
+    },
+    "videos": [
+      {
+        "id": "Nim9T1Mcuu0",
+        "title": "얼굴 때를 왜 밀어 | 남자 각질 관리 3가지 #Shorts",
+        "published_at": "2026-10-31T09:38:57Z",
+        "url": "https://youtube.com/shorts/Nim9T1Mcuu0",
+        "statistics": {
+          "viewCount": 80,
+          "likeCount": 0,
+          "dislikeCount": 0,
+          "favoriteCount": 0,
+          "commentCount": 0
+        }
+      }
+    ]
+  },
+  "tiktok": null,
+  "naver": {
+    "aside": "naver",
+    "date": "2026-11-05",
+    "upload": "none",
+    "title": "",
+    "url": "",
+    "reason": "오늘/어제 naver 항목 없음(TEST 제외). 클립 크리에이터 접속 시 네이버 로그인 화면이 나와 통계 못 읽음(로그인 안 함)",
+    "stats": []
+  },
+  "xhs": {
+    "aside": "xhs",
+    "date": "2026-11-05",
+    "upload": "none",
+    "title": "",
+    "url": "",
+    "reason": "",
+    "stats": [
+      {
+        "title": "韩国男生去角质｜3个方法",
+        "posted": "2026-11-02",
+        "views": 2,
+        "likes": 0,
+        "saves": 0,
+        "comments": 0,
+        "shares": 0
+      }
+    ]
+  }
+}
