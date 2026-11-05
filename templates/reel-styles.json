@@ -1,110 +1,60 @@
 {
-  "_설명": "릴스 만들기 스타일 설정. 숫자는 1080x1920 화면 기준 px, y 는 글자 덩어리의 가운데. 색은 #RRGGBB 또는 #RRGGBBAA(뒤 2자리 = 투명도).",
+  "_설명": "릴스 만들기 기본 스타일. 숫자는 1080x1920 화면 기준 px, y 는 글자 덩어리의 가운데. 업로드 툴에서 '이 설정을 기본으로'를 누르면 templates/reel-presets.json 에 저장되고 이 파일보다 우선한다.",
+  "fonts": {
+    "pretendard": { "label": "프리텐다드", "file": "Pretendard-SemiBold.otf", "css": "Pretendard", "weight": 600 },
+    "pretendard-xb": { "label": "프리텐다드 굵게", "file": "Pretendard-ExtraBold.otf", "css": "Pretendard", "weight": 800 },
+    "blackhansans": { "label": "블랙한산스", "file": "BlackHanSans-Regular.ttf", "css": "Black Han Sans", "weight": 400 },
+    "dohyeon": { "label": "도현", "file": "DoHyeon-Regular.ttf", "css": "Do Hyeon", "weight": 400 },
+    "jua": { "label": "주아", "file": "Jua-Regular.ttf", "css": "Jua", "weight": 400 },
+    "myeongjo": { "label": "나눔명조", "file": "NanumMyeongjo-ExtraBold.ttf", "css": "Nanum Myeongjo", "weight": 800 }
+  },
   "common": {
-    "logo": {
-      "file": "assets/logo.png",
-      "width": 170,
-      "y": 300,
-      "opacity": 0.9,
-      "fallback_text": "Mentis",
-      "fallback_size": 78
-    },
-    "corner": {
-      "y": 398,
-      "size": 34,
-      "color": "#FFFFFFCC"
-    },
-    "credit": {
-      "size": 36,
-      "color": "#E6E6E6",
-      "stroke": 3,
-      "prefix": "영상: ",
-      "suffix": ""
-    },
-    "highlight": "#FFD24A",
-    "max_width": 900,
+    "logo": { "file": "assets/logo.png", "width": 170, "y": 300, "opacity": 0.9, "fallback_text": "Mentis", "fallback_size": 78 },
+    "corner": { "y": 398, "size": 34, "color": "#FFFFFFCC" },
+    "max_width": 960,
     "max_mb": 95
+  },
+  "text_defaults": {
+    "font": "pretendard", "size": 60, "color": "#FFFFFF", "highlight": "#FFD24A",
+    "stroke": 6, "stroke_color": "#000000", "box": "", "box_opacity": 0.85, "pad": 20, "y": 1190
+  },
+  "elements": {
+    "hook": { "label": "위쪽 문구", "lines": "multi" },
+    "subtitle": { "label": "자막", "lines": "one" },
+    "step": { "label": "단계 문구", "lines": "multi" },
+    "credit": { "label": "출처", "lines": "one" }
   },
   "styles": {
     "overseas": {
       "label": "해외 소스 · 세르칸 스타일",
-      "lang": "en",
-      "audio": "original",
-      "credit_required": true,
-      "hook": {
-        "y": 520,
-        "size": 76,
-        "color": "#FFFFFF",
-        "stroke": 7,
-        "max_lines": 2
-      },
-      "subtitle": {
-        "y": 1190,
-        "size": 64,
-        "color": "#FFFFFF",
-        "stroke": 6,
-        "max_lines": 2
-      },
-      "band": {
-        "y": 1190,
-        "height": 300,
-        "color": "#000000D9"
-      },
-      "credit_y": 1365,
-      "music": "none"
+      "lang": "en", "audio": "original", "music": "none", "credit_required": true,
+      "band": { "height": 150, "color": "#000000D9" },
+      "text": {
+        "hook": { "font": "blackhansans", "size": 84, "y": 540, "stroke": 8 },
+        "subtitle": { "font": "pretendard", "size": 58, "y": 1190, "stroke": 6 },
+        "credit": { "font": "pretendard", "size": 32, "y": 1290, "color": "#E6E6E6", "stroke": 3 }
+      }
     },
     "format": {
       "label": "B 포맷",
-      "lang": "none",
-      "audio": "mute",
-      "credit_required": false,
-      "title": {
-        "y": 520,
-        "size": 62,
-        "color": "#111111",
-        "box": "#FFFFFFF2",
-        "pad": 22,
-        "max_lines": 2
-      },
-      "step": {
-        "y": 1120,
-        "size": 70,
-        "color": "#FFFFFF",
-        "stroke": 7,
-        "max_lines": 2
-      },
-      "subtitle": {
-        "y": 1330,
-        "size": 50,
-        "color": "#FFFFFF",
-        "stroke": 5,
-        "max_lines": 2
-      },
-      "credit_y": 1440,
-      "music": "random"
+      "lang": "none", "audio": "mute", "music": "random", "credit_required": false,
+      "text": {
+        "hook": { "font": "pretendard-xb", "size": 60, "y": 540, "color": "#111111", "stroke": 0, "box": "#FFFFFF", "box_opacity": 0.95, "pad": 24 },
+        "step": { "font": "blackhansans", "size": 76, "y": 1110, "stroke": 8 },
+        "subtitle": { "font": "pretendard", "size": 48, "y": 1330, "stroke": 5 },
+        "credit": { "font": "pretendard", "size": 32, "y": 1430, "color": "#E6E6E6", "stroke": 3 }
+      }
     },
     "shoot": {
       "label": "C 촬영용",
-      "lang": "ko",
-      "audio": "original",
-      "credit_required": false,
-      "subtitle": {
-        "y": 1190,
-        "size": 64,
-        "color": "#FFFFFF",
-        "stroke": 6,
-        "max_lines": 2
-      },
-      "credit_y": 1365,
-      "music": "none"
+      "lang": "ko", "audio": "original", "music": "none", "credit_required": false,
+      "text": {
+        "hook": { "font": "blackhansans", "size": 80, "y": 540, "stroke": 8 },
+        "subtitle": { "font": "pretendard", "size": 60, "y": 1190, "stroke": 6 },
+        "credit": { "font": "pretendard", "size": 32, "y": 1290, "color": "#E6E6E6", "stroke": 3 }
+      }
     }
   },
-  "music_volume": {
-    "alone": 0.6,
-    "under_voice": 0.12
-  },
-  "whisper_model": {
-    "en": "small",
-    "ko": "medium"
-  }
+  "music_volume": { "alone": 0.6, "under_voice": 0.12 },
+  "whisper_model": { "en": "small", "ko": "medium" }
 }

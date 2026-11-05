@@ -5,6 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>맨티스 업로드</title>
 <link rel="stylesheet" href="style.css">
+<!-- 릴스 만들기 미리보기용 글꼴 (영상에는 assets/fonts 의 같은 글꼴이 들어감) -->
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Do+Hyeon&family=Jua&family=Nanum+Myeongjo:wght@800&display=swap">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
 </head>
 <body>
 <header class="top">
@@ -181,13 +185,10 @@
         </div>
 
         <h3>3. 글자</h3>
-        <label data-for="overseas">훅 문구 <small>위쪽에 영상 내내 · <code>*강조*</code> 는 노란색</small>
+        <label>위쪽 문구 <small>훅·제목 · 영상 내내 · <code>*강조*</code> 는 강조색 · 비우면 없음</small>
           <input type="text" id="stHook" placeholder="거북목, *12초*면 펴져요">
         </label>
         <label class="check" data-for="overseas"><input type="checkbox" id="stBand"> 원본에 영어 자막이 있어요 (한국어 자막 뒤에 검은 띠로 가리기)</label>
-        <label data-for="format">제목 <small>위쪽 흰 띠</small>
-          <input type="text" id="stTitle" placeholder="의사가 고른 올리브영 TOP3">
-        </label>
         <label data-for="format">단계 문구 <small>한 줄에 하나 · 영상 길이에 맞춰 나눠요 (시간은 다음 화면에서 고칠 수 있어요)</small>
           <textarea id="stSteps" rows="4" placeholder="#1 *라로슈포제* 시카플라스트&#10;#2 토리든 다이브인 세럼&#10;#3 아누아 어성초 토너"></textarea>
         </label>
@@ -251,17 +252,54 @@
           <div class="studio">
             <div class="stage" id="stStage">
               <video id="stVideo" controls playsinline></video>
-              <div class="ov hook" id="ovHook"></div>
-              <div class="ov sub" id="ovSub"></div>
-              <div class="ov step" id="ovStep"></div>
-              <div class="ov credit" id="ovCredit"></div>
+              <div class="ovband" id="ovBand" hidden></div>
+              <div class="ovlogo" id="ovLogo"></div>
+              <div class="ov" id="ovCorner"></div>
+              <div class="ov" id="ov-hook"></div>
+              <div class="ov" id="ov-subtitle"></div>
+              <div class="ov" id="ov-step"></div>
+              <div class="ov" id="ov-credit"></div>
             </div>
             <div class="stagehint hint">대략 미리보기예요. 정확한 모양은 '릴스 완성' 후 확인해요.</div>
           </div>
-          <label data-for="overseas">훅 문구 <input type="text" id="edHook"></label>
-          <label data-for="format">제목 <input type="text" id="edTitle"></label>
-          <label data-for="overseas">크레딧 <input type="text" id="edCredit"></label>
-          <h3>자막 <small>시간(초) · <code>*강조*</code> 는 노란색 · 줄바꿈은 그대로 반영</small></h3>
+          <label>위쪽 문구 <small>Enter 로 줄바꿈 · 비우면 없음</small> <textarea id="edHook" rows="2"></textarea></label>
+          <div id="edCreditBox">
+            <label>출처 <input type="text" id="edCredit"></label>
+            <label class="check"><input type="checkbox" id="edCreditOn"> 영상 안에 출처 표시 <small>(꺼도 캡션에는 출처 줄이 들어가요)</small></label>
+          </div>
+
+          <h3>글자 스타일 <small>고를 것을 누르고 바꾸면 미리보기에 바로 보여요</small></h3>
+          <div class="seg" id="edEls"></div>
+          <div class="styler" id="edStyler">
+            <div data-ctl="text">
+              <label>글꼴 <select id="sFont"></select></label>
+              <label>크기 <span class="val" id="sSizeV"></span><input type="range" id="sSize" min="20" max="160" step="2"></label>
+              <label>위치 (위 ↔ 아래) <span class="val" id="sYV"></span><input type="range" id="sY" min="120" max="1800" step="10"></label>
+              <div class="colors">
+                <label>글자색 <input type="color" id="sColor"></label>
+                <label>강조색 <input type="color" id="sHl"></label>
+                <label>테두리색 <input type="color" id="sStrokeColor"></label>
+              </div>
+              <label>테두리 두께 <span class="val" id="sStrokeV"></span><input type="range" id="sStroke" min="0" max="16" step="1"></label>
+              <div class="colors">
+                <label class="check"><input type="checkbox" id="sBoxOn"> 배경 박스</label>
+                <label>박스색 <input type="color" id="sBox"></label>
+                <label>진하기 <span class="val" id="sBoxOpV"></span><input type="range" id="sBoxOp" min="0.1" max="1" step="0.05"></label>
+              </div>
+            </div>
+            <div data-ctl="logo">
+              <label class="check"><input type="checkbox" id="lShow"> 로고 보이기</label>
+              <label>로고 색 <input type="color" id="lColor"> <small>밝은 영상이면 어두운 색으로</small></label>
+              <label>크기 <span class="val" id="lWidthV"></span><input type="range" id="lWidth" min="80" max="420" step="10"></label>
+              <label>위치 (위 ↔ 아래) <span class="val" id="lYV"></span><input type="range" id="lY" min="120" max="1000" step="10"></label>
+            </div>
+            <div class="row end">
+              <button class="btn ghost small" id="sReset">이 작업만 원래대로</button>
+              <button class="btn small" id="sSavePreset">이 설정을 기본으로 저장</button>
+            </div>
+            <p class="hint" id="sPresetHint"></p>
+          </div>
+          <h3>자막 <small>시간(초) · 한 줄씩 나와요 · <code>*강조*</code> 는 강조색 · 길면 ✂ 로 나누기</small> <button class="btn ghost small" id="edSplitAll">긴 자막 모두 나누기</button></h3>
           <div id="edSegs" class="subs"></div>
           <button class="btn ghost small" id="edAddSeg">+ 자막 추가</button>
           <div data-for="format">

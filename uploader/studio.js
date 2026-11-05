@@ -126,7 +126,7 @@
   }
 
   function resetForm() {
-    for (const id of ["stHandle", "stPermission", "stSlug", "stHook", "stTitle", "stSteps", "stLines"]) $(id).value = "";
+    for (const id of ["stHandle", "stPermission", "stSlug", "stHook", "stSteps", "stLines"]) $(id).value = "";
     for (const id of ["stAllowed", "stOwn", "stBand"]) $(id).checked = false;
     $("stCorner").value = ""; $("stFit").value = "auto";
     setRaw(null); setVoice(null); setStyle("overseas");
@@ -160,9 +160,10 @@
       lang: $("stLinesBox").hidden ? lang : "none", raw: `raw.${ext(raw.file)}`,
       lines: $("stLinesBox").hidden ? "" : $("stLines").value.trim(), created_at: now(),
     };
-    if (style === "overseas") Object.assign(data, { hook: $("stHook").value.trim(), cover_band: $("stBand").checked,
+    data.hook = $("stHook").value.trim();
+    if (style === "overseas") Object.assign(data, { cover_band: $("stBand").checked,
       credit: { handle, permission: $("stPermission").value.trim() } });
-    if (style === "format") Object.assign(data, { title: $("stTitle").value.trim(), step_lines: $("stSteps").value.trim() });
+    if (style === "format") data.step_lines = $("stSteps").value.trim();
     if (voice) data.voice = `voice.${ext(voice)}`;
 
     const folder = `studio/${name}`;
@@ -223,18 +224,55 @@
 
   // ---------- 자막 고치기 ----------
   const num = (v) => Math.round(Number(v) * 10) / 10;
+  const W = 1080, H = 1920;
+  let conf = null, presets = {}, element = "hook", logoRatio = 494 / 384;
+  const LABEL = { hook: "위쪽 문구", subtitle: "자막", step: "단계 문구", credit: "출처", logo: "로고" };
+
+  // 스타일 기본값(reel-styles.json)·저장된 기본(reel-presets.json)을 저장소에서 읽는다
+  async function loadConf() {
+    const get = (p) => fetch(A.rawUrl(p), { cache: "no-store" }).then((r) => (r.ok ? r.json() : null)).catch(() => null);
+    [conf, presets] = await Promise.all([get("templates/reel-styles.json"), get("templates/reel-presets.json")]);
+    presets ||= {};
+    $("sFont").innerHTML = Object.entries(conf.fonts).map(([k, f]) =>
+      `<option value="${k}" style="font-family:'${f.css}';font-weight:${f.weight}">${esc(f.label)}</option>`).join("");
+    const img = new Image();
+    img.onload = () => { logoRatio = img.naturalWidth / img.naturalHeight; drawOverlay(); };
+    img.src = A.rawUrl("assets/logo.png");
+    $("ovLogo").style.maskImage = $("ovLogo").style.webkitMaskImage = `url("${img.src}")`;
+  }
+
+  const key = () => jobData.style || "shoot";
+  const ov = () => (subs.styles ||= {});
+  function textStyle(el) {
+    return { ...conf.text_defaults, ...(conf.styles[key()]?.text?.[el] || {}), ...(presets[key()]?.[el] || {}), ...(ov()[el] || {}),
+      one_line: conf.elements[el]?.lines === "one" };
+  }
+  function logoStyle() {
+    return { show: true, color: "#FFFFFF", ...conf.common.logo, ...(presets[key()]?.logo || {}), ...(ov().logo || {}) };
+  }
+  function elements() {
+    return ["hook", "subtitle", ...(key() === "format" ? ["step"] : []), ...(subs.credit ? ["credit"] : []), "logo"];
+  }
+  function setOv(el, k, v) { (ov()[el] ||= {})[k] = v; drawOverlay(); }
 
   function rowsHtml(list, kind) {
+    const one = kind === "segments";
     return list.map((s, i) => `<div class="subrow" data-kind="${kind}" data-i="${i}">
       <input type="number" step="0.1" min="0" value="${num(s.start)}" data-k="start" aria-label="시작(초)">
       <input type="number" step="0.1" min="0" value="${num(s.end)}" data-k="end" aria-label="끝(초)">
-      <div class="txt"><textarea rows="2" data-k="text">${esc(s.text)}</textarea>${s.src ? `<small>${esc(s.src)}</small>` : ""}</div>
-      <button class="btn ghost small" data-del title="빼기">×</button></div>`).join("") || `<p class="hint">없음</p>`;
+      <div class="txt">${one ? `<input type="text" data-k="text" value="${esc(s.text)}">` : `<textarea rows="2" data-k="text">${esc(s.text)}</textarea>`}
+        ${s.src ? `<small>${esc(s.src)}</small>` : ""}<small class="long" hidden>길어서 글자가 작아져요 → ✂ 로 나누기</small></div>
+      <span class="acts">${one ? `<button class="btn ghost small" data-split title="반으로 나누기">✂</button>` : ""}<button class="btn ghost small" data-del title="빼기">×</button></span></div>`).join("") || `<p class="hint">없음</p>`;
   }
 
-  function renderEditor() {
-    showFor($("stEdit"), jobData.style || "shoot");
-    $("edHook").value = subs.hook || ""; $("edTitle").value = subs.title || ""; $("edCredit").value = subs.credit || "";
+  async function renderEditor() {
+    if (!conf) await loadConf();
+    // 예전 작업(제목 따로)은 위쪽 문구로 합친다
+    if (!subs.hook && subs.title) subs.hook = subs.title;
+    subs.credit_on ??= true;
+    showFor($("stEdit"), key());
+    $("edHook").value = subs.hook || ""; $("edCredit").value = subs.credit || ""; $("edCreditOn").checked = subs.credit_on;
+    $("edCreditBox").hidden = !subs.credit;
     $("edSegs").innerHTML = rowsHtml(subs.segments || [], "segments");
     $("edSteps").innerHTML = rowsHtml(subs.steps || [], "steps");
     document.querySelectorAll("#stEdit .subrow").forEach((row) => {
@@ -244,30 +282,145 @@
         drawOverlay();
       }));
       row.querySelector("[data-del]").onclick = () => { list.splice(i, 1); renderEditor(); };
-      row.querySelector("textarea").onfocus = () => { $("stVideo").currentTime = list[i].start + 0.05; };
+      const split = row.querySelector("[data-split]");
+      if (split) split.onclick = () => { splitRow(list, i); renderEditor(); };
+      row.querySelector("[data-k=text]").onfocus = () => { $("stVideo").currentTime = list[i].start + 0.05; };
     });
+    if (!elements().includes(element)) element = "hook";
+    renderEls();
     const v = $("stVideo");
     const rawFile = Object.keys(job.files).find((f) => /^raw\./.test(f));
     const src = A.rawUrl(`${job.folder}/${rawFile}`);
     if (v.dataset.src !== src) { v.src = src; v.dataset.src = src; }
     v.style.objectFit = jobData.fit === "blur" ? "contain" : "cover";
     v.ontimeupdate = drawOverlay;
+    document.fonts.ready.then(drawOverlay);
     drawOverlay();
   }
 
-  const fmt = (t) => esc(t).replace(/\*([^*]+)\*/g, "<b>$1</b>").replace(/\n/g, "<br>");
+  // 자막 한 줄을 띄어쓰기 기준으로 반으로 (시간은 글자 수 비율)
+  function splitRow(list, i) {
+    const s = list[i], text = s.text.trim().replace(/\s+/g, " ");
+    const spaces = [...text].map((c, k) => (c === " " ? k : -1)).filter((k) => k > 0);
+    const mid = text.length / 2;
+    const at = spaces.length ? spaces.reduce((a, b) => (Math.abs(b - mid) < Math.abs(a - mid) ? b : a)) : Math.floor(mid);
+    const a = text.slice(0, at).trim(), b = text.slice(at).trim();
+    if (!a || !b) return;
+    const t = num(s.start + (s.end - s.start) * a.length / (a.length + b.length));
+    list.splice(i, 1, { ...s, text: a, end: t }, { ...s, text: b, start: t });
+  }
+
+  // ---------- 글자 스타일 ----------
+  function renderEls() {
+    $("edEls").innerHTML = elements().map((e) => `<button data-el="${e}" class="${e === element ? "on" : ""}">${LABEL[e]}</button>`).join("");
+    $("edEls").querySelectorAll("button").forEach((b) => (b.onclick = () => { element = b.dataset.el; renderEls(); }));
+    const isLogo = element === "logo";
+    $("edStyler").querySelector("[data-ctl=text]").hidden = isLogo;
+    $("edStyler").querySelector("[data-ctl=logo]").hidden = !isLogo;
+    if (isLogo) {
+      const l = logoStyle();
+      $("lShow").checked = l.show !== false; $("lColor").value = l.color.slice(0, 7);
+      $("lWidth").value = l.width; $("lY").value = l.y;
+    } else {
+      const t = textStyle(element);
+      $("sFont").value = t.font; $("sSize").value = t.size; $("sY").value = t.y;
+      $("sColor").value = t.color.slice(0, 7); $("sHl").value = t.highlight.slice(0, 7);
+      $("sStrokeColor").value = t.stroke_color.slice(0, 7); $("sStroke").value = t.stroke;
+      $("sBoxOn").checked = !!t.box; $("sBox").value = (t.box || "#000000").slice(0, 7); $("sBoxOp").value = t.box_opacity;
+    }
+    $("sPresetHint").textContent = `'기본으로 저장'하면 다음 ${STYLES[key()].label} 작업부터 이 글꼴·색·크기·위치로 시작해요.`;
+    showVals();
+  }
+
+  function showVals() {
+    $("sSizeV").textContent = `${$("sSize").value}px`; $("sYV").textContent = $("sY").value;
+    $("sStrokeV").textContent = `${$("sStroke").value}px`; $("sBoxOpV").textContent = `${Math.round($("sBoxOp").value * 100)}%`;
+    $("lWidthV").textContent = `${$("lWidth").value}px`; $("lYV").textContent = $("lY").value;
+  }
+
+  function bindStyler() {
+    const text = { sFont: ["font", String], sSize: ["size", Number], sY: ["y", Number], sColor: ["color", String],
+      sHl: ["highlight", String], sStrokeColor: ["stroke_color", String], sStroke: ["stroke", Number], sBoxOp: ["box_opacity", Number] };
+    for (const [id, [k, cast]] of Object.entries(text)) $(id).oninput = () => { setOv(element, k, cast($(id).value)); showVals(); };
+    const box = () => setOv(element, "box", $("sBoxOn").checked ? $("sBox").value : "");
+    $("sBoxOn").onchange = box; $("sBox").oninput = box;
+    $("lShow").onchange = () => setOv("logo", "show", $("lShow").checked);
+    $("lColor").oninput = () => setOv("logo", "color", $("lColor").value);
+    $("lWidth").oninput = () => { setOv("logo", "width", Number($("lWidth").value)); showVals(); };
+    $("lY").oninput = () => { setOv("logo", "y", Number($("lY").value)); showVals(); };
+    $("sReset").onclick = () => { delete ov()[element]; renderEls(); drawOverlay(); };
+    $("sSavePreset").onclick = savePreset;
+  }
+
+  async function savePreset() {
+    const k = key();
+    const next = { ...presets, [k]: { ...(presets[k] || {}) } };
+    for (const [el, v] of Object.entries(ov())) next[k][el] = { ...(next[k][el] || {}), ...v };
+    try {
+      await A.commit(`reel studio: ${STYLES[k].label} 기본 글자 스타일 저장`,
+        [{ path: "templates/reel-presets.json", text: JSON.stringify(next, null, 2) + "\n" }]);
+      presets = next;
+      A.toast("기본 스타일로 저장했어요. 다음 작업부터 적용돼요.");
+    } catch (e) { if (e.message !== "401") A.toast(`저장 실패: ${e.message}`, 5000); }
+  }
+
+  // ---------- 미리보기 (영상과 같은 계산: 1080×1920 기준 px → 화면 비율) ----------
+  const cq = (px) => `${(px / W) * 100}cqw`;
+  const top = (y) => `${(y / H) * 100}%`;
+  const plainText = (t) => t.replace(/\*([^*]+)\*/g, "$1");
+  const hexA = (hex, a) => { const n = parseInt(hex.slice(1, 7), 16); return `rgba(${n >> 16},${(n >> 8) & 255},${n & 255},${a})`; };
+  const measure = document.createElement("canvas").getContext("2d");
+
+  // 가장 긴 줄이 화면 폭에 들어가도록 글자를 줄인다 (영상 렌더와 같은 규칙, 최소 절반)
+  function fitSize(lines, st) {
+    const f = conf.fonts[st.font] || conf.fonts.pretendard;
+    const maxW = conf.common.max_width - (st.box ? 2 * st.pad : 0);
+    let size = st.size;
+    while (size > st.size * 0.5) {
+      measure.font = `${f.weight} ${size}px "${f.css}"`;
+      if (Math.max(...lines.map((l) => measure.measureText(plainText(l)).width)) <= maxW) break;
+      size -= 2;
+    }
+    return size;
+  }
+
+  function paintText(el, text, st) {
+    const box = $(`ov-${el}`);
+    if (!text || !text.trim()) { box.innerHTML = ""; return; }
+    const lines = st.one_line ? [text.replace(/\s+/g, " ").trim()] : text.split("\n").map((l) => l.trim()).filter(Boolean);
+    const size = fitSize(lines, st), f = conf.fonts[st.font] || conf.fonts.pretendard;
+    const html = lines.map((l) => esc(l).replace(/\*([^*]+)\*/g, `<b style="color:${st.highlight}">$1</b>`)).join("<br>");
+    box.style.top = top(st.y);
+    box.innerHTML = `<span style="font-family:'${f.css}';font-weight:${f.weight};font-size:${cq(size)};color:${st.color};` +
+      `-webkit-text-stroke:${cq(st.stroke * 2)} ${st.stroke_color};background:${st.box ? hexA(st.box, st.box_opacity) : "transparent"};` +
+      `padding:${st.box ? `${cq(st.pad * 0.6)} ${cq(st.pad)}` : 0}">${html}</span>`;
+  }
 
   function drawOverlay() {
-    if (!subs) return;
+    if (!subs || !conf) return;
     const t = $("stVideo").currentTime || 0;
     const at = (list) => (list || []).find((s) => s.start <= t && t < s.end)?.text || "";
-    const st = jobData.style;
-    $("ovHook").innerHTML = st === "overseas" ? fmt($("edHook").value) : st === "format" ? fmt($("edTitle").value) : "";
-    $("ovHook").classList.toggle("box", st === "format");
-    $("ovSub").innerHTML = fmt(at(subs.segments));
-    $("ovSub").classList.toggle("small", st === "format");
-    $("ovStep").innerHTML = st === "format" ? fmt(at(subs.steps)) : "";
-    $("ovCredit").textContent = st === "overseas" ? $("edCredit").value : "";
+    subs.hook = $("edHook").value; subs.credit = $("edCredit").value; subs.credit_on = $("edCreditOn").checked;
+    paintText("hook", subs.hook, textStyle("hook"));
+    paintText("subtitle", at(subs.segments), textStyle("subtitle"));
+    paintText("step", key() === "format" ? at(subs.steps) : "", textStyle("step"));
+    paintText("credit", subs.credit_on ? subs.credit : "", textStyle("credit"));
+    // 로고: 흰 로고 PNG 모양(mask)에 고른 색을 칠한다
+    const l = logoStyle(), logo = $("ovLogo"), show = l.show !== false;
+    logo.hidden = !show;
+    Object.assign(logo.style, { width: cq(l.width), aspectRatio: String(logoRatio), top: top(l.y), background: l.color, opacity: l.opacity });
+    const corner = $("ovCorner");
+    corner.textContent = show ? jobData.corner || "" : "";
+    Object.assign(corner.style, { top: top(l.y + l.width / logoRatio / 2 + 30), fontSize: cq(conf.common.corner.size), color: l.color });
+    const band = $("ovBand"), b = conf.styles[key()]?.band;
+    band.hidden = !(jobData.cover_band && b);
+    if (!band.hidden) Object.assign(band.style, { top: top(textStyle("subtitle").y - b.height / 2), height: top(b.height) });
+    // 한 줄에 안 들어가 글자가 작아지는 자막 표시
+    const st = textStyle("subtitle");
+    document.querySelectorAll("#edSegs .subrow").forEach((row) => {
+      const s = subs.segments[+row.dataset.i];
+      row.querySelector(".long").hidden = !s?.text || fitSize([s.text], st) >= st.size;
+    });
   }
 
   function addRow(kind) {
@@ -280,12 +433,12 @@
 
   async function saveAndRender() {
     const err = (t) => A.setMsg($("stJobMsg"), t, "err");
-    subs.hook = $("edHook").value.trim(); subs.title = $("edTitle").value.trim(); subs.credit = $("edCredit").value.trim();
+    subs.hook = $("edHook").value.trim(); subs.credit = $("edCredit").value.trim(); subs.credit_on = $("edCreditOn").checked;
+    delete subs.title;
     for (const k of ["segments", "steps"]) {
       subs[k] = (subs[k] || []).filter((s) => String(s.text).trim()).sort((a, b) => a.start - b.start);
       if (subs[k].some((s) => !(s.end > s.start))) return err("끝 시간이 시작 시간보다 늦어야 해요.");
     }
-    if (jobData.style === "overseas" && !subs.credit) return err("해외 소스 영상은 크레딧을 지울 수 없어요.");
     const btn = $("edRender"); btn.disabled = true;
     try {
       await A.commit(`reel studio: 자막 저장 ${job.name}`, [
@@ -334,8 +487,18 @@
   $("stStart").onclick = start;
   $("stNew").onclick = () => { closeJob(); resetForm(); };
   $("edAddSeg").onclick = () => addRow("segments");
+  // 한 줄에 안 들어가는 자막을 모두 반씩 나눈다 (들어갈 때까지)
+  $("edSplitAll").onclick = () => {
+    const st = textStyle("subtitle");
+    for (let i = 0; i < (subs.segments || []).length; i++) {
+      while (subs.segments[i].text.trim().includes(" ") && fitSize([subs.segments[i].text], st) < st.size) splitRow(subs.segments, i);
+    }
+    renderEditor();
+  };
   $("edAddStep").onclick = () => addRow("steps");
-  for (const id of ["edHook", "edTitle", "edCredit"]) $(id).oninput = drawOverlay;
+  for (const id of ["edHook", "edCredit"]) $(id).oninput = drawOverlay;
+  $("edCreditOn").onchange = drawOverlay;
+  bindStyler();
   $("edRender").onclick = saveAndRender;
   $("stReedit").onclick = () => { $("stDone").hidden = true; $("stEdit").hidden = false; renderEditor(); };
   $("stSchedule").onclick = schedule;

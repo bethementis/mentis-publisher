@@ -207,6 +207,7 @@ def make_subs(job_dir):
 
     if not segments and job.get("lines"):
         segments = spread(job["lines"].splitlines(), total)
+    segments = split_long(segments, text_style(job.get("style"), "subtitle"))
     steps = spread((job.get("step_lines") or "").splitlines(), total) if job.get("style") == "format" else []
 
     credit = ""
@@ -214,18 +215,38 @@ def make_subs(job_dir):
         c = CONF["common"]["credit"]
         credit = f"{c['prefix']}{job['credit']['handle'].strip()}{c['suffix']}"
     write_json(job_dir / "subs.json", {"duration": total, "segments": segments, "steps": steps,
-                                       "hook": job.get("hook", ""), "title": job.get("title", ""), "credit": credit})
+                                       "hook": job.get("hook") or job.get("title", ""), "credit": credit,
+                                       "credit_on": job.get("credit_on", True), "styles": {}})
     return {"segments": len(segments), "warnings": warnings}
 
 
 # ---------- 그리기 ----------
-def rgba(hexstr):
+PRESETS_FILE = ROOT / "templates" / "reel-presets.json"
+
+
+def text_style(style_key, element, overrides=None):
+    """글자 스타일 = 기본값 ← 스타일별 기본 ← 저장된 기본(reel-presets.json) ← 이 작업에서 고친 값."""
+    presets = read_json(PRESETS_FILE, {})
+    st = {**CONF["text_defaults"],
+          **CONF["styles"].get(style_key, {}).get("text", {}).get(element, {}),
+          **presets.get(style_key, {}).get(element, {}),
+          **(overrides or {}).get(element, {})}
+    st["one_line"] = CONF["elements"].get(element, {}).get("lines") == "one"
+    return st
+
+
+def rgba(hexstr, opacity=None):
     h = hexstr.lstrip("#")
-    return tuple(int(h[i:i + 2], 16) for i in (0, 2, 4)) + ((int(h[6:8], 16),) if len(h) == 8 else (255,))
+    a = int(h[6:8], 16) if len(h) == 8 else 255
+    if opacity is not None:
+        a = round(255 * float(opacity))
+    return tuple(int(h[i:i + 2], 16) for i in (0, 2, 4)) + (a,)
 
 
-def font(size, family="body"):
-    f = "Playfair-BoldItalic.ttf" if family == "logo" else "Pretendard-SemiBold.otf"
+def font(size, family="pretendard"):
+    if family == "logo":
+        return ImageFont.truetype(str(FONTS / "Playfair-BoldItalic.ttf"), size)
+    f = CONF["fonts"].get(family, CONF["fonts"]["pretendard"])["file"]
     return ImageFont.truetype(str(FONTS / f), size)
 
 
@@ -239,82 +260,118 @@ def plain(line):
     return "".join(t for t, _ in runs_of(line))
 
 
-def wrap(text, fnt, max_w):
-    lines = []
-    for para in text.split("\n"):
-        cur = ""
-        for word in para.split(" "):
-            test = f"{cur} {word}".strip()
-            if cur and fnt.getlength(plain(test)) > max_w:
-                lines.append(cur); cur = word
-            else:
-                cur = test
-        lines.append(cur)
-    return [l for l in lines if l.strip()] or [""]
+def text_lines(text, st):
+    """자동 줄바꿈은 하지 않는다. 자막·출처는 늘 한 줄, 위쪽 문구·단계는 직접 넣은 줄바꿈만."""
+    if st.get("one_line"):
+        return [" ".join(text.split())]
+    return [l.strip() for l in text.splitlines() if l.strip()] or [""]
 
 
-def fit_lines(text, st, max_w):
-    """한 덩어리가 max_lines 안에 들어가도록 글자를 조금씩 줄인다 (최소 65%)."""
-    size = st["size"]
-    while True:
-        fnt = font(size, st.get("family", "body"))
-        lines = wrap(text, fnt, max_w)
-        if len(lines) <= st.get("max_lines", 2) or size <= st["size"] * 0.65:
-            return fnt, lines
-        size -= 3
+def fit_size(lines, st):
+    """가장 긴 줄이 화면 폭에 들어가도록 글자를 줄인다 (최소 절반)."""
+    box = bool(st.get("box"))
+    max_w = CONF["common"]["max_width"] - (2 * st.get("pad", 0) if box else 0)
+    size = int(st["size"])
+    while size > st["size"] * 0.5:
+        fnt = font(size, st.get("font"))
+        if max(fnt.getlength(plain(l)) for l in lines) <= max_w:
+            break
+        size -= 2
+    return font(size, st.get("font"))
 
 
-def draw_text(img, text, st, y=None):
+def draw_text(img, text, st):
     if not text or not text.strip():
         return
     d = ImageDraw.Draw(img)
+    lines = text_lines(text, st)
+    fnt = fit_size(lines, st)
+    lh = round(fnt.size * 1.3)
+    y0 = st["y"] - lh * len(lines) / 2
     pad = st.get("pad", 0)
-    max_w = CONF["common"]["max_width"] - 2 * pad
-    fnt, lines = fit_lines(text, st, max_w)
-    lh = round(fnt.size * 1.28)
-    y0 = (st["y"] if y is None else y) - lh * len(lines) / 2
-    hl, color, stroke = rgba(CONF["common"]["highlight"]), rgba(st["color"]), st.get("stroke", 0)
     if st.get("box"):
         bw = max(fnt.getlength(plain(l)) for l in lines) + 2 * pad
-        d.rounded_rectangle([(W - bw) / 2, y0 - pad, (W + bw) / 2, y0 + lh * len(lines) + pad * 0.6],
-                            radius=14, fill=rgba(st["box"]))
+        d.rounded_rectangle([(W - bw) / 2, y0 - pad * 0.7, (W + bw) / 2, y0 + lh * len(lines) + pad * 0.5],
+                            radius=14, fill=rgba(st["box"], st.get("box_opacity", 0.85)))
+    hl, color = rgba(st.get("highlight", "#FFD24A")), rgba(st["color"])
+    stroke, stroke_fill = int(st.get("stroke", 0)), rgba(st.get("stroke_color", "#000000"))
     for i, line in enumerate(lines):
         x = (W - fnt.getlength(plain(line))) / 2
         for t, strong in runs_of(line):
             d.text((x, y0 + i * lh), t, font=fnt, fill=hl if strong else color,
-                   stroke_width=stroke, stroke_fill=(0, 0, 0, 255))
+                   stroke_width=stroke, stroke_fill=stroke_fill)
             x += fnt.getlength(t)
 
 
+def split_long(segments, st):
+    """한 줄에 안 들어가는 자막은 띄어쓰기 기준으로 반씩 나눠 여러 화면으로 (시간은 글자 수 비율)."""
+    max_w = CONF["common"]["max_width"]
+    fnt = font(int(st["size"]), st.get("font"))
+    out = []
+
+    def cut(seg):
+        text = " ".join(seg["text"].split())
+        if fnt.getlength(plain(text)) <= max_w or len(text) < 6:
+            out.append({**seg, "text": text}); return
+        spaces = [i for i, c in enumerate(text) if c == " "]
+        mid = len(text) / 2
+        i = min(spaces, key=lambda k: abs(k - mid)) if spaces else int(mid)
+        a, b = text[:i].strip(), text[i:].strip()
+        t = seg["start"] + (seg["end"] - seg["start"]) * len(a) / max(len(a) + len(b), 1)
+        extra = {"src": seg["src"]} if seg.get("src") else {}
+        cut({"start": seg["start"], "end": round(t, 2), "text": a, **extra})
+        cut({"start": round(t, 2), "end": seg["end"], "text": b, **extra})
+
+    for s in segments:
+        cut(s)
+    return out
+
+
+def logo_style(style_key, overrides=None):
+    presets = read_json(PRESETS_FILE, {})
+    return {"show": True, "color": "#FFFFFF", **CONF["common"]["logo"],
+            **presets.get(style_key, {}).get("logo", {}), **(overrides or {}).get("logo", {})}
+
+
+def paste_logo(img, ls):
+    """로고를 고른 색으로 칠해서 붙인다. 붙인 로고의 아래쪽 y 를 돌려준다 (코너 이름 위치용)."""
+    logo_file = ROOT / ls["file"]
+    if not logo_file.exists():   # 로고 파일이 없으면 글자 로고
+        draw_text(img, ls["fallback_text"], {**CONF["text_defaults"], "y": ls["y"], "font": "logo",
+                                             "size": ls["fallback_size"], "color": ls["color"], "stroke": 2})
+        return ls["y"] + ls["fallback_size"] / 2
+    src = Image.open(logo_file).convert("RGBA")
+    w = int(ls["width"])
+    alpha = src.getchannel("A").resize((w, round(src.height * w / src.width)), Image.LANCZOS)
+    alpha = alpha.point(lambda a: round(a * float(ls["opacity"])))
+    lg = Image.new("RGBA", alpha.size, rgba(ls["color"])); lg.putalpha(alpha)
+    pos = ((W - lg.width) // 2, round(ls["y"] - lg.height / 2))
+    # 영상 색과 겹쳐도 가는 선이 보이게 옅은 그림자 (어두운 로고면 밝은 그림자)
+    r, g, b, _ = rgba(ls["color"])
+    glow = (255, 255, 255) if r * 0.299 + g * 0.587 + b * 0.114 < 110 else (0, 0, 0)
+    shadow = Image.new("RGBA", lg.size, glow + (0,))
+    shadow.putalpha(alpha.point(lambda a: round(a * 0.6)).filter(ImageFilter.GaussianBlur(3)))
+    img.alpha_composite(shadow, pos)
+    img.alpha_composite(lg, pos)
+    return pos[1] + lg.height
+
+
 def static_layer(job, style, subs):
-    """영상 내내 같은 것: 원본 자막 가림 띠, 로고, 코너 이름, 훅/제목, 크레딧."""
+    """영상 내내 같은 것: 원본 자막 가림 띠, 로고, 코너 이름, 위쪽 문구, 출처."""
     img = Image.new("RGBA", (W, H), (0, 0, 0, 0))
-    c = CONF["common"]
+    c, key, ov = CONF["common"], job.get("style"), subs.get("styles") or {}
     if job.get("cover_band") and style.get("band"):
-        b = style["band"]
-        ImageDraw.Draw(img).rectangle([0, b["y"] - b["height"] / 2, W, b["y"] + b["height"] / 2], fill=rgba(b["color"]))
-    logo_file = ROOT / c["logo"]["file"]
-    if logo_file.exists():
-        lg = Image.open(logo_file).convert("RGBA")
-        lg = lg.resize((c["logo"]["width"], round(lg.height * c["logo"]["width"] / lg.width)), Image.LANCZOS)
-        lg.putalpha(lg.getchannel("A").point(lambda a: round(a * c["logo"]["opacity"])))
-        pos = ((W - lg.width) // 2, round(c["logo"]["y"] - lg.height / 2))
-        # 밝은 영상에서도 가는 선이 보이게 옅은 그림자
-        shadow = Image.new("RGBA", lg.size, (0, 0, 0, 0))
-        shadow.putalpha(lg.getchannel("A").point(lambda a: round(a * 0.6)).filter(ImageFilter.GaussianBlur(3)))
-        img.alpha_composite(shadow, pos)
-        img.alpha_composite(lg, pos)
-    else:   # 로고 파일을 받기 전에는 글자 로고
-        draw_text(img, c["logo"]["fallback_text"], {"y": c["logo"]["y"], "size": c["logo"]["fallback_size"],
-                                                     "color": "#FFFFFFE6", "stroke": 2, "family": "logo"})
-    if job.get("corner"):
-        draw_text(img, job["corner"], {**c["corner"], "stroke": 2})
-    if style.get("hook"):
-        draw_text(img, subs.get("hook", ""), style["hook"])
-    if style.get("title"):
-        draw_text(img, subs.get("title", ""), style["title"])
-    if subs.get("credit"):
-        draw_text(img, subs["credit"], {**c["credit"], "y": style["credit_y"], "max_lines": 1})
+        b, y = style["band"], text_style(key, "subtitle", ov)["y"]
+        ImageDraw.Draw(img).rectangle([0, y - b["height"] / 2, W, y + b["height"] / 2], fill=rgba(b["color"]))
+    ls = logo_style(key, ov)
+    if ls.get("show", True):
+        bottom = paste_logo(img, ls)
+        if job.get("corner"):
+            draw_text(img, job["corner"], {**CONF["text_defaults"], **c["corner"], "y": bottom + 30,
+                                           "color": ls["color"], "stroke": 2, "one_line": True})
+    draw_text(img, subs.get("hook", ""), text_style(key, "hook", ov))
+    if subs.get("credit") and subs.get("credit_on", True):
+        draw_text(img, subs["credit"], text_style(key, "credit", ov))
     return img
 
 
@@ -332,8 +389,7 @@ def overlay_track(job, style, subs, total, tmp):
         if active not in cache:
             img = base.copy()
             for k, text in active:
-                if style.get(k):
-                    draw_text(img, text, style[k])
+                draw_text(img, text, text_style(job.get("style"), k, subs.get("styles")))
             cache[active] = tmp / f"ov{len(cache):03d}.png"
             img.save(cache[active])
         frames.append((cache[active], b - a))
@@ -362,7 +418,7 @@ def render(job_dir):
         subs = read_json(job_dir / "subs.json")
     raw_path = find_file(job_dir, "raw")
     raw, voice, total = total_length(job_dir, job)
-    if style.get("credit_required") and not subs.get("credit"):
+    if style.get("credit_required") and not job.get("credit", {}).get("handle"):
         raise RuntimeError("해외 소스 영상은 원작자 크레딧이 있어야 만들 수 있어요")
     tmp = Path(tempfile.mkdtemp())
     ov = overlay_track(job, style, subs, total, tmp)
