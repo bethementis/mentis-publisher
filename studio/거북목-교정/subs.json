@@ -1,0 +1,45 @@
+{
+  "duration": 12.17,
+  "segments": [
+    {
+      "start": 0.0,
+      "end": 2.1,
+      "text": "하루에 1분씩 이 자세를 유지할 수 있다면,",
+      "src": "If you can hold this for one minute a day,"
+    },
+    {
+      "start": 2.1,
+      "end": 4.04,
+      "text": "머리가 앞으로 쏠린 자세가 교정될 것입니다.",
+      "src": "you will correct forward head posture."
+    },
+    {
+      "start": 4.04,
+      "end": 6.0,
+      "text": "하루에 1분씩 이 자세를 유지할 수 있다면,",
+      "src": "If you can hold this for one minute a day,"
+    },
+    {
+      "start": 6.0,
+      "end": 8.04,
+      "text": "등이 굽는 것을 방지하는 데 도움이 될 것입니다.",
+      "src": "it will help you not be so hunched over."
+    },
+    {
+      "start": 8.04,
+      "end": 10.0,
+      "text": "하루에 1분씩 이 자세를 유지할 수 있다면,",
+      "src": "If you can hold this for one minute a day,"
+    },
+    {
+      "start": 10.0,
+      "end": 11.66,
+      "text": "허리 통증이 줄어들 것입니다.",
+      "src": "you will feel less pain in your lower back."
+    }
+  ],
+  "steps": [],
+  "hook": "",
+  "title": "",
+  "credit": "영상: @drrodpt"
+}
