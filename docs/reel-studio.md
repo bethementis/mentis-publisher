@@ -1,7 +1,7 @@
 # 릴스 만들기 (업로드 툴 '릴스 만들기' 탭)
 
 원본 영상 → 9:16(1080×1920) 맞추기 · 맨티스 로고 · 한국어 자막 · 원작자 크레딧 → 완성본(`reel.mp4`, 95MB 이하)을 바로 예약.
-비용 0원 (GitHub Actions + Whisper 받아쓰기 + DeepL 무료 번역 월 50만 자).
+비용 0원 (GitHub Actions + Whisper 받아쓰기 + DeepL 무료 Developer 플랜: 처음 한 번 100만 자, 릴스 약 2,000개 분량).
 
 **권리가 있는 영상만** 넣는다: 직접 촬영, 상업 이용 되는 무료 스톡, 원작자에게 허락받은 영상.
 남의 릴스를 주소로 내려받는 기능은 일부러 넣지 않았다.
@@ -30,7 +30,7 @@
 - 저장소가 공개라서 처리 중인 원본은 잠시 공개 상태다. 예약하면 지워지지만 git 기록에는 남는다.
 
 ## 처음 한 번 (성현님이 직접)
-1. **DeepL 키**: deepl.com → API → **DeepL API Free** 가입 → 계정의 API 키 복사 (끝이 `:fx`)
+1. **DeepL 키**: deepl.com → 가격 → API → **Developer (무료 회원가입)** → 계정의 API 키 복사
    → GitHub 저장소 **Settings → Secrets and variables → Actions → New repository secret**
    → Name `DEEPL_API_KEY`, Secret 에 키. **채팅에 붙여넣지 않기.**
    (키가 없으면 번역 없이 영어 자막이 그대로 들어가고 '번역 실패' 경고가 뜬다)

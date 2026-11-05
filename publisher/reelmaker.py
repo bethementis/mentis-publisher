@@ -157,15 +157,22 @@ def translate(texts, context):
     if not key:
         raise RuntimeError("DEEPL_API_KEY 가 GitHub Secrets 에 없어요")
     import requests
-    host = "api-free.deepl.com" if key.endswith(":fx") else "api.deepl.com"
+    # 무료 키(끝이 :fx)는 api-free, 그 밖은 api. 플랜 이름이 바뀌어도 되게 안 맞으면 다른 주소로 한 번 더
+    hosts = ["api-free.deepl.com", "api.deepl.com"]
+    if not key.endswith(":fx"):
+        hosts.reverse()
     out = []
     for i in range(0, len(texts), 50):
-        r = requests.post(f"https://{host}/v2/translate", timeout=60,
-                          headers={"Authorization": f"DeepL-Auth-Key {key}"},
-                          json={"text": texts[i:i + 50], "source_lang": "EN", "target_lang": "KO",
-                                "context": context[:4000]})
+        for host in hosts:
+            r = requests.post(f"https://{host}/v2/translate", timeout=60,
+                              headers={"Authorization": f"DeepL-Auth-Key {key}"},
+                              json={"text": texts[i:i + 50], "source_lang": "EN", "target_lang": "KO",
+                                    "context": context[:4000]})
+            if r.status_code not in (401, 403):
+                hosts = [host]
+                break
         if r.status_code == 456:
-            raise RuntimeError("DeepL 무료 한도(한 달 50만 자)를 다 썼어요")
+            raise RuntimeError("DeepL 무료 글자 수를 다 썼어요")
         if r.status_code in (401, 403):
             raise RuntimeError("DeepL 키가 맞지 않아요. GitHub Secrets 의 DEEPL_API_KEY 를 확인해 주세요")
         r.raise_for_status()
