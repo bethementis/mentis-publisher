@@ -129,8 +129,13 @@ def transcribe(audio_src, lang):
     from faster_whisper import WhisperModel   # Actions 에서만 설치 (자막 만들기 단계)
     name = CONF.get("whisper_model", {}).get(lang, "small")
     log(f"받아쓰기: Whisper {name} ({lang})")
+    import wave
+    import numpy as np
+    # ffmpeg 로 만든 16kHz 모노 wav 를 직접 읽어 넘긴다 (faster-whisper 의 PyAV 읽기는 버전에 따라 깨짐)
+    with wave.open(str(audio_src)) as f:
+        audio = np.frombuffer(f.readframes(f.getnframes()), np.int16).astype(np.float32) / 32768
     model = WhisperModel(name, device="cpu", compute_type="int8")
-    segs, _ = model.transcribe(str(audio_src), language=lang, word_timestamps=True, vad_filter=True)
+    segs, _ = model.transcribe(audio, language=lang, word_timestamps=True, vad_filter=True)
     words = [w for s in segs for w in (s.words or [])]
     out = chunk_words(words, 42 if lang == "en" else 28)
     # 화면이 너무 빨리 바뀌지 않게: 다음 자막 직전까지 이어서 보여준다 (최대 0.6초)
