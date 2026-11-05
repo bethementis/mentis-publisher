@@ -21,6 +21,9 @@
   const REEL = "reel.mp4";
   const REEL_MAX_MB = 95;    // GitHub 파일 한도 100MB
   let month = new Date(); month.setDate(1);
+  let jobs = [];             // 릴스 만들기 작업 폴더들 (studio/이름/)
+  let musicTracks = [];      // assets/music/*.mp3
+  let fromStudio = null;     // 릴스 만들기에서 넘어온 작업 (예약하면 작업 폴더를 지움)
 
   // ---------- 공통 ----------
   const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -100,9 +103,18 @@
     const ref = await gh(`/repos/${CFG.repo}/git/ref/heads/${CFG.branch}`);
     headSha = ref.object.sha;
     const tree = await gh(`/repos/${CFG.repo}/git/trees/${headSha}?recursive=1`);
-    const byFolder = new Map();
+    const byFolder = new Map(), byJob = new Map();
+    musicTracks = [];
     for (const e of tree.tree) {
       if (e.type !== "blob") continue;
+      const mm = e.path.match(/^assets\/music\/([^/]+\.mp3)$/i);
+      if (mm) musicTracks.push(mm[1]);
+      const sj = e.path.match(/^studio\/([^/]+)\/([^/]+)$/);
+      if (sj) {
+        if (!byJob.has(sj[1])) byJob.set(sj[1], { folder: `studio/${sj[1]}`, name: sj[1], files: {} });
+        byJob.get(sj[1]).files[sj[2]] = e.sha;
+        continue;
+      }
       const m = e.path.match(/^(queue|published)\/([^/]+)\/(.+)$/);
       if (!m) continue;
       const key = `${m[1]}/${m[2]}`;
@@ -113,8 +125,10 @@
       byFolder.get(key).files[m[3]] = e.sha;
     }
     posts = [...byFolder.values()];
+    jobs = [...byJob.values()].sort((a, b) => natural(a.name, b.name));
     renderSchedule();
     renderResults();
+    window.MENTIS_STUDIO?.refresh();
   }
 
   function cardFiles(post, sub = "") {
@@ -323,7 +337,7 @@
   }
 
   function resetEditor(date) {
-    editing = null; cards = []; zhCards = []; reel = null;
+    editing = null; cards = []; zhCards = []; reel = null; fromStudio = null;
     $("editTitle").textContent = "새 게시물";
     $("cancelEdit").hidden = true; $("deletePost").hidden = true;
     $("save").textContent = "예약하기";
@@ -429,6 +443,8 @@
     if (editing?.files["result.json"]) put(`${folder}/result.json`, { sha: editing.files["result.json"] });
 
     const changes = [...want.values()];
+    // 릴스 만들기 작업은 예약하면 원본째 지운다 (완성본은 위에서 queue/ 로 옮김)
+    if (fromStudio) for (const f of Object.keys(fromStudio.files)) changes.push({ path: `${fromStudio.folder}/${f}`, sha: null });
     // 기존 폴더에서 이제 필요 없는 파일 지우기 (_jpg 변환본도 순서가 바뀌었을 수 있어서 지움)
     if (editing) {
       for (const f of Object.keys(editing.files)) {
@@ -586,7 +602,27 @@
     document.querySelectorAll(".tabs button").forEach((b) => b.classList.toggle("on", b.dataset.tab === name));
     document.querySelectorAll(".tab").forEach((t) => (t.hidden = t.id !== `tab-${name}`));
     if (name === "tools") loadRuns();
+    if (name === "studio") window.MENTIS_STUDIO?.refresh();
   }
+
+  // 릴스 만들기 → 완성본을 새 게시물(릴스) 화면에 채워서 예약으로 넘긴다
+  function scheduleFromStudio(job, { slug, caption }) {
+    resetEditor();
+    setFormat("reel");
+    setReel(rawUrl(`${job.folder}/${REEL}`), { sha: job.files[REEL] });
+    $("slug").value = slug; $("caption").value = caption;
+    fromStudio = job;
+    $("editTitle").textContent = `새 게시물 (릴스 만들기: ${job.name})`;
+    $("cancelEdit").hidden = false;
+    showTab("new");
+    window.scrollTo(0, 0);
+  }
+
+  // studio.js(릴스 만들기 탭)가 쓰는 공통 기능
+  window.MENTIS_APP = {
+    gh, commit, readJson, rawUrl, esc, toast, setMsg, slugify, showTab, loadRepo, scheduleFromStudio,
+    jobs: () => jobs, musicTracks: () => musicTracks,
+  };
 
   // ---------- 연결 ----------
   document.querySelectorAll(".tabs button").forEach((b) => (b.onclick = () => showTab(b.dataset.tab)));

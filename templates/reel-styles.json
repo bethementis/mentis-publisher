@@ -1,0 +1,110 @@
+{
+  "_설명": "릴스 만들기 스타일 설정. 숫자는 1080x1920 화면 기준 px, y 는 글자 덩어리의 가운데. 색은 #RRGGBB 또는 #RRGGBBAA(뒤 2자리 = 투명도).",
+  "common": {
+    "logo": {
+      "file": "assets/logo.png",
+      "width": 220,
+      "y": 290,
+      "opacity": 0.9,
+      "fallback_text": "Mentis",
+      "fallback_size": 78
+    },
+    "corner": {
+      "y": 375,
+      "size": 34,
+      "color": "#FFFFFFCC"
+    },
+    "credit": {
+      "size": 36,
+      "color": "#E6E6E6",
+      "stroke": 3,
+      "prefix": "영상: ",
+      "suffix": ""
+    },
+    "highlight": "#FFD24A",
+    "max_width": 900,
+    "max_mb": 95
+  },
+  "styles": {
+    "overseas": {
+      "label": "해외 소스 · 세르칸 스타일",
+      "lang": "en",
+      "audio": "original",
+      "credit_required": true,
+      "hook": {
+        "y": 520,
+        "size": 76,
+        "color": "#FFFFFF",
+        "stroke": 7,
+        "max_lines": 2
+      },
+      "subtitle": {
+        "y": 1190,
+        "size": 64,
+        "color": "#FFFFFF",
+        "stroke": 6,
+        "max_lines": 2
+      },
+      "band": {
+        "y": 1190,
+        "height": 300,
+        "color": "#000000D9"
+      },
+      "credit_y": 1365,
+      "music": "none"
+    },
+    "format": {
+      "label": "B 포맷",
+      "lang": "none",
+      "audio": "mute",
+      "credit_required": false,
+      "title": {
+        "y": 520,
+        "size": 62,
+        "color": "#111111",
+        "box": "#FFFFFFF2",
+        "pad": 22,
+        "max_lines": 2
+      },
+      "step": {
+        "y": 1120,
+        "size": 70,
+        "color": "#FFFFFF",
+        "stroke": 7,
+        "max_lines": 2
+      },
+      "subtitle": {
+        "y": 1330,
+        "size": 50,
+        "color": "#FFFFFF",
+        "stroke": 5,
+        "max_lines": 2
+      },
+      "credit_y": 1440,
+      "music": "random"
+    },
+    "shoot": {
+      "label": "C 촬영용",
+      "lang": "ko",
+      "audio": "original",
+      "credit_required": false,
+      "subtitle": {
+        "y": 1190,
+        "size": 64,
+        "color": "#FFFFFF",
+        "stroke": 6,
+        "max_lines": 2
+      },
+      "credit_y": 1365,
+      "music": "none"
+    }
+  },
+  "music_volume": {
+    "alone": 0.6,
+    "under_voice": 0.12
+  },
+  "whisper_model": {
+    "en": "small",
+    "ko": "medium"
+  }
+}

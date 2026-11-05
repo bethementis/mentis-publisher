@@ -36,11 +36,13 @@ publisher/
   refresh_tokens.py # 쓰레드(+IG_INSIGHTS_TOKEN 이 IGAA면) 토큰 주간 연장
   metrics.py        # 전략비서 숫자 수집 collect / 권한 점검 probe
   checks.py         # 전략비서 저녁 점검 (문제 있을 때만 알림 재료)
+  reelmaker.py      # 릴스 만들기: subs(Whisper+DeepL→subs.json) / render(9:16·로고·자막·크레딧→reel.mp4) → docs/reel-studio.md
 .github/workflows/
   publish.yml        # 매일 UTC 10:00 (~19:00 KST) + 0~25분 랜덤 지연. 수동: check/preview/publish
   refresh-tokens.yml # 매주 월
   tiktok-auth.yml    # 최초 연결용 (scope 추가 시 재인증에도 사용)
   metrics.yml        # 06:00 collect, 21:20 check (KST)
+  reel-studio.yml    # 업로드 툴 '릴스 만들기'가 실행 (job, step=subs|render). DEEPL_API_KEY
 queue/               # 발행 대기. 폴더 1개 = 게시물 1개. 이름 앞 YYYY-MM-DD 면 그날 발행
 published/           # 발행 완료 + result.json (플랫폼별 링크/ID)
 outbox/              # 어사이드가 가져가는 파일 (naver/short.mp4, xhs/중국어 카드) + index.json, 14일 후 삭제
@@ -50,6 +52,8 @@ uploader/               # 업로드 툴 웹페이지 (GitHub Pages, 빌드 없�
 worker/                 # 업로드 툴 로그인 중계 (Cloudflare Worker, GitHub App OAuth code→토큰 교환만)
 docs/uploader-setup.md  # 업로드 툴 최초 설정 순서 (사용자가 직접)
 templates/post.json     # 게시물 설정 양식
+templates/reel-styles.json  # 릴스 만들기 스타일 3개 (해외 소스·세르칸 / B 포맷 / C 촬영용) 위치·크기·색
+studio/                 # 릴스 만들기 작업 폴더 (원본·자막·완성본). 예약하면 queue/ 로 옮기고 지움
 ```
 
 ### 게시물 폴더 형식

@@ -1,0 +1,71 @@
+name: 맨티스 릴스 만들기
+
+# 업로드 툴 '릴스 만들기' 탭이 실행한다. studio/작업이름/ 을 처리하고 결과를 같은 폴더에 커밋한다.
+#   subs   = 자막 만들기 (받아쓰기 + 번역) → subs.json
+#   render = 릴스 완성 → reel.mp4
+on:
+  workflow_dispatch:
+    inputs:
+      job:
+        description: "studio/ 안의 작업 폴더 이름"
+        required: true
+        type: string
+      step:
+        description: "subs = 자막 만들기 / render = 릴스 완성"
+        required: true
+        default: subs
+        type: choice
+        options: [subs, render]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: reel-studio-${{ github.event.inputs.job }}
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      JOB: ${{ github.event.inputs.job }}
+      STEP: ${{ github.event.inputs.step }}
+    steps:
+      - name: 작업 이름 확인
+        run: |
+          case "$JOB" in ""|.*|*/*|*\\*) echo "작업 이름이 이상해요"; exit 1;; esac
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -q requests pillow
+      - name: 받아쓰기 프로그램 설치 (자막 만들기 때만)
+        if: env.STEP == 'subs'
+        run: pip install -q faster-whisper
+      - name: 받아쓰기 모델 캐시
+        if: env.STEP == 'subs'
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/huggingface
+          key: whisper-${{ hashFiles('templates/reel-styles.json') }}
+          restore-keys: whisper-
+      - name: ffmpeg 설치
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg > /dev/null
+      - name: 실행
+        env:
+          DEEPL_API_KEY: ${{ secrets.DEEPL_API_KEY }}
+        run: python publisher/reelmaker.py "$STEP" "studio/$JOB"
+      - name: 결과 저장 (실패해도 상태는 저장)
+        if: always()
+        run: |
+          git config user.name mentis-bot
+          git config user.email bot@users.noreply.github.com
+          git add "studio/$JOB"
+          git diff --cached --quiet && exit 0
+          git commit -q -m "reel studio: $STEP $JOB"
+          for i in 1 2 3 4; do
+            git pull -q --rebase origin "$GITHUB_REF_NAME" && git push -q origin "HEAD:$GITHUB_REF_NAME" && exit 0
+            sleep $((i * 5))
+          done
+          exit 1

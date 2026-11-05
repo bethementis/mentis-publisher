@@ -1,0 +1,44 @@
+# 릴스 만들기 (업로드 툴 '릴스 만들기' 탭)
+
+원본 영상 → 9:16(1080×1920) 맞추기 · 맨티스 로고 · 한국어 자막 · 원작자 크레딧 → 완성본(`reel.mp4`, 95MB 이하)을 바로 예약.
+비용 0원 (GitHub Actions + Whisper 받아쓰기 + DeepL 무료 번역 월 50만 자).
+
+**권리가 있는 영상만** 넣는다: 직접 촬영, 상업 이용 되는 무료 스톡, 원작자에게 허락받은 영상.
+남의 릴스를 주소로 내려받는 기능은 일부러 넣지 않았다.
+
+## 스타일 3개 (레퍼런스 보드 그룹 기준)
+| 스타일 | 화면 | 자막 | 소리 | 크레딧 |
+|---|---|---|---|---|
+| 해외 소스 · 세르칸 (보드 A+S) | 위쪽 훅 문구 고정 + 로고 + 아래 자막 (원본 영어 자막은 검은 띠로 가리기 선택) | 영어 → 한국어 번역 | 원본 | 필수 (영상 + 캡션) |
+| B 포맷 | 위쪽 흰 제목 띠 + 장면마다 바뀌는 #1 #2 #3 단계 문구 | 직접 쓰기 (말이 있으면 받아쓰기도 가능) | 배경음 | 없음 |
+| C 촬영용 | 로고 + 자막만 | 받아쓰기 또는 직접 쓰기 | 원본 / 소리 없이 자막만 / 따로 녹음한 음성 | 없음 |
+
+- 자막의 `*별표*` 로 감싼 말은 노란색 강조.
+- 위치·크기·색은 `templates/reel-styles.json` 에서 바꾼다 (1080×1920 기준 px).
+- 로고: `assets/logo.png` (투명 배경 PNG) 가 있으면 그 이미지, 없으면 글자 'Mentis'.
+
+## 흐름
+1. 업로드 툴 → **릴스 만들기** → 스타일 · 원본 영상 · 권리 확인 · 글자 · 소리 고르기 → **자막 만들기**
+   → `studio/작업이름/` 에 원본 + `job.json` 커밋 → `reel-studio.yml` (subs) 실행, 3~8분
+2. 자막표에서 고치기 (시간·문장·강조) → **자막 저장하고 릴스 완성** → `reel-studio.yml` (render), 2~5분
+3. 완성본 확인 → **이 영상으로 예약** → 새 게시물(릴스) 화면에서 날짜·캡션 넣고 예약
+   → `queue/날짜_이름/reel.mp4` 로 옮기고 `studio/작업이름/` 은 통째로 지운다 (원본 정리)
+
+- 해외 소스는 캡션 끝에 `🎥 영상: @원작자 (원작자 허락 받고 사용)` 줄이 자동으로 들어간다.
+- 실패하거나 20분 넘게 멈추면 작업 화면에 **다시 시도** 버튼이 나온다. 원인은 GitHub → Actions → '맨티스 릴스 만들기' 로그.
+- 저녁 점검(checks.py)이 7일 넘게 남은 작업과 저장소 용량(800MB 넘으면)을 알려준다.
+- 저장소가 공개라서 처리 중인 원본은 잠시 공개 상태다. 예약하면 지워지지만 git 기록에는 남는다.
+
+## 처음 한 번 (성현님이 직접)
+1. **DeepL 키**: deepl.com → API → **DeepL API Free** 가입 → 계정의 API 키 복사 (끝이 `:fx`)
+   → GitHub 저장소 **Settings → Secrets and variables → Actions → New repository secret**
+   → Name `DEEPL_API_KEY`, Secret 에 키. **채팅에 붙여넣지 않기.**
+   (키가 없으면 번역 없이 영어 자막이 그대로 들어가고 '번역 실패' 경고가 뜬다)
+2. **로고**: 투명 배경 PNG (흰색 버전 추천)를 Claude 에게 주면 `assets/logo.png` 로 넣는다.
+3. 업로드 툴 GitHub App 에 Actions 실행 권한(Actions: Read and write)이 있어야 한다 — '지금 발행' 버튼이 되면 이미 있음.
+
+## 파일
+- `publisher/reelmaker.py` — `subs` (Whisper + DeepL → subs.json), `render` (ffmpeg → reel.mp4)
+- `.github/workflows/reel-studio.yml` — 업로드 툴이 실행 (inputs: job, step)
+- `uploader/studio.js` — 릴스 만들기 탭
+- `studio/작업이름/` — raw.mp4·voice.m4a(선택)·job.json·subs.json·status.json·reel.mp4

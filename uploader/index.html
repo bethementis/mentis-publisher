@@ -24,6 +24,7 @@
   <div id="app" hidden>
     <nav class="tabs">
       <button data-tab="new" class="on">새 게시물</button>
+      <button data-tab="studio">릴스 만들기</button>
       <button data-tab="schedule">예약 목록</button>
       <button data-tab="results">발행 결과</button>
       <button data-tab="tools">도구</button>
@@ -124,6 +125,166 @@
       </div>
     </section>
 
+    <!-- 릴스 만들기 -->
+    <section id="tab-studio" class="tab" hidden>
+      <div class="panel">
+        <div class="row between">
+          <h2>릴스 만들기</h2>
+          <button id="stNew" class="btn ghost small">새로 만들기</button>
+        </div>
+        <p class="hint">원본 영상 → 9:16 맞추기 · 맨티스 로고 · 한국어 자막 · 크레딧 → 완성본을 바로 예약해요. 권리가 있는 영상만 넣어 주세요.</p>
+        <div id="stJobs" class="list"></div>
+      </div>
+
+      <!-- 새 작업 -->
+      <div class="panel" id="stForm" style="margin-top:12px">
+        <h3 style="margin-top:0">1. 스타일</h3>
+        <div class="seg" id="stStyle">
+          <button data-style="overseas" class="on">해외 소스 · 세르칸</button>
+          <button data-style="format">B 포맷</button>
+          <button data-style="shoot">C 촬영용</button>
+        </div>
+        <p class="hint" id="stStyleHint"></p>
+
+        <h3>2. 원본 영상 <small>mp4·mov · 95MB 이하</small></h3>
+        <div id="stRawPreview"></div>
+        <label class="drop" id="stRawDrop">
+          <input type="file" id="stRawInput" accept="video/mp4,video/quicktime" hidden>
+          영상을 여기로 끌어다 놓거나 <u>눌러서 선택</u>
+        </label>
+
+        <div id="stRights">
+          <div data-for="overseas">
+            <div class="grid2">
+              <label>원작자 계정 <small>영상 안과 캡션에 들어가요</small>
+                <input type="text" id="stHandle" placeholder="@drrodpt">
+              </label>
+              <label>허락 메모 <small>언제·어디서 허락받았는지</small>
+                <input type="text" id="stPermission" placeholder="11/3 인스타 DM으로 허락받음 (캡처 보관)">
+              </label>
+            </div>
+            <label class="check"><input type="checkbox" id="stAllowed"> 원작자에게 이 영상을 맨티스에 올려도 된다는 허락을 받았어요</label>
+          </div>
+          <label class="check" data-for="format shoot"><input type="checkbox" id="stOwn"> 직접 찍었거나 상업 이용이 되는 무료 스톡 영상이에요</label>
+        </div>
+
+        <div class="grid2">
+          <label>작업 이름 <small>예약할 때 주제 이름이 돼요</small>
+            <input type="text" id="stSlug" placeholder="예: 거북목-12초">
+          </label>
+          <label>코너 <small>로고 아래 작게</small>
+            <select id="stCorner">
+              <option value="">없음</option>
+              <option>Hair Lab</option><option>Skin Note</option><option>Body</option><option>Style</option><option>Routine</option>
+            </select>
+          </label>
+        </div>
+
+        <h3>3. 글자</h3>
+        <label data-for="overseas">훅 문구 <small>위쪽에 영상 내내 · <code>*강조*</code> 는 노란색</small>
+          <input type="text" id="stHook" placeholder="거북목, *12초*면 펴져요">
+        </label>
+        <label class="check" data-for="overseas"><input type="checkbox" id="stBand"> 원본에 영어 자막이 있어요 (한국어 자막 뒤에 검은 띠로 가리기)</label>
+        <label data-for="format">제목 <small>위쪽 흰 띠</small>
+          <input type="text" id="stTitle" placeholder="의사가 고른 올리브영 TOP3">
+        </label>
+        <label data-for="format">단계 문구 <small>한 줄에 하나 · 영상 길이에 맞춰 나눠요 (시간은 다음 화면에서 고칠 수 있어요)</small>
+          <textarea id="stSteps" rows="4" placeholder="#1 *라로슈포제* 시카플라스트&#10;#2 토리든 다이브인 세럼&#10;#3 아누아 어성초 토너"></textarea>
+        </label>
+
+        <h3>4. 소리 · 자막</h3>
+        <div class="grid2">
+          <label>소리
+            <select id="stAudio">
+              <option value="original">원본 소리 그대로</option>
+              <option value="mute">소리 없이 (자막만)</option>
+              <option value="voice">따로 녹음한 음성 파일</option>
+            </select>
+          </label>
+          <label>배경음
+            <select id="stMusic"></select>
+          </label>
+        </div>
+        <div id="stVoiceBox">
+          <div id="stVoicePreview"></div>
+          <label class="drop small" id="stVoiceDrop">
+            <input type="file" id="stVoiceInput" accept="audio/*,.m4a,.mp3,.wav,.aac" hidden>
+            음성 파일(m4a·mp3·wav)을 끌어다 놓거나 <u>눌러서 선택</u>
+          </label>
+        </div>
+        <div class="grid2">
+          <label>자막 만드는 방법
+            <select id="stLang">
+              <option value="en">영어 말 → 한국어 번역</option>
+              <option value="ko">한국어 말 받아쓰기</option>
+              <option value="none">직접 쓰기</option>
+            </select>
+          </label>
+          <label>세로(9:16) 맞추기
+            <select id="stFit">
+              <option value="auto">자동</option>
+              <option value="crop">꽉 채우기 (양옆 잘림)</option>
+              <option value="blur">흐린 배경 깔기 (안 잘림)</option>
+            </select>
+          </label>
+        </div>
+        <label id="stLinesBox">자막 직접 쓰기 <small>한 줄 = 한 화면 · 영상 길이에 맞춰 나눠요</small>
+          <textarea id="stLines" rows="5" placeholder="아침 루틴 3분이면 끝나요&#10;세안은 *미지근한 물*로"></textarea>
+        </label>
+        <p id="stWarn" class="warn"></p>
+
+        <div class="row end">
+          <button id="stStart" class="btn primary">자막 만들기</button>
+        </div>
+        <p id="stMsg" class="msg"></p>
+      </div>
+
+      <!-- 작업 열기 -->
+      <div class="panel" id="stJob" style="margin-top:12px" hidden>
+        <div class="row between">
+          <h2 id="stJobTitle"></h2>
+          <span><button id="stRetry" class="btn small" hidden>다시 시도</button>
+          <button id="stDelete" class="btn danger small">작업 삭제</button></span>
+        </div>
+        <p id="stState" class="msg"></p>
+        <div id="stEdit" hidden>
+          <div class="studio">
+            <div class="stage" id="stStage">
+              <video id="stVideo" controls playsinline></video>
+              <div class="ov hook" id="ovHook"></div>
+              <div class="ov sub" id="ovSub"></div>
+              <div class="ov step" id="ovStep"></div>
+              <div class="ov credit" id="ovCredit"></div>
+            </div>
+            <div class="stagehint hint">대략 미리보기예요. 정확한 모양은 '릴스 완성' 후 확인해요.</div>
+          </div>
+          <label data-for="overseas">훅 문구 <input type="text" id="edHook"></label>
+          <label data-for="format">제목 <input type="text" id="edTitle"></label>
+          <label data-for="overseas">크레딧 <input type="text" id="edCredit"></label>
+          <h3>자막 <small>시간(초) · <code>*강조*</code> 는 노란색 · 줄바꿈은 그대로 반영</small></h3>
+          <div id="edSegs" class="subs"></div>
+          <button class="btn ghost small" id="edAddSeg">+ 자막 추가</button>
+          <div data-for="format">
+            <h3>단계 문구</h3>
+            <div id="edSteps" class="subs"></div>
+            <button class="btn ghost small" id="edAddStep">+ 단계 추가</button>
+          </div>
+          <div class="row end">
+            <button id="edRender" class="btn primary">자막 저장하고 릴스 완성</button>
+          </div>
+        </div>
+        <div id="stDone" hidden>
+          <h3>완성본</h3>
+          <div class="reel"><video id="stReel" controls playsinline></video><div class="meta" id="stReelMeta"></div></div>
+          <div class="row end">
+            <button id="stReedit" class="btn ghost">자막 다시 고치기</button>
+            <button id="stSchedule" class="btn primary">이 영상으로 예약</button>
+          </div>
+        </div>
+        <p id="stJobMsg" class="msg"></p>
+      </div>
+    </section>
+
     <!-- 예약 목록 -->
     <section id="tab-schedule" class="tab" hidden>
       <div class="panel">
@@ -170,5 +331,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.2/Sortable.min.js"></script>
 <script src="config.js"></script>
 <script src="app.js"></script>
+<script src="studio.js"></script>
 </body>
 </html>

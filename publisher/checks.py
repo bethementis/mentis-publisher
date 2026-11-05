@@ -194,6 +194,22 @@ def check_upcoming(today):
                 add("warn", "예약 게시물", f"{d.name}: 샤오홍슈 제목이 20자를 넘어서 잘려요.")
 
 
+def check_studio(today):
+    """릴스 만들기: 오래 남은 작업 폴더(원본 영상이 저장소에 쌓임) + 저장소 용량."""
+    studio = PB.ROOT / "studio"
+    for d in sorted(p for p in studio.iterdir() if p.is_dir()) if studio.exists() else []:
+        st = json.loads((d / "status.json").read_text(encoding="utf-8")) if (d / "status.json").exists() else {}
+        at = str(st.get("at", ""))[:10]
+        if at and (today - dt.date.fromisoformat(at)).days >= 7:
+            add("warn", "릴스 만들기", f"'{d.name}' 작업이 {at} 이후 그대로예요. 예약하거나 지워 주세요 (원본 영상이 저장소 용량을 차지해요).")
+    try:
+        kb = requests.get(f"https://api.github.com/repos/{REPO}", timeout=30).json().get("size", 0)
+        if kb > 800 * 1024:
+            add("warn", "저장소", f"저장소가 {kb / 1024 / 1024:.1f}GB 예요. 1GB 를 넘으면 GitHub 가 정리를 요청할 수 있어요. Claude 에게 정리 방법을 물어보세요.")
+    except Exception:  # noqa: BLE001
+        pass
+
+
 def main():
     now = dt.datetime.now(KST)
     today = now.date()
@@ -205,6 +221,7 @@ def main():
     check_tokens()
     check_upcoming(today)
     check_aside(today)
+    check_studio(today)
 
     result = {"date": today.isoformat(), "checked_at": now.isoformat(timespec="seconds"),
               "status": "문제 있음" if any(p["level"] == "problem" for p in problems) else
