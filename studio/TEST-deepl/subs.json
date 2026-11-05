@@ -1,0 +1,27 @@
+{
+  "duration": 14.07,
+  "segments": [
+    {
+      "start": 0.0,
+      "end": 3.62,
+      "text": "필요한 건 화장지 한 롤뿐입니다,",
+      "src": "All you need is a roll of toilet paper,"
+    },
+    {
+      "start": 3.74,
+      "end": 7.32,
+      "text": "적어두고 그 위에 음식을 올려두세요.",
+      "src": "write down and rest your food on it."
+    },
+    {
+      "start": 7.64,
+      "end": 10.66,
+      "text": "이제 턱을 천천히 뒤로 당기면서 12초 동안 유지하세요.",
+      "src": "Now slowly pull your chin back for 12 seconds."
+    }
+  ],
+  "steps": [],
+  "hook": "거북목, *12초*면 펴져요",
+  "title": "",
+  "credit": "영상: @test"
+}
