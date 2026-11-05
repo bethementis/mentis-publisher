@@ -121,6 +121,14 @@ def chunk_words(words, max_chars, max_sec=3.6):
             chunks.append(cur); cur = []
     if cur:
         chunks.append(cur)
+    # "seconds." 처럼 한두 단어만 떨어진 조각은 앞 자막에 붙인다
+    merged = []
+    for c in chunks:
+        if merged and len("".join(x.word for x in c).strip()) < 12 and not re.search(r"[.?!。？！]$", merged[-1][-1].word.strip()):
+            merged[-1] = merged[-1] + c
+        else:
+            merged.append(c)
+    chunks = merged
     return [{"start": round(c[0].start, 2), "end": round(c[-1].end, 2),
              "text": "".join(x.word for x in c).strip()} for c in chunks]
 
