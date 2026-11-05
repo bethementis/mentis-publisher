@@ -1,6 +1,9 @@
 {
   "step": "subs",
-  "state": "error",
-  "at": "2026-11-05T17:17:20+09:00",
-  "error": "open() got an unexpected keyword argument 'metadata_errors'"
+  "state": "done",
+  "at": "2026-11-05T17:18:56+09:00",
+  "segments": 4,
+  "warnings": [
+    "번역 실패: DEEPL_API_KEY 가 GitHub Secrets 에 없어요. 영어 원문을 그대로 넣었어요."
+  ]
 }
