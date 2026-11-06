@@ -1,1 +1,6 @@
-{"step":"subs","state":"queued","at":"2026-11-06T20:24:50+09:00"}
+{
+  "step": "subs",
+  "state": "error",
+  "at": "2026-11-06T20:58:07+09:00",
+  "error": "'credit'"
+}
