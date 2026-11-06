@@ -1,6 +1,7 @@
 {
   "step": "subs",
-  "state": "error",
-  "at": "2026-11-06T21:00:10+09:00",
-  "error": "'credit'"
+  "state": "done",
+  "at": "2026-11-06T21:07:33+09:00",
+  "segments": 20,
+  "warnings": []
 }
