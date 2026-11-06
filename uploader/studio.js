@@ -216,11 +216,13 @@
       $("stReelMeta").innerHTML = `${s.seconds}초 · ${s.mb}MB${s.music ? `<br>배경음: ${esc(s.music)}` : ""}`;
     }
     if (!$("stEdit").hidden && (!quiet || wasHidden)) renderEditor();
+    if (!running && subs) window.MENTIS_THUMB?.open(j, jobData, subs);
     if (!quiet) $("stJob").scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
   function closeJob() {
     job = null; $("stJob").hidden = true; $("stForm").hidden = false;
+    window.MENTIS_THUMB?.close();
   }
 
   // ---------- 자막 고치기 ----------

@@ -228,3 +228,17 @@ summary { cursor: pointer; font-weight: 600; }
   #stEdit .studio { float: right; width: 290px; margin: 0 0 12px 16px; position: sticky; top: 8px; }
 }
 #stEdit::after { content: ""; display: block; clear: both; }
+
+/* 썸네일 */
+.thumbwrap { display: flex; gap: 16px; align-items: flex-start; flex-wrap: wrap; }
+#thCanvas { width: 270px; max-width: 100%; aspect-ratio: 9 / 16; border-radius: 10px; background: #000; position: sticky; top: 8px; }
+.thumbside { flex: 1; min-width: 260px; }
+.thumbside h3:first-child { margin-top: 0; }
+.picks, .designs, .suggest { display: flex; flex-wrap: wrap; gap: 8px; }
+.pick, .design { border: 2px solid var(--line); border-radius: 8px; padding: 0; background: var(--bg); cursor: pointer; overflow: hidden; color: var(--text); font: inherit; }
+.pick img { display: block; width: 72px; aspect-ratio: 9 / 16; object-fit: cover; }
+.pick span, .design span { display: block; font-size: 11px; padding: 2px 4px; color: var(--muted); }
+.design canvas { display: block; width: 72px; aspect-ratio: 9 / 16; }
+.pick.on, .design.on { border-color: var(--accent); }
+.chip-btn { border: 1px solid var(--line); background: var(--chip); color: var(--text); border-radius: 99px; padding: 6px 12px; font: inherit; font-size: 13px; cursor: pointer; text-align: left; }
+#thResuggest { margin-top: 6px; }

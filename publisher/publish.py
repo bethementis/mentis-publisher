@@ -93,6 +93,8 @@ def card_images(folder):
 
 def size_warnings(folder):
     """인스타 피드 권장 비율(4:5, 1080x1350)과 다른 카드를 찾아 경고 문구로 돌려준다."""
+    if reel_video(folder):   # 릴스의 cover.jpg(9:16 썸네일)는 카드가 아님
+        return []
     out = []
     for p in card_images(folder):
         with Image.open(p) as im:
@@ -202,6 +204,8 @@ def build_outbox(folder, post, get_video):
         title, body, tags = youtube_meta(post)
         d = out / "naver"; d.mkdir(exist_ok=True)
         shutil.copy(get_video()["path"], d / "short.mp4")
+        if (folder / "cover.jpg").exists():   # 릴스 썸네일 → 네이버 클립 표지로 쓸 수 있게
+            shutil.copy(folder / "cover.jpg", d / "cover.jpg")
         (d / "upload.json").write_text(json.dumps({
             "title": (nv.get("title") or title)[:40],
             "body": nv.get("body") or body,
@@ -217,6 +221,8 @@ def build_outbox(folder, post, get_video):
         else:
             d = out / "xhs"; d.mkdir(exist_ok=True)
             shutil.copy(reel, d / "video.mp4")
+            if (folder / "cover.jpg").exists():
+                shutil.copy(folder / "cover.jpg", d / "cover.jpg")
             tags = x.get("tags") or []
             body = x["body"].rstrip() + ("\n\n" + " ".join("#" + t.lstrip("#") for t in tags) if tags else "")
             (d / "upload.json").write_text(json.dumps({
@@ -299,7 +305,9 @@ def cmd_publish():
     if "instagram" in post["platforms"] and not result.get("instagram", {}).get("ok"):
         try:
             if reel:
-                r = P.ig_publish_reel(os.environ["IG_ACCESS_TOKEN"], reel, post.get("caption", ""))
+                cover = folder / "cover.jpg"   # 릴스 만들기에서 만든 썸네일
+                r = P.ig_publish_reel(os.environ["IG_ACCESS_TOKEN"], reel, post.get("caption", ""),
+                                      cover_url=raw_url(cover) if cover.exists() else None)
             else:
                 r = P.ig_publish_carousel(os.environ["IG_ACCESS_TOKEN"], urls, post.get("caption", ""))
             result["instagram"] = {"ok": True, **r}

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>맨티스 업로드</title>
-<link rel="stylesheet" href="style.css?v=20261106b">
+<link rel="stylesheet" href="style.css?v=20261106d">
 <!-- 릴스 만들기 미리보기용 글꼴 (영상에는 assets/fonts 의 같은 글꼴이 들어감) -->
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Do+Hyeon&family=Jua&family=Nanum+Myeongjo:wght@800&display=swap">
@@ -328,6 +328,44 @@
         </div>
         <p id="stJobMsg" class="msg"></p>
       </div>
+
+      <!-- 썸네일 -->
+      <div class="panel" id="stThumb" style="margin-top:12px" hidden>
+        <h2>썸네일 <small>인스타 릴스 커버 · 1080×1920 · 프로필 격자에서는 가운데 부분만 보여요</small></h2>
+        <video id="thVideo" hidden playsinline></video>
+        <div class="thumbwrap">
+          <canvas id="thCanvas" width="540" height="960"></canvas>
+          <div class="thumbside">
+            <h3>1. 장면 <small>추천 3개 · 또는 막대로 직접</small></h3>
+            <div id="thPicks" class="picks"></div>
+            <label>직접 고르기 <span class="val" id="thTimeV"></span><input type="range" id="thTime" min="0" max="1" step="0.1"></label>
+
+            <h3>2. 멘트 <small>추천을 누르면 아래 칸에 들어가요 · 직접 고쳐도 돼요</small></h3>
+            <div id="thSuggest" class="suggest"></div>
+            <button class="btn ghost small" id="thResuggest">자막 기준으로 다시 추천</button>
+            <label>썸네일 멘트 <small>Enter 로 줄바꿈 · <code>*강조*</code></small>
+              <textarea id="thText" rows="3"></textarea>
+            </label>
+
+            <h3>3. 디자인</h3>
+            <div id="thDesigns" class="designs"></div>
+            <div class="styler">
+              <label>글자 크기 <span class="val" id="thSizeV"></span><input type="range" id="thSize" min="60" max="150" step="5"></label>
+              <label>글자 위치 (위 ↔ 아래) <span class="val" id="thOffsetV"></span><input type="range" id="thOffset" min="-500" max="300" step="10"></label>
+              <label>사진 어둡게 <span class="val" id="thDimV"></span><input type="range" id="thDim" min="0" max="70" step="5"></label>
+              <label>MENTIS 위치
+                <select id="thLogo"><option value="auto">디자인 기본</option><option value="top">위</option><option value="bottom">아래</option><option value="none">넣지 않기</option></select>
+              </label>
+            </div>
+            <div class="row end">
+              <button class="btn ghost" id="thDownload">내려받기</button>
+              <button class="btn primary" id="thSave">썸네일 저장</button>
+            </div>
+            <p id="thSaved" class="hint"></p>
+            <p id="thMsg" class="msg"></p>
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- 예약 목록 -->
@@ -375,7 +413,8 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.2/Sortable.min.js"></script>
 <script src="config.js"></script>
-<script src="app.js?v=20261106b"></script>
-<script src="studio.js?v=20261106b"></script>
+<script src="app.js?v=20261106d"></script>
+<script src="studio.js?v=20261106d"></script>
+<script src="thumb.js?v=20261106d"></script>
 </body>
 </html>

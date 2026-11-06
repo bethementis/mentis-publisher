@@ -83,14 +83,17 @@ def ig_publish_carousel(token, image_urls, caption):
     return _ig_publish(IG, uid, creation_id, token)
 
 
-def ig_publish_reel(token, video_path, caption):
-    """릴스: 영상 파일을 메타 서버로 직접 올린다(resumable 업로드). 피드에도 같이 보이게 share_to_feed."""
+def ig_publish_reel(token, video_path, caption, cover_url=None):
+    """릴스: 영상 파일을 메타 서버로 직접 올린다(resumable 업로드). 피드에도 같이 보이게 share_to_feed.
+    cover_url 이 있으면 그 이미지(공개 JPEG 주소)를 릴스 커버로 쓴다."""
     token = token.strip()
     IG = _ig_base(token)
     uid = ig_me(token)["user_id"]
-    c = _check(requests.post(f"{IG}/{uid}/media", data={
-        "media_type": "REELS", "upload_type": "resumable", "caption": caption,
-        "share_to_feed": "true", "access_token": token}, timeout=TIMEOUT))
+    data = {"media_type": "REELS", "upload_type": "resumable", "caption": caption,
+            "share_to_feed": "true", "access_token": token}
+    if cover_url:
+        data["cover_url"] = cover_url
+    c = _check(requests.post(f"{IG}/{uid}/media", data=data, timeout=TIMEOUT))
     size = os.path.getsize(video_path)
     with open(video_path, "rb") as f:
         r = requests.post(c["uri"], data=f, timeout=600, headers={

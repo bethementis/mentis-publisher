@@ -434,6 +434,9 @@
     const put = (path, c) => want.set(path, { path, ...c });
     if (format === "reel") {
       put(`${folder}/${REEL}`, reel.file ? { file: reel.file } : { sha: reel.sha });
+      // 릴스 만들기에서 만든 썸네일(인스타 릴스 커버)도 같이
+      const cover = fromStudio?.files["cover.jpg"] || editing?.files["cover.jpg"];
+      if (cover) put(`${folder}/cover.jpg`, { sha: cover });
     } else {
       cards.forEach((c, i) => put(`${folder}/${i === 0 ? "00_cover" : pad(i)}.${c.ext}`, c.file ? { file: c.file } : { sha: c.sha }));
       zhCards.forEach((c, i) => put(`${folder}/zh/${i === 0 ? "00_cover" : pad(i)}.${c.ext}`, c.file ? { file: c.file } : { sha: c.sha }));
