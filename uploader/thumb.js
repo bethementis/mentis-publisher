@@ -6,15 +6,25 @@
   const $ = (id) => document.getElementById(id);
   const esc = A.esc;
   const W = 1080, H = 1920;
-  const HL = { magazine: "#E9C46A", bold: "#FFD24A", box: "#2B3A8C", minimal: "#FFD24A" };
   const DESIGNS = {
     magazine: "매거진", bold: "볼드", box: "박스", minimal: "미니멀",
   };
+  // 디자인별 기본 글자 (글꼴 키는 templates/reel-styles.json 의 fonts). 사용자가 바꾼 값(opt.text)이 위에 덮인다
+  const TEXT_DEF = {
+    magazine: { font: "myeongjo", color: "#FFFFFF", hl: "#E9C46A", stroke: 0, strokeColor: "#000000" },
+    bold: { font: "blackhansans", color: "#FFFFFF", hl: "#FFD24A", stroke: 18, strokeColor: "#000000" },
+    box: { font: "pretendard-xb", color: "#111111", hl: "#2B3A8C", stroke: 0, strokeColor: "#000000" },
+    minimal: { font: "pretendard-xb", color: "#FFFFFF", hl: "#FFD24A", stroke: 0, strokeColor: "#000000" },
+  };
+  // 로고 버전별 크기 비율 (MENTIS 글자 기준). 심볼이 들어가면 세로가 길어서 작게
+  const LOGO_SCALE = { text: 1, both: 0.55, symbol: 0.3 };
+  const OPT_DEF = { size: 100, offset: 0, dim: 25, logo: "auto", text: {}, logoVariant: "text", logoColor: "#FFFFFF", logoSize: 100 };
 
   let job = null, jobData = null, subs = null;
   let frameT = 0, picks = [], lines = [], design = "magazine";
-  let opt = { size: 100, offset: 0, dim: 25, logo: "auto" };
-  let logoImg = null;
+  let opt = structuredClone(OPT_DEF);
+  let conf = null, presets = {};
+  const logoImgs = {};
   const frame = document.createElement("canvas"); frame.width = W; frame.height = H;   // 고른 장면 (9:16)
 
   // ---------- 열기 ----------
@@ -27,18 +37,29 @@
     if (!rawFile) return;
     if (same) return;
     const saved = j.files["thumb.json"] ? await A.readJson(j, "thumb.json").catch(() => null) : null;
-    design = saved?.design || "magazine";
-    opt = { size: 100, offset: 0, dim: 25, logo: "auto", ...(saved?.opt || {}) };
+    if (!conf) {
+      const get = (p) => fetch(A.rawUrl(p), { cache: "no-store" }).then((r) => (r.ok ? r.json() : null)).catch(() => null);
+      [conf, presets] = await Promise.all([get("templates/reel-styles.json"), get("templates/reel-presets.json")]);
+      presets ||= {};
+      $("thFont").innerHTML = `<option value="">디자인 기본</option>` + Object.entries(conf.fonts).map(([k, f]) =>
+        `<option value="${k}" style="font-family:'${f.css}';font-weight:${f.weight}">${esc(f.label)}</option>`).join("");
+      $("thLogoV").innerHTML = Object.entries(conf.common.logo.variants).map(([k, v]) => `<button data-v="${k}">${esc(v.label)}</button>`).join("");
+      $("thLogoV").querySelectorAll("button").forEach((b) => (b.onclick = () => { opt.logoVariant = b.dataset.v; syncControls(); }));
+    }
+    // 이 작업에서 저장한 썸네일 설정 → 없으면 '기본값으로 저장'한 설정 → 없으면 처음 기본
+    const preset = presets[jobData.style || "shoot"]?.thumb;
+    design = saved?.design || preset?.design || "magazine";
+    opt = { ...structuredClone(OPT_DEF), ...structuredClone(preset?.opt || {}), ...(saved?.opt || {}) };
     lines = suggest();
     $("thText").value = saved?.text ?? lines[0];
     renderSuggest();
     $("thSaved").textContent = j.files["cover.jpg"] ? "✓ 저장된 썸네일이 있어요. 예약하면 인스타 릴스 커버로 같이 올라가요." : "";
     // 캔버스는 화면에 안 쓰인 글꼴을 모르니 미리 불러 둔다
-    await Promise.all(['800 100px "Nanum Myeongjo"', '400 100px "Black Han Sans"', '800 100px "Pretendard"', '600 100px "Pretendard"']
-      .map((f) => document.fonts.load(f).catch(() => null)));
-    if (!logoImg) {
-      logoImg = new Image(); logoImg.crossOrigin = "anonymous";
-      logoImg.onload = draw; logoImg.src = A.rawUrl("assets/logo-text.png");
+    await Promise.all(Object.values(conf.fonts).map((f) => document.fonts.load(`${f.weight} 100px "${f.css}"`).catch(() => null)));
+    for (const [k, v] of Object.entries(conf.common.logo.variants)) {
+      if (logoImgs[k]) continue;
+      const img = new Image(); img.crossOrigin = "anonymous";
+      img.onload = draw; img.src = A.rawUrl(v.file); logoImgs[k] = img;
     }
     const v = $("thVideo");
     v.crossOrigin = "anonymous"; v.muted = true; v.preload = "auto";
@@ -142,10 +163,18 @@
   }
 
   // ---------- 그리기 ----------
-  function fitFont(ctx, txtLines, family, weight, size, maxW) {
+  // 글자 스타일 = 디자인 기본 ← 사용자가 바꾼 값
+  function textOf(which) {
+    const t = { ...TEXT_DEF[which] };
+    for (const [k, v] of Object.entries(opt.text || {})) if (v !== "" && v != null) t[k] = v;
+    const f = conf?.fonts[t.font] || { css: "Pretendard", weight: 800 };
+    return { ...t, css: f.css, weight: f.weight };
+  }
+
+  function fitFont(ctx, txtLines, st, size, maxW) {
     const plain = (l) => l.replace(/\*/g, "");
     while (size > 30) {
-      ctx.font = `${weight} ${size}px "${family}"`;
+      ctx.font = `${st.weight} ${size}px "${st.css}"`;
       if (Math.max(...txtLines.map((l) => ctx.measureText(plain(l)).width)) <= maxW) break;
       size -= 2;
     }
@@ -153,13 +182,13 @@
   }
 
   // 한 줄을 *강조* 구간별로 나눠 그린다. align: "center" | "left"
-  function drawLine(ctx, line, x, y, color, hl, stroke, align) {
+  function drawLine(ctx, line, x, y, color, hl, stroke, align, strokeColor = "#000000") {
     const parts = line.split(/(\*[^*]+\*)/).filter(Boolean).map((p) => (/^\*.+\*$/.test(p) ? [p.slice(1, -1), true] : [p, false]));
     const total = parts.reduce((w, [t]) => w + ctx.measureText(t).width, 0);
     let cx = align === "center" ? x - total / 2 : x;
     ctx.textAlign = "left";
     for (const [t, strong] of parts) {
-      if (stroke) { ctx.lineWidth = stroke; ctx.strokeStyle = "rgba(0,0,0,.95)"; ctx.lineJoin = "round"; ctx.strokeText(t, cx, y); }
+      if (stroke) { ctx.lineWidth = stroke; ctx.strokeStyle = strokeColor; ctx.lineJoin = "round"; ctx.strokeText(t, cx, y); }
       ctx.fillStyle = strong ? hl : color; ctx.fillText(t, cx, y);
       cx += ctx.measureText(t).width;
     }
@@ -167,10 +196,13 @@
   }
 
   // 디자인마다 정해진 로고 자리. '위'·'아래'를 고르면 그 자리로, '없음'이면 안 그림
-  function drawLogo(ctx, cx, cy, w, color = "#FFFFFF") {
+  function drawLogo(ctx, cx, cy, w) {
+    const logoImg = logoImgs[opt.logoVariant] || logoImgs.text;
     if (opt.logo === "none" || !logoImg?.complete || !logoImg.naturalWidth) return;
     if (opt.logo === "top") cy = 300;
     if (opt.logo === "bottom") cy = 1640;
+    const color = opt.logoColor || "#FFFFFF";
+    w = Math.round(w * (LOGO_SCALE[opt.logoVariant] ?? 1) * (opt.logoSize || 100) / 100);
     const h = w * logoImg.naturalHeight / logoImg.naturalWidth;
     const tmp = document.createElement("canvas"); tmp.width = w + 4; tmp.height = h + 4;
     const t = tmp.getContext("2d");
@@ -185,7 +217,8 @@
   function render(ctx, which) {
     const text = $("thText").value.trim();
     const tl = text ? text.split("\n").map((l) => l.trim()).filter(Boolean) : [];
-    const k = opt.size / 100, off = opt.offset;
+    const k = opt.size / 100, off = opt.offset, st = textOf(which);
+    const font = (size) => `${st.weight} ${size}px "${st.css}"`;
     ctx.clearRect(0, 0, W, H);
     ctx.drawImage(frame, 0, 0);
     ctx.fillStyle = `rgba(0,0,0,${opt.dim / 100})`; ctx.fillRect(0, 0, W, H);
@@ -196,34 +229,35 @@
       g.addColorStop(0, "rgba(0,0,0,0)"); g.addColorStop(1, "rgba(0,0,0,.82)");
       ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
       drawLogo(ctx, W / 2, 300, 260);
-      const size = fitFont(ctx, tl, "Nanum Myeongjo", 800, 104 * k, W - 160), lh = size * 1.22;
+      const size = fitFont(ctx, tl, st, 104 * k, W - 160), lh = size * 1.22;
       const yEnd = 1560 + off, y0 = yEnd - lh * (tl.length - 1);
-      ctx.fillStyle = HL.magazine; ctx.fillRect(80, y0 - size - 54, 70, 5);
-      if (corner) { ctx.font = `600 34px "Pretendard"`; ctx.fillStyle = "#FFFFFF"; ctx.fillText(corner.toUpperCase(), 170, y0 - size - 38); }
-      ctx.font = `800 ${size}px "Nanum Myeongjo"`;
-      tl.forEach((l, i) => drawLine(ctx, l, 80, y0 + i * lh, "#FFFFFF", HL.magazine, 0, "left"));
+      ctx.fillStyle = st.hl; ctx.fillRect(80, y0 - size - 54, 70, 5);
+      if (corner) { ctx.font = `600 34px "Pretendard"`; ctx.fillStyle = st.color; ctx.fillText(corner.toUpperCase(), 170, y0 - size - 38); }
+      ctx.font = font(size);
+      tl.forEach((l, i) => drawLine(ctx, l, 80, y0 + i * lh, st.color, st.hl, st.stroke * size / 104, "left", st.strokeColor));
     } else if (which === "bold") {
       drawLogo(ctx, W / 2, 300, 240);
-      const size = fitFont(ctx, tl, "Black Han Sans", 400, 150 * k, W - 120), lh = size * 1.12;
+      const size = fitFont(ctx, tl, st, 150 * k, W - 120), lh = size * 1.12;
       const y0 = 980 + off - (lh * (tl.length - 1)) / 2 + size * 0.35;
-      ctx.font = `400 ${size}px "Black Han Sans"`;
-      tl.forEach((l, i) => drawLine(ctx, l, W / 2, y0 + i * lh, "#FFFFFF", HL.bold, Math.round(size * 0.12), "center"));
+      ctx.font = font(size);
+      tl.forEach((l, i) => drawLine(ctx, l, W / 2, y0 + i * lh, st.color, st.hl, st.stroke * size / 150, "center", st.strokeColor));
     } else if (which === "box") {
-      const size = fitFont(ctx, tl, "Pretendard", 800, 82 * k, W - 260), lh = size * 1.3;
-      ctx.font = `800 ${size}px "Pretendard"`;
+      const size = fitFont(ctx, tl, st, 82 * k, W - 260), lh = size * 1.3;
+      ctx.font = font(size);
       const bw = Math.max(...tl.map((l) => ctx.measureText(l.replace(/\*/g, "")).width), 200) + 120;
       const bh = lh * tl.length + 70, by = 1320 + off - bh / 2;
       ctx.fillStyle = "rgba(255,255,255,.96)";
       ctx.beginPath(); ctx.roundRect((W - bw) / 2, by, bw, bh, 22); ctx.fill();
       drawLogo(ctx, W / 2, by - 70, 230);
-      tl.forEach((l, i) => drawLine(ctx, l, W / 2, by + 35 + size * 0.95 + i * lh, "#111111", HL.box, 0, "center"));
+      ctx.font = font(size);
+      tl.forEach((l, i) => drawLine(ctx, l, W / 2, by + 35 + size * 0.95 + i * lh, st.color, st.hl, st.stroke * size / 82, "center", st.strokeColor));
     } else {
       const g = ctx.createLinearGradient(0, 0, 0, H * 0.5);
       g.addColorStop(0, "rgba(0,0,0,.75)"); g.addColorStop(1, "rgba(0,0,0,0)");
       ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
-      const size = fitFont(ctx, tl, "Pretendard", 800, 96 * k, W - 160), lh = size * 1.25;
-      ctx.font = `800 ${size}px "Pretendard"`;
-      tl.forEach((l, i) => drawLine(ctx, l, 80, 420 + off + i * lh, "#FFFFFF", HL.minimal, 0, "left"));
+      const size = fitFont(ctx, tl, st, 96 * k, W - 160), lh = size * 1.25;
+      ctx.font = font(size);
+      tl.forEach((l, i) => drawLine(ctx, l, 80, 420 + off + i * lh, st.color, st.hl, st.stroke * size / 96, "left", st.strokeColor));
       drawLogo(ctx, W / 2, 1600, 230);
     }
   }
@@ -246,6 +280,11 @@
     $("thDesigns").querySelectorAll("button").forEach((b) => (b.onclick = () => { design = b.dataset.d; syncControls(); }));
     $("thSize").value = opt.size; $("thOffset").value = opt.offset; $("thDim").value = opt.dim; $("thLogo").value = opt.logo;
     $("thSizeV").textContent = `${opt.size}%`; $("thOffsetV").textContent = opt.offset; $("thDimV").textContent = `${opt.dim}%`;
+    const st = textOf(design);
+    $("thFont").value = opt.text?.font || ""; $("thColor").value = st.color; $("thHl").value = st.hl;
+    $("thStroke").value = st.stroke; $("thStrokeV").textContent = `${st.stroke}px`; $("thStrokeColor").value = st.strokeColor;
+    $("thLogoColor").value = opt.logoColor; $("thLogoSize").value = opt.logoSize; $("thLogoSizeV").textContent = `${opt.logoSize}%`;
+    $("thLogoV").querySelectorAll("button").forEach((b) => b.classList.toggle("on", b.dataset.v === opt.logoVariant));
     document.fonts.ready.then(draw);
     draw();
   }
@@ -288,9 +327,24 @@
     $(id).oninput = () => { opt[k] = Number($(id).value); syncControls(); };
   }
   $("thLogo").onchange = () => { opt.logo = $("thLogo").value; syncControls(); };
+  // 멘트 글자: 바꾼 값만 opt.text 에 (디자인을 바꿔도 내가 고른 글꼴·색은 유지)
+  const setText = (k, v) => { (opt.text ||= {})[k] = v; syncControls(); };
+  $("thFont").onchange = () => setText("font", $("thFont").value);
+  $("thColor").oninput = () => setText("color", $("thColor").value);
+  $("thHl").oninput = () => setText("hl", $("thHl").value);
+  $("thStroke").oninput = () => setText("stroke", Number($("thStroke").value));
+  $("thStrokeColor").oninput = () => setText("strokeColor", $("thStrokeColor").value);
+  $("thTextReset").onclick = () => { opt.text = {}; syncControls(); };
+  $("thLogoColor").oninput = () => { opt.logoColor = $("thLogoColor").value; syncControls(); };
+  $("thLogoSize").oninput = () => { opt.logoSize = Number($("thLogoSize").value); syncControls(); };
+  $("thPreset").onclick = () => window.MENTIS_STUDIO?.savePreset();
   $("thResuggest").onclick = () => { lines = suggest(); renderSuggest(); };
   $("thSave").onclick = save;
   $("thDownload").onclick = download;
 
-  window.MENTIS_THUMB = { open, close: () => { job = null; $("stThumb").hidden = true; } };
+  window.MENTIS_THUMB = {
+    open, close: () => { job = null; $("stThumb").hidden = true; },
+    current: () => (job ? { design, opt: structuredClone(opt) } : null),   // '기본값으로 저장'에 같이 들어감
+    setPresets: (p) => { presets = p; },
+  };
 })();

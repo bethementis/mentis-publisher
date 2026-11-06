@@ -375,7 +375,7 @@
       $("sStrokeColor").value = t.stroke_color.slice(0, 7); $("sStroke").value = t.stroke;
       $("sBoxOn").checked = !!t.box; $("sBox").value = (t.box || "#000000").slice(0, 7); $("sBoxOp").value = t.box_opacity;
     }
-    $("sPresetHint").textContent = `'기본으로 저장'하면 다음 ${STYLES[key()].label} 작업부터 이 글꼴·색·크기·위치로 시작해요.`;
+    $("sPresetHint").textContent = `'지금 설정을 기본값으로'를 누르면 자막·로고 스타일과 아래 썸네일 설정까지 저장돼서, 다음 ${STYLES[key()].label} 작업부터 그대로 시작해요.`;
     showVals();
   }
 
@@ -403,14 +403,20 @@
   }
 
   async function savePreset() {
+    if (!subs) return;
+    if (!conf) await loadConf();   // 완성본 화면에서 바로 눌러도 저장된 기본값을 먼저 읽어서 덮어쓰지 않게
     const k = key();
     const next = { ...presets, [k]: { ...(presets[k] || {}) } };
     for (const [el, v] of Object.entries(ov())) next[k][el] = { ...(next[k][el] || {}), ...v };
+    const thumb = window.MENTIS_THUMB?.current();
+    if (thumb) next[k].thumb = thumb;
+    if (!confirm(`지금 설정을 ${STYLES[k].label} 기본값으로 저장할까요?\n(자막·위쪽 문구·출처·로고 스타일${thumb ? " + 썸네일 디자인·글자·로고" : ""})\n다음 ${STYLES[k].label} 작업부터 이 설정으로 시작해요.`)) return;
     try {
-      await A.commit(`reel studio: ${STYLES[k].label} 기본 글자 스타일 저장`,
+      await A.commit(`reel studio: ${STYLES[k].label} 기본값 저장`,
         [{ path: "templates/reel-presets.json", text: JSON.stringify(next, null, 2) + "\n" }]);
       presets = next;
-      A.toast("기본 스타일로 저장했어요. 다음 작업부터 적용돼요.");
+      window.MENTIS_THUMB?.setPresets(next);
+      A.toast("기본값으로 저장했어요. 다음 작업부터 이 설정으로 시작해요.");
     } catch (e) { if (e.message !== "401") A.toast(`저장 실패: ${e.message}`, 5000); }
   }
 
@@ -586,6 +592,6 @@
   $("stDelete").onclick = deleteJob;
   $("stRetry").onclick = retry;
 
-  window.MENTIS_STUDIO = { refresh };
+  window.MENTIS_STUDIO = { refresh, savePreset };
   renderMusic(); setStyle("overseas");
 })();

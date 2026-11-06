@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>맨티스 업로드</title>
-<link rel="stylesheet" href="style.css?v=20261106d">
+<link rel="stylesheet" href="style.css?v=20261106e">
 <!-- 릴스 만들기 미리보기용 글꼴 (영상에는 assets/fonts 의 같은 글꼴이 들어감) -->
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Do+Hyeon&family=Jua&family=Nanum+Myeongjo:wght@800&display=swap">
@@ -302,7 +302,7 @@
             </div>
             <div class="row end">
               <button class="btn ghost small" id="sReset">이 작업만 원래대로</button>
-              <button class="btn small" id="sSavePreset">이 설정을 기본으로 저장</button>
+              <button class="btn small" id="sSavePreset" title="릴스 자막·로고 스타일과 썸네일 설정을 모두 기본값으로">지금 설정을 기본값으로</button>
             </div>
             <p class="hint" id="sPresetHint"></p>
           </div>
@@ -353,11 +353,33 @@
               <label>글자 크기 <span class="val" id="thSizeV"></span><input type="range" id="thSize" min="60" max="150" step="5"></label>
               <label>글자 위치 (위 ↔ 아래) <span class="val" id="thOffsetV"></span><input type="range" id="thOffset" min="-500" max="300" step="10"></label>
               <label>사진 어둡게 <span class="val" id="thDimV"></span><input type="range" id="thDim" min="0" max="70" step="5"></label>
-              <label>MENTIS 위치
-                <select id="thLogo"><option value="auto">디자인 기본</option><option value="top">위</option><option value="bottom">아래</option><option value="none">넣지 않기</option></select>
-              </label>
+            </div>
+
+            <h3>4. 멘트 글자 <small>바꾼 것은 디자인을 바꿔도 유지돼요</small></h3>
+            <div class="styler">
+              <label>글꼴 <select id="thFont"></select></label>
+              <div class="colors">
+                <label>글자색 <input type="color" id="thColor"></label>
+                <label>강조색 <input type="color" id="thHl"></label>
+                <label>테두리색 <input type="color" id="thStrokeColor"></label>
+              </div>
+              <label>테두리 두께 <span class="val" id="thStrokeV"></span><input type="range" id="thStroke" min="0" max="30" step="1"></label>
+              <button class="btn ghost small" id="thTextReset">글자를 디자인 기본으로</button>
+            </div>
+
+            <h3>5. MENTIS 로고</h3>
+            <div class="styler">
+              <div class="seg" id="thLogoV"></div>
+              <div class="colors">
+                <label>로고 색 <input type="color" id="thLogoColor"></label>
+                <label>위치
+                  <select id="thLogo"><option value="auto">디자인 기본</option><option value="top">위</option><option value="bottom">아래</option><option value="none">넣지 않기</option></select>
+                </label>
+              </div>
+              <label>크기 <span class="val" id="thLogoSizeV"></span><input type="range" id="thLogoSize" min="40" max="220" step="5"></label>
             </div>
             <div class="row end">
+              <button class="btn ghost small" id="thPreset" title="릴스 자막·로고 스타일과 썸네일 설정을 모두 기본값으로">지금 설정을 기본값으로</button>
               <button class="btn ghost" id="thDownload">내려받기</button>
               <button class="btn primary" id="thSave">썸네일 저장</button>
             </div>
@@ -413,8 +435,8 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.2/Sortable.min.js"></script>
 <script src="config.js"></script>
-<script src="app.js?v=20261106d"></script>
-<script src="studio.js?v=20261106d"></script>
-<script src="thumb.js?v=20261106d"></script>
+<script src="app.js?v=20261106e"></script>
+<script src="studio.js?v=20261106e"></script>
+<script src="thumb.js?v=20261106e"></script>
 </body>
 </html>
