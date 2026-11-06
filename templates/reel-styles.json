@@ -9,7 +9,12 @@
     "myeongjo": { "label": "나눔명조", "file": "NanumMyeongjo-ExtraBold.ttf", "css": "Nanum Myeongjo", "weight": 800 }
   },
   "common": {
-    "logo": { "file": "assets/logo.png", "width": 190, "y": 300, "opacity": 1, "bold": 2, "fallback_text": "Mentis", "fallback_size": 78 },
+    "logo": { "variant": "both", "width": 190, "y": 300, "opacity": 1, "bold": 2, "fallback_text": "Mentis", "fallback_size": 78,
+      "variants": {
+        "both": { "label": "심볼 + MENTIS", "file": "assets/logo.png", "width": 190 },
+        "text": { "label": "MENTIS 글자만", "file": "assets/logo-text.png", "width": 300 },
+        "symbol": { "label": "심볼(Σ)만", "file": "assets/logo-symbol.png", "width": 110 }
+      } },
     "corner": { "y": 398, "size": 34, "color": "#FFFFFFCC" },
     "max_width": 960,
     "max_mb": 95

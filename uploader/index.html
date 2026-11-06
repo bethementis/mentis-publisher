@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>맨티스 업로드</title>
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css?v=20261106">
 <!-- 릴스 만들기 미리보기용 글꼴 (영상에는 assets/fonts 의 같은 글꼴이 들어감) -->
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Do+Hyeon&family=Jua&family=Nanum+Myeongjo:wght@800&display=swap">
@@ -289,6 +289,7 @@
             </div>
             <div data-ctl="logo">
               <label class="check"><input type="checkbox" id="lShow"> 로고 보이기</label>
+              <div class="seg" id="lVariant"></div>
               <label>로고 색 <input type="color" id="lColor"> <small>밝은 영상이면 어두운 색으로</small></label>
               <label>크기 <span class="val" id="lWidthV"></span><input type="range" id="lWidth" min="80" max="420" step="10"></label>
               <label>위치 (위 ↔ 아래) <span class="val" id="lYV"></span><input type="range" id="lY" min="100" max="1820" step="10"></label>
@@ -301,7 +302,7 @@
             </div>
             <p class="hint" id="sPresetHint"></p>
           </div>
-          <h3>자막 <small>시간(초) · 한 줄씩 나와요 · <code>*강조*</code> 는 강조색 · 길면 ✂ 로 나누기</small> <button class="btn ghost small" id="edSplitAll">긴 자막 모두 나누기</button></h3>
+          <h3>자막 <small>시간(초) · 한 줄씩 나와요 · <code>*강조*</code> 는 강조색 · ✂ 나누기: 글자 칸에서 자를 곳을 클릭하고 누르면 거기서, 아니면 가운데서 · ⤵ 다음 자막과 합치기</small> <button class="btn ghost small" id="edSplitAll">긴 자막 모두 나누기</button></h3>
           <div id="edSegs" class="subs"></div>
           <button class="btn ghost small" id="edAddSeg">+ 자막 추가</button>
           <div data-for="format">
@@ -370,7 +371,7 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.2/Sortable.min.js"></script>
 <script src="config.js"></script>
-<script src="app.js"></script>
-<script src="studio.js"></script>
+<script src="app.js?v=20261106"></script>
+<script src="studio.js?v=20261106"></script>
 </body>
 </html>

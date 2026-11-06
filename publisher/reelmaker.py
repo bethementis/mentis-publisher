@@ -335,7 +335,8 @@ def logo_style(style_key, overrides=None):
 
 def paste_logo(img, ls):
     """로고를 고른 색으로 칠해서 붙인다. 붙인 로고의 아래쪽 y 를 돌려준다 (코너 이름 위치용)."""
-    logo_file = ROOT / ls["file"]
+    variants = ls.get("variants", {})
+    logo_file = ROOT / variants.get(ls.get("variant", "both"), variants.get("both", {})).get("file", "assets/logo.png")
     if not logo_file.exists():   # 로고 파일이 없으면 글자 로고
         draw_text(img, ls["fallback_text"], {**CONF["text_defaults"], "y": ls["y"], "font": "logo",
                                              "size": ls["fallback_size"], "color": ls["color"], "stroke": 2})

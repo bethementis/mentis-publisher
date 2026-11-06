@@ -225,7 +225,8 @@
   // ---------- 자막 고치기 ----------
   const num = (v) => Math.round(Number(v) * 10) / 10;
   const W = 1080, H = 1920;
-  let conf = null, presets = {}, element = "hook", logoRatio = 494 / 384;
+  let conf = null, presets = {}, element = "hook";
+  const logoRatio = {};   // 로고 버전별 가로/세로 비율
   const LABEL = { hook: "위쪽 문구", subtitle: "자막", step: "단계 문구", credit: "출처", logo: "로고" };
 
   // 스타일 기본값(reel-styles.json)·저장된 기본(reel-presets.json)을 저장소에서 읽는다
@@ -235,10 +236,16 @@
     presets ||= {};
     $("sFont").innerHTML = Object.entries(conf.fonts).map(([k, f]) =>
       `<option value="${k}" style="font-family:'${f.css}';font-weight:${f.weight}">${esc(f.label)}</option>`).join("");
-    const img = new Image();
-    img.onload = () => { logoRatio = img.naturalWidth / img.naturalHeight; drawOverlay(); };
-    img.src = A.rawUrl("assets/logo.png");
-    $("ovLogo").style.maskImage = $("ovLogo").style.webkitMaskImage = `url("${img.src}")`;
+    for (const [v, info] of Object.entries(conf.common.logo.variants)) {
+      const img = new Image();
+      img.onload = () => { logoRatio[v] = img.naturalWidth / img.naturalHeight; drawOverlay(); };
+      img.src = info.url = A.rawUrl(info.file);
+    }
+    $("lVariant").innerHTML = Object.entries(conf.common.logo.variants).map(([v, info]) => `<button data-v="${v}">${esc(info.label)}</button>`).join("");
+    $("lVariant").querySelectorAll("button").forEach((b) => (b.onclick = () => {
+      // 버전을 바꾸면 그 버전에 맞는 기본 크기로
+      setOv("logo", "variant", b.dataset.v); setOv("logo", "width", conf.common.logo.variants[b.dataset.v].width); renderEls();
+    }));
   }
 
   const key = () => jobData.style || "shoot";
@@ -262,7 +269,7 @@
       <input type="number" step="0.1" min="0" value="${num(s.end)}" data-k="end" aria-label="끝(초)">
       <div class="txt">${one ? `<input type="text" data-k="text" value="${esc(s.text)}">` : `<textarea rows="2" data-k="text">${esc(s.text)}</textarea>`}
         ${s.src ? `<small>${esc(s.src)}</small>` : ""}<small class="long" hidden>길어서 글자가 작아져요 → ✂ 로 나누기</small></div>
-      <span class="acts">${one ? `<button class="btn ghost small" data-split title="반으로 나누기">✂</button>` : ""}<button class="btn ghost small" data-del title="빼기">×</button></span></div>`).join("") || `<p class="hint">없음</p>`;
+      <span class="acts">${one ? `<button class="btn ghost small" data-split title="나누기 (글자 칸에서 클릭한 곳, 없으면 가운데)">✂</button>` : ""}${i < list.length - 1 ? `<button class="btn ghost small" data-merge title="다음 자막과 합치기">⤵</button>` : ""}<button class="btn ghost small" data-del title="빼기">×</button></span></div>`).join("") || `<p class="hint">없음</p>`;
   }
 
   async function renderEditor() {
@@ -282,8 +289,13 @@
         drawOverlay();
       }));
       row.querySelector("[data-del]").onclick = () => { list.splice(i, 1); renderEditor(); };
-      const split = row.querySelector("[data-split]");
-      if (split) split.onclick = () => { splitRow(list, i); renderEditor(); };
+      const split = row.querySelector("[data-split]"), field = row.querySelector("[data-k=text]");
+      // 버튼을 누르면 글자 칸 커서가 사라지니, 마지막으로 클릭·입력한 위치를 기억해 둔다
+      const remember = () => { field.dataset.caret = field.selectionStart; };
+      for (const ev of ["click", "keyup", "select"]) field.addEventListener(ev, remember);
+      if (split) split.onclick = () => { splitRow(list, i, field.dataset.caret ? Number(field.dataset.caret) : null); renderEditor(); };
+      const merge = row.querySelector("[data-merge]");
+      if (merge) merge.onclick = () => { mergeRow(list, i); renderEditor(); };
       row.querySelector("[data-k=text]").onfocus = () => { $("stVideo").currentTime = list[i].start + 0.05; };
     });
     if (!elements().includes(element)) element = "hook";
@@ -298,16 +310,25 @@
     drawOverlay();
   }
 
-  // 자막 한 줄을 띄어쓰기 기준으로 반으로 (시간은 글자 수 비율)
-  function splitRow(list, i) {
-    const s = list[i], text = s.text.trim().replace(/\s+/g, " ");
+  // 자막 한 줄을 둘로 (자를 곳을 고르지 않았으면 가운데 띄어쓰기). 시간은 글자 수 비율
+  function splitRow(list, i, caret = null) {
+    const s = list[i], text = s.text.replace(/\s+/g, " ");
     const spaces = [...text].map((c, k) => (c === " " ? k : -1)).filter((k) => k > 0);
     const mid = text.length / 2;
-    const at = spaces.length ? spaces.reduce((a, b) => (Math.abs(b - mid) < Math.abs(a - mid) ? b : a)) : Math.floor(mid);
+    const at = caret > 0 && caret < text.length ? caret
+      : spaces.length ? spaces.reduce((a, b) => (Math.abs(b - mid) < Math.abs(a - mid) ? b : a)) : Math.floor(mid);
     const a = text.slice(0, at).trim(), b = text.slice(at).trim();
     if (!a || !b) return;
     const t = num(s.start + (s.end - s.start) * a.length / (a.length + b.length));
     list.splice(i, 1, { ...s, text: a, end: t }, { ...s, text: b, start: t });
+  }
+
+  // 다음 자막과 하나로 (시간은 앞 자막 시작 ~ 뒤 자막 끝)
+  function mergeRow(list, i) {
+    const a = list[i], b = list[i + 1];
+    if (!b) return;
+    list.splice(i, 2, { ...a, text: `${a.text.trim()} ${b.text.trim()}`.trim(), end: b.end,
+      ...(a.src || b.src ? { src: [a.src, b.src].filter((x, k, arr) => x && arr.indexOf(x) === k).join(" ") } : {}) });
   }
 
   // ---------- 글자 스타일 ----------
@@ -320,6 +341,7 @@
     if (isLogo) {
       const l = logoStyle();
       $("lShow").checked = l.show !== false; $("lColor").value = l.color.slice(0, 7);
+      $("lVariant").querySelectorAll("button").forEach((b) => b.classList.toggle("on", b.dataset.v === l.variant));
       $("lWidth").value = l.width; $("lY").value = l.y; $("lOp").value = l.opacity; $("lBold").value = l.bold ?? 0;
     } else {
       const t = textStyle(element);
@@ -410,14 +432,17 @@
     paintText("credit", subs.credit_on ? subs.credit : "", textStyle("credit"));
     // 로고: 흰 로고 PNG 모양(mask)에 고른 색을 칠한다
     const l = logoStyle(), logo = $("ovLogo"), show = l.show !== false;
+    const variant = conf.common.logo.variants[l.variant] ? l.variant : "both";
+    const ratio = logoRatio[variant] || 1.3, mask = `url("${conf.common.logo.variants[variant].url}")`;
+    if (logo.style.maskImage !== mask) logo.style.maskImage = logo.style.webkitMaskImage = mask;
     logo.hidden = !show;
     // 굵기: 같은 색 그림자를 사방으로 1px씩 겹쳐 선을 두껍게 (영상 렌더의 MaxFilter 와 비슷)
     const bw = cq(l.bold || 0), thick = l.bold ? [`${bw} 0`, `-${bw} 0`, `0 ${bw}`, `0 -${bw}`].map((o) => `drop-shadow(${o} 0 ${l.color})`).join(" ") : "";
-    Object.assign(logo.style, { width: cq(l.width), aspectRatio: String(logoRatio), top: top(l.y), background: l.color,
+    Object.assign(logo.style, { width: cq(l.width), aspectRatio: String(ratio), top: top(l.y), background: l.color,
       opacity: l.opacity, filter: `${thick} drop-shadow(0 0 1px rgba(0,0,0,.6))` });
     const corner = $("ovCorner");
     corner.textContent = show ? jobData.corner || "" : "";
-    Object.assign(corner.style, { top: top(l.y + l.width / logoRatio / 2 + (l.bold || 0) + 30), fontSize: cq(conf.common.corner.size), color: l.color });
+    Object.assign(corner.style, { top: top(l.y + l.width / ratio / 2 + (l.bold || 0) + 30), fontSize: cq(conf.common.corner.size), color: l.color });
     const band = $("ovBand"), b = conf.styles[key()]?.band;
     band.hidden = !(jobData.cover_band && b);
     if (!band.hidden) Object.assign(band.style, { top: top(textStyle("subtitle").y - b.height / 2), height: top(b.height) });
