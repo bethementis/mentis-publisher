@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>맨티스 업로드</title>
-<link rel="stylesheet" href="style.css?v=20261106">
+<link rel="stylesheet" href="style.css?v=20261106b">
 <!-- 릴스 만들기 미리보기용 글꼴 (영상에는 assets/fonts 의 같은 글꼴이 들어감) -->
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Do+Hyeon&family=Jua&family=Nanum+Myeongjo:wght@800&display=swap">
@@ -249,11 +249,15 @@
         </div>
         <p id="stState" class="msg"></p>
         <div id="stEdit" hidden>
+          <div class="row end undo">
+            <button class="btn ghost small" id="edUndo" title="Ctrl+Z">↶ 되돌리기</button>
+            <button class="btn ghost small" id="edRedo" title="Ctrl+Y 또는 Ctrl+Shift+Z">↷ 다시 하기</button>
+          </div>
           <div class="studio">
             <div class="stage" id="stStage">
               <video id="stVideo" controls playsinline></video>
               <div class="ovband" id="ovBand" hidden></div>
-              <div class="ovlogo" id="ovLogo"></div>
+              <canvas class="ovlogo" id="ovLogo"></canvas>
               <div class="ov" id="ovCorner"></div>
               <div class="ov" id="ov-hook"></div>
               <div class="ov" id="ov-subtitle"></div>
@@ -371,7 +375,7 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.2/Sortable.min.js"></script>
 <script src="config.js"></script>
-<script src="app.js?v=20261106"></script>
-<script src="studio.js?v=20261106"></script>
+<script src="app.js?v=20261106b"></script>
+<script src="studio.js?v=20261106b"></script>
 </body>
 </html>

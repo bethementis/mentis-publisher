@@ -191,6 +191,7 @@
   async function openJob(name, quiet) {
     const j = A.jobs().find((x) => x.name === name);
     if (!j) return;
+    if (job?.name !== name) { undoStack = []; redoStack = []; }   // 다른 작업을 열면 되돌리기 기록 새로
     job = j;
     $("stForm").hidden = true; $("stJob").hidden = false;
     $("stJobTitle").textContent = name;
@@ -226,7 +227,7 @@
   const num = (v) => Math.round(Number(v) * 10) / 10;
   const W = 1080, H = 1920;
   let conf = null, presets = {}, element = "hook";
-  const logoRatio = {};   // 로고 버전별 가로/세로 비율
+  const logoRatio = {}, logoImg = {};   // 로고 버전별 가로/세로 비율, 이미지
   const LABEL = { hook: "위쪽 문구", subtitle: "자막", step: "단계 문구", credit: "출처", logo: "로고" };
 
   // 스타일 기본값(reel-styles.json)·저장된 기본(reel-presets.json)을 저장소에서 읽는다
@@ -238,13 +239,15 @@
       `<option value="${k}" style="font-family:'${f.css}';font-weight:${f.weight}">${esc(f.label)}</option>`).join("");
     for (const [v, info] of Object.entries(conf.common.logo.variants)) {
       const img = new Image();
-      img.onload = () => { logoRatio[v] = img.naturalWidth / img.naturalHeight; drawOverlay(); };
+      img.onload = () => { logoRatio[v] = img.naturalWidth / img.naturalHeight; logoImg[v] = img; drawOverlay(); };
       img.src = info.url = A.rawUrl(info.file);
     }
     $("lVariant").innerHTML = Object.entries(conf.common.logo.variants).map(([v, info]) => `<button data-v="${v}">${esc(info.label)}</button>`).join("");
     $("lVariant").querySelectorAll("button").forEach((b) => (b.onclick = () => {
       // 버전을 바꾸면 그 버전에 맞는 기본 크기로
-      setOv("logo", "variant", b.dataset.v); setOv("logo", "width", conf.common.logo.variants[b.dataset.v].width); renderEls();
+      checkpoint();
+      (ov().logo ||= {}).variant = b.dataset.v; ov().logo.width = conf.common.logo.variants[b.dataset.v].width;
+      renderEls(); drawOverlay();
     }));
   }
 
@@ -260,7 +263,26 @@
   function elements() {
     return ["hook", "subtitle", ...(key() === "format" ? ["step"] : []), ...(subs.credit ? ["credit"] : []), "logo"];
   }
-  function setOv(el, k, v) { (ov()[el] ||= {})[k] = v; drawOverlay(); }
+  function setOv(el, k, v) { track(); (ov()[el] ||= {})[k] = v; drawOverlay(); }
+
+  // ---------- 되돌리기 (Ctrl+Z) / 다시 하기 (Ctrl+Y) ----------
+  let undoStack = [], redoStack = [], lastTrack = 0;
+  const snap = () => JSON.stringify({ segments: subs.segments, steps: subs.steps, hook: subs.hook, credit: subs.credit,
+    credit_on: subs.credit_on, styles: subs.styles });
+  // 버튼 한 번 = 되돌리기 한 칸
+  function checkpoint() {
+    undoStack.push(snap()); redoStack = [];
+    if (undoStack.length > 100) undoStack.shift();
+    lastTrack = Date.now();
+  }
+  // 글자 입력·슬라이더처럼 계속 바뀌는 건 잠깐(0.8초) 멈출 때마다 한 칸
+  function track() { if (Date.now() - lastTrack > 800) checkpoint(); lastTrack = Date.now(); }
+  function restore(state) {
+    Object.assign(subs, JSON.parse(state));
+    renderEditor();
+  }
+  function undo() { if (!undoStack.length) return A.toast("더 되돌릴 게 없어요"); redoStack.push(snap()); restore(undoStack.pop()); lastTrack = 0; }
+  function redo() { if (!redoStack.length) return; undoStack.push(snap()); restore(redoStack.pop()); lastTrack = 0; }
 
   function rowsHtml(list, kind) {
     const one = kind === "segments";
@@ -285,17 +307,18 @@
     document.querySelectorAll("#stEdit .subrow").forEach((row) => {
       const list = subs[row.dataset.kind], i = +row.dataset.i;
       row.querySelectorAll("[data-k]").forEach((inp) => (inp.oninput = () => {
+        track();
         list[i][inp.dataset.k] = inp.dataset.k === "text" ? inp.value : Number(inp.value);
         drawOverlay();
       }));
-      row.querySelector("[data-del]").onclick = () => { list.splice(i, 1); renderEditor(); };
+      row.querySelector("[data-del]").onclick = () => { checkpoint(); list.splice(i, 1); renderEditor(); };
       const split = row.querySelector("[data-split]"), field = row.querySelector("[data-k=text]");
       // 버튼을 누르면 글자 칸 커서가 사라지니, 마지막으로 클릭·입력한 위치를 기억해 둔다
       const remember = () => { field.dataset.caret = field.selectionStart; };
       for (const ev of ["click", "keyup", "select"]) field.addEventListener(ev, remember);
-      if (split) split.onclick = () => { splitRow(list, i, field.dataset.caret ? Number(field.dataset.caret) : null); renderEditor(); };
+      if (split) split.onclick = () => { checkpoint(); splitRow(list, i, field.dataset.caret ? Number(field.dataset.caret) : null); renderEditor(); };
       const merge = row.querySelector("[data-merge]");
-      if (merge) merge.onclick = () => { mergeRow(list, i); renderEditor(); };
+      if (merge) merge.onclick = () => { checkpoint(); mergeRow(list, i); renderEditor(); };
       row.querySelector("[data-k=text]").onfocus = () => { $("stVideo").currentTime = list[i].start + 0.05; };
     });
     if (!elements().includes(element)) element = "hook";
@@ -373,7 +396,7 @@
     $("lY").oninput = () => { setOv("logo", "y", Number($("lY").value)); showVals(); };
     $("lOp").oninput = () => { setOv("logo", "opacity", Number($("lOp").value)); showVals(); };
     $("lBold").oninput = () => { setOv("logo", "bold", Number($("lBold").value)); showVals(); };
-    $("sReset").onclick = () => { delete ov()[element]; renderEls(); drawOverlay(); };
+    $("sReset").onclick = () => { checkpoint(); delete ov()[element]; renderEls(); drawOverlay(); };
     $("sSavePreset").onclick = savePreset;
   }
 
@@ -430,16 +453,12 @@
     paintText("subtitle", at(subs.segments), textStyle("subtitle"));
     paintText("step", key() === "format" ? at(subs.steps) : "", textStyle("step"));
     paintText("credit", subs.credit_on ? subs.credit : "", textStyle("credit"));
-    // 로고: 흰 로고 PNG 모양(mask)에 고른 색을 칠한다
     const l = logoStyle(), logo = $("ovLogo"), show = l.show !== false;
     const variant = conf.common.logo.variants[l.variant] ? l.variant : "both";
-    const ratio = logoRatio[variant] || 1.3, mask = `url("${conf.common.logo.variants[variant].url}")`;
-    if (logo.style.maskImage !== mask) logo.style.maskImage = logo.style.webkitMaskImage = mask;
+    const ratio = logoRatio[variant] || 1.3;
     logo.hidden = !show;
-    // 굵기: 같은 색 그림자를 사방으로 1px씩 겹쳐 선을 두껍게 (영상 렌더의 MaxFilter 와 비슷)
-    const bw = cq(l.bold || 0), thick = l.bold ? [`${bw} 0`, `-${bw} 0`, `0 ${bw}`, `0 -${bw}`].map((o) => `drop-shadow(${o} 0 ${l.color})`).join(" ") : "";
-    Object.assign(logo.style, { width: cq(l.width), aspectRatio: String(ratio), top: top(l.y), background: l.color,
-      opacity: l.opacity, filter: `${thick} drop-shadow(0 0 1px rgba(0,0,0,.6))` });
+    paintLogo(logo, variant, l);
+    Object.assign(logo.style, { width: cq(l.width), top: top(l.y), opacity: l.opacity });
     const corner = $("ovCorner");
     corner.textContent = show ? jobData.corner || "" : "";
     Object.assign(corner.style, { top: top(l.y + l.width / ratio / 2 + (l.bold || 0) + 30), fontSize: cq(conf.common.corner.size), color: l.color });
@@ -454,7 +473,27 @@
     });
   }
 
+  // 로고를 영상 렌더와 같은 크기(1080 기준)로 그린 뒤 화면에 줄여 보여준다 → 굵기가 미리보기에도 그대로 보임
+  function paintLogo(canvas, variant, l) {
+    const img = logoImg[variant];
+    const k = `${variant}|${l.width}|${l.bold}|${l.color}`;
+    if (!img || canvas.dataset.key === k) return;
+    canvas.dataset.key = k;
+    const s = 2, w = Math.round(l.width * s), h = Math.round(w / logoRatio[variant]);
+    canvas.width = w; canvas.height = h;
+    const ctx = canvas.getContext("2d");
+    ctx.clearRect(0, 0, w, h);
+    const r = Math.round((l.bold || 0) * s);   // 굵기 1 = 1px(1080 기준)씩 두껍게, 영상 렌더와 같음
+    for (let dx = -r; dx <= r; dx++) for (let dy = -r; dy <= r; dy++) {
+      if (dx * dx + dy * dy <= r * r) ctx.drawImage(img, dx, dy, w, h);
+    }
+    ctx.globalCompositeOperation = "source-in";
+    ctx.fillStyle = l.color; ctx.fillRect(0, 0, w, h);
+    ctx.globalCompositeOperation = "source-over";
+  }
+
   function addRow(kind) {
+    checkpoint();
     const list = (subs[kind] ||= []);
     const t = num($("stVideo").currentTime || (list.at(-1)?.end ?? 0));
     list.push({ start: t, end: num(t + 2.5), text: "" });
@@ -520,6 +559,7 @@
   $("edAddSeg").onclick = () => addRow("segments");
   // 한 줄에 안 들어가는 자막을 모두 반씩 나눈다 (들어갈 때까지)
   $("edSplitAll").onclick = () => {
+    checkpoint();
     const st = textStyle("subtitle");
     for (let i = 0; i < (subs.segments || []).length; i++) {
       while (subs.segments[i].text.trim().includes(" ") && fitSize([subs.segments[i].text], st) < st.size) splitRow(subs.segments, i);
@@ -527,8 +567,16 @@
     renderEditor();
   };
   $("edAddStep").onclick = () => addRow("steps");
-  for (const id of ["edHook", "edCredit"]) $(id).oninput = drawOverlay;
-  $("edCreditOn").onchange = drawOverlay;
+  for (const id of ["edHook", "edCredit"]) $(id).oninput = () => { track(); drawOverlay(); };
+  $("edCreditOn").onchange = () => { checkpoint(); drawOverlay(); };
+  $("edUndo").onclick = undo;
+  $("edRedo").onclick = redo;
+  document.addEventListener("keydown", (e) => {
+    if ($("tab-studio").hidden || $("stEdit").hidden || !(e.ctrlKey || e.metaKey)) return;
+    const k = e.key.toLowerCase();
+    if (k === "z" && !e.shiftKey) { e.preventDefault(); undo(); }
+    else if (k === "y" || (k === "z" && e.shiftKey)) { e.preventDefault(); redo(); }
+  });
   bindStyler();
   $("edRender").onclick = saveAndRender;
   $("stReedit").onclick = () => { $("stDone").hidden = true; $("stEdit").hidden = false; renderEditor(); };
