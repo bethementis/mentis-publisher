@@ -9,7 +9,7 @@
     "myeongjo": { "label": "나눔명조", "file": "NanumMyeongjo-ExtraBold.ttf", "css": "Nanum Myeongjo", "weight": 800 }
   },
   "common": {
-    "logo": { "file": "assets/logo.png", "width": 170, "y": 300, "opacity": 0.9, "fallback_text": "Mentis", "fallback_size": 78 },
+    "logo": { "file": "assets/logo.png", "width": 190, "y": 300, "opacity": 1, "bold": 2, "fallback_text": "Mentis", "fallback_size": 78 },
     "corner": { "y": 398, "size": 34, "color": "#FFFFFFCC" },
     "max_width": 960,
     "max_mb": 95

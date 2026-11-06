@@ -320,7 +320,7 @@
     if (isLogo) {
       const l = logoStyle();
       $("lShow").checked = l.show !== false; $("lColor").value = l.color.slice(0, 7);
-      $("lWidth").value = l.width; $("lY").value = l.y;
+      $("lWidth").value = l.width; $("lY").value = l.y; $("lOp").value = l.opacity; $("lBold").value = l.bold ?? 0;
     } else {
       const t = textStyle(element);
       $("sFont").value = t.font; $("sSize").value = t.size; $("sY").value = t.y;
@@ -336,6 +336,7 @@
     $("sSizeV").textContent = `${$("sSize").value}px`; $("sYV").textContent = $("sY").value;
     $("sStrokeV").textContent = `${$("sStroke").value}px`; $("sBoxOpV").textContent = `${Math.round($("sBoxOp").value * 100)}%`;
     $("lWidthV").textContent = `${$("lWidth").value}px`; $("lYV").textContent = $("lY").value;
+    $("lOpV").textContent = `${Math.round($("lOp").value * 100)}%`; $("lBoldV").textContent = $("lBold").value;
   }
 
   function bindStyler() {
@@ -348,6 +349,8 @@
     $("lColor").oninput = () => setOv("logo", "color", $("lColor").value);
     $("lWidth").oninput = () => { setOv("logo", "width", Number($("lWidth").value)); showVals(); };
     $("lY").oninput = () => { setOv("logo", "y", Number($("lY").value)); showVals(); };
+    $("lOp").oninput = () => { setOv("logo", "opacity", Number($("lOp").value)); showVals(); };
+    $("lBold").oninput = () => { setOv("logo", "bold", Number($("lBold").value)); showVals(); };
     $("sReset").onclick = () => { delete ov()[element]; renderEls(); drawOverlay(); };
     $("sSavePreset").onclick = savePreset;
   }
@@ -408,10 +411,13 @@
     // 로고: 흰 로고 PNG 모양(mask)에 고른 색을 칠한다
     const l = logoStyle(), logo = $("ovLogo"), show = l.show !== false;
     logo.hidden = !show;
-    Object.assign(logo.style, { width: cq(l.width), aspectRatio: String(logoRatio), top: top(l.y), background: l.color, opacity: l.opacity });
+    // 굵기: 같은 색 그림자를 사방으로 1px씩 겹쳐 선을 두껍게 (영상 렌더의 MaxFilter 와 비슷)
+    const bw = cq(l.bold || 0), thick = l.bold ? [`${bw} 0`, `-${bw} 0`, `0 ${bw}`, `0 -${bw}`].map((o) => `drop-shadow(${o} 0 ${l.color})`).join(" ") : "";
+    Object.assign(logo.style, { width: cq(l.width), aspectRatio: String(logoRatio), top: top(l.y), background: l.color,
+      opacity: l.opacity, filter: `${thick} drop-shadow(0 0 1px rgba(0,0,0,.6))` });
     const corner = $("ovCorner");
     corner.textContent = show ? jobData.corner || "" : "";
-    Object.assign(corner.style, { top: top(l.y + l.width / logoRatio / 2 + 30), fontSize: cq(conf.common.corner.size), color: l.color });
+    Object.assign(corner.style, { top: top(l.y + l.width / logoRatio / 2 + (l.bold || 0) + 30), fontSize: cq(conf.common.corner.size), color: l.color });
     const band = $("ovBand"), b = conf.styles[key()]?.band;
     band.hidden = !(jobData.cover_band && b);
     if (!band.hidden) Object.assign(band.style, { top: top(textStyle("subtitle").y - b.height / 2), height: top(b.height) });

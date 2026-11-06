@@ -342,7 +342,14 @@ def paste_logo(img, ls):
         return ls["y"] + ls["fallback_size"] / 2
     src = Image.open(logo_file).convert("RGBA")
     w = int(ls["width"])
-    alpha = src.getchannel("A").resize((w, round(src.height * w / src.width)), Image.LANCZOS)
+    size = (w, round(src.height * w / src.width))
+    alpha = src.getchannel("A")
+    if int(ls.get("bold", 0)):   # 굵기: 4배 크기에서 선을 굵게 한 뒤 줄여서 매끄럽게 (단계마다 약 1px)
+        big = alpha.resize((size[0] * 4, size[1] * 4), Image.LANCZOS).point(lambda a: 255 if a > 30 else 0)
+        for _ in range(int(ls["bold"])):
+            big = big.filter(ImageFilter.MaxFilter(9))
+        alpha = big.filter(ImageFilter.GaussianBlur(1.5))
+    alpha = alpha.resize(size, Image.LANCZOS)
     alpha = alpha.point(lambda a: round(a * float(ls["opacity"])))
     lg = Image.new("RGBA", alpha.size, rgba(ls["color"])); lg.putalpha(alpha)
     pos = ((W - lg.width) // 2, round(ls["y"] - lg.height / 2))
