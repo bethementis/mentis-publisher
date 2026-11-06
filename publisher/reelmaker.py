@@ -191,6 +191,10 @@ def make_subs(job_dir):
         wav = Path(tempfile.mkdtemp()) / "a.wav"
         subprocess.run([FFMPEG, "-y", "-loglevel", "error", "-i", str(src), "-vn", "-ac", "1", "-ar", "16000", str(wav)], check=True)
         segments = transcribe(wav, lang)
+        # 음악만 있는 영상에서 Whisper 가 "you", "Thank you." 같은 말을 지어낼 때가 있어 걸러낸다.
+        fake = {"", "you", "thank you", "thanks for watching", "bye", "감사합니다", "시청해주셔서 감사합니다"}
+        if len(segments) <= 2 and all(s["text"].strip(" .!?,").lower() in fake for s in segments):
+            segments = []
         if not segments:
             warnings.append("말소리를 찾지 못했어요. 자막을 직접 써 주세요.")
         if lang == "en" and segments:
