@@ -1,7 +1,1 @@
-{
-  "step": "subs",
-  "state": "done",
-  "at": "2026-11-05T18:19:41+09:00",
-  "segments": 6,
-  "warnings": []
-}
+{"step":"render","state":"queued","at":"2026-11-06T16:33:17+09:00"}
