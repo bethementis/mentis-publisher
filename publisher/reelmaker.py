@@ -212,7 +212,7 @@ def make_subs(job_dir):
 
     credit = ""
     if job.get("credit", {}).get("handle"):
-        c = CONF["common"]["credit"]
+        c = {"prefix": "영상: ", "suffix": "", **CONF["common"].get("credit", {})}
         credit = f"{c['prefix']}{job['credit']['handle'].strip()}{c['suffix']}"
     write_json(job_dir / "subs.json", {"duration": total, "segments": segments, "steps": steps,
                                        "hook": job.get("hook") or job.get("title", ""), "credit": credit,

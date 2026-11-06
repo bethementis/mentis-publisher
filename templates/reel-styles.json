@@ -16,6 +16,7 @@
         "symbol": { "label": "심볼(Σ)만", "file": "assets/logo-symbol.png", "width": 110 }
       } },
     "corner": { "y": 398, "size": 34, "color": "#FFFFFFCC" },
+    "credit": { "prefix": "영상: ", "suffix": "" },
     "max_width": 960,
     "max_mb": 95
   },
