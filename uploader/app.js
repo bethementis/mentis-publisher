@@ -42,6 +42,8 @@
 
   async function gh(path, opts = {}) {
     const res = await fetch(API + path, {
+      // GitHub 은 응답을 60초 동안 브라우저에 저장해 두게 해서, 저장 직후 목록이 옛날 것으로 보일 수 있다
+      cache: "no-store",
       ...opts,
       headers: {
         Accept: "application/vnd.github+json",
