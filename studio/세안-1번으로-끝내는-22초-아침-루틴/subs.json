@@ -1,13 +1,6 @@
 {
   "duration": 22.52,
-  "segments": [
-    {
-      "start": 2.19,
-      "end": 3.19,
-      "text": "당신 당신",
-      "src": "you"
-    }
-  ],
+  "segments": [],
   "steps": [],
   "hook": "세안 1번으로 끝내는 22초 아침 루틴",
   "credit": "영상: @David Yusupov",
