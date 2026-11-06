@@ -1,2 +1,6 @@
 __pycache__/
 *.pyc
+
+# 회의록은 이 PC에만 (저장소가 공개라 GitHub 에 올리지 않음)
+docs/meetings/*
+!docs/meetings/README.md
