@@ -4,6 +4,8 @@
 
 - 파일 하나 = 회의 하나: `YYYY-MM-DD_주제.md` (예: `2026-11-06_피드메이커-방향.md`)
 - 녹음·받아쓰기 원문은 `raw/` 에 같은 이름으로 (선택). 요약본만 있어도 됨.
+- **회의록은 이 PC(`Documents\mentis-publisher\docs\meetings`)에만 저장**된다. 저장소가 공개라 GitHub 에는 이 README 만 올라간다 (.gitignore).
+  그래서 클라우드 예약 작업(저녁 점검·일간 리포트)과 다른 PC는 회의록을 못 본다. 결정 사항 중 공개돼도 되는 것만 CLAUDE.md·next-projects.md 에 옮긴다.
 - 회의에서 정한 것이 기존 문서(CLAUDE.md, next-projects.md 등)와 다르면 **회의 결정이 우선**. Claude 는 반영할 문서를 알려주고 고친다.
 
 ## 결정 사항 모음 (최신이 위)
