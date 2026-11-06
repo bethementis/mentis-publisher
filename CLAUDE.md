@@ -3,6 +3,11 @@
 이 파일은 Claude Code가 이 저장소를 열었을 때 가장 먼저 읽는 프로젝트 메모다.
 다음 할 일: **[docs/next-projects.md](docs/next-projects.md)** (① 업로드 툴: 코드 완성, 설정 대기 → [docs/uploader-setup.md](docs/uploader-setup.md) ② 전략비서 에이전트)
 
+## 회의록 (작업 전에 확인)
+- **[docs/meetings/](docs/meetings/README.md)** 에 성현·친구 회의록이 쌓인다. 맨티스 작업을 시작할 때 README 의 '결정 사항 모음'과 최근 회의록을 먼저 읽는다.
+- 회의 결정이 이 파일이나 다른 문서와 다르면 회의 결정이 우선. 어긋나는 문서는 사용자에게 알리고 고친다.
+- 사용자가 회의 내용(텍스트·녹음)을 주면: 양식대로 `docs/meetings/YYYY-MM-DD_주제.md` 저장 → README 결정 사항 모음 갱신 → 영향 받는 문서·작업 알려주기.
+
 ## 누구 / 무엇
 - 사용자: 조성현(GitHub 계정 bethementis 운영). 친구와 둘이 남성 자기관리 매거진 채널 '맨티스'를 운영. 레퍼런스: 세르칸(@iamtheserkan).
 - 목표: **인스타그램 메인 채널(@bethementis) 유입 극대화.** 다른 플랫폼은 인스타 유입 통로 겸 별도 성장.
