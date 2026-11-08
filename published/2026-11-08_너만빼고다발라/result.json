@@ -1,0 +1,33 @@
+{
+  "instagram": {
+    "ok": true,
+    "media_id": "17866041321696480",
+    "permalink": "https://www.instagram.com/p/DfekOujkQs5/"
+  },
+  "threads": {
+    "ok": true,
+    "thread_id": "17917367121548676",
+    "permalink": "https://www.threads.com/@bethementis/post/DfekP_XFahr"
+  },
+  "youtube": {
+    "ok": true,
+    "video_id": "SFTankv6QEI",
+    "url": "https://youtube.com/shorts/SFTankv6QEI",
+    "privacy": "public",
+    "music": "chill-beats.mp3"
+  },
+  "tiktok": {
+    "ok": true,
+    "publish_id": "v_inbox_file~v2.7705749008806905863",
+    "mode": "inbox"
+  },
+  "outbox": {
+    "ok": true,
+    "path": "outbox/2026-11-08_너만빼고다발라",
+    "platforms": [
+      "naver"
+    ],
+    "skipped": []
+  },
+  "updated_at": "2026-11-08T19:42:23+09:00"
+}
