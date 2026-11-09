@@ -1,6 +1,14 @@
 {
   "items": [
     {
+      "date": "2026-11-09",
+      "folder": "2026-11-09_모공-기구로-관리하자",
+      "platforms": [
+        "naver"
+      ],
+      "base_url": "https://raw.githubusercontent.com/bethementis/mentis-publisher/main/outbox/2026-11-09_모공-기구로-관리하자/"
+    },
+    {
       "date": "2026-11-08",
       "folder": "2026-11-08_너만빼고다발라",
       "platforms": [

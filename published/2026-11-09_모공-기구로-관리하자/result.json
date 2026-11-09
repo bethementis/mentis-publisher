@@ -1,0 +1,33 @@
+{
+  "instagram": {
+    "ok": true,
+    "media_id": "18153410656519743",
+    "permalink": "https://www.instagram.com/p/DfhKksjmGZw/"
+  },
+  "threads": {
+    "ok": true,
+    "thread_id": "18119590901054881",
+    "permalink": "https://www.threads.com/@bethementis/post/DfhKmEeG5MI"
+  },
+  "youtube": {
+    "ok": true,
+    "video_id": "rnkKpiUvSqY",
+    "url": "https://youtube.com/shorts/rnkKpiUvSqY",
+    "privacy": "public",
+    "music": "never-gonna-leave-my-mind.mp3"
+  },
+  "tiktok": {
+    "ok": true,
+    "publish_id": "v_inbox_file~v2.7706123590634244102",
+    "mode": "inbox"
+  },
+  "outbox": {
+    "ok": true,
+    "path": "outbox/2026-11-09_모공-기구로-관리하자",
+    "platforms": [
+      "naver"
+    ],
+    "skipped": []
+  },
+  "updated_at": "2026-11-09T19:56:27+09:00"
+}
