@@ -259,6 +259,10 @@
     setReel(URL.createObjectURL(f), { file: f, size: f.size });
   }
 
+  function setStyle(s) {
+    document.querySelectorAll("input[name=style]").forEach((i) => (i.checked = i.value === (s || "세딸")));
+  }
+
   function setFormat(f) {
     format = f;
     document.querySelectorAll("#format button").forEach((b) => b.classList.toggle("on", b.dataset.format === f));
@@ -266,6 +270,7 @@
     $("reelBox").hidden = f !== "reel";
     $("threadsBox").hidden = f === "reel";
     $("zhBox").hidden = f === "reel";
+    $("styleBox").hidden = f !== "reel";
     $("formatHint").textContent = f === "reel"
       ? "인스타 릴스 + 유튜브 쇼츠·틱톡·네이버 클립·샤오홍슈(영상 노트)에 같은 영상이 올라가요. 쓰레드는 제외."
       : "인스타 캐러셀 + 쓰레드 글 + 카드로 만든 영상(유튜브·틱톡·네이버) + 샤오홍슈 이미지 노트.";
@@ -348,6 +353,7 @@
     $("date").value = date || nextFreeDate();
     $("xhsBox").open = false;
     format = "carousel";
+    setStyle("세딸");
     renderPlatforms(PLATFORMS.map(([k]) => k));
     setFormat("carousel");
     setMsg($("saveMsg"), "");
@@ -380,6 +386,7 @@
     $("xhsBody").value = data.xhs?.body || "";
     $("xhsTags").value = (data.xhs?.tags || []).join(", ");
     format = isReel(post) ? "reel" : "carousel";
+    setStyle(data.style);
     renderPlatforms(data.platforms || PLATFORMS.map(([k]) => k));
     setFormat(format);
     reel = null;
@@ -404,6 +411,8 @@
     const post = { platforms: selectedPlatforms(), caption: $("caption").value.trim() };
     if (format === "reel") {
       post.type = "reel";
+      // 리포트가 포맷별(세딸·직촬·캐러셀) 저장·공유율을 비교하는 데 쓴다
+      post.style = document.querySelector("input[name=style]:checked")?.value || "세딸";
     } else {
       const threads = $("threads").value.split(/^\s*---\s*$/m).map((s) => s.trim()).filter(Boolean);
       if (threads.length) post.threads = threads;

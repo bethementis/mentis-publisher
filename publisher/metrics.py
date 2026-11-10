@@ -326,6 +326,48 @@ def collect_tiktok():
     return {"account": user, "videos": [v for v in vids if v.get("create_time", 0) >= cutoff]}
 
 
+def post_index():
+    """발행 기록(result.json)의 플랫폼 ID → 우리 게시물 정보 (폴더·형식·주제). 리포트가 포맷별로 비교하는 데 쓴다."""
+    idx = {}
+    for base in (ROOT / "published", ROOT / "queue"):
+        for res in base.glob("*/result.json") if base.exists() else []:
+            folder = res.parent
+            try:
+                r = json.loads(res.read_text(encoding="utf-8"))
+                post = json.loads((folder / "post.json").read_text(encoding="utf-8"))
+            except Exception:  # noqa: BLE001
+                continue
+            reel = (folder / "reel.mp4").exists() or post.get("type") == "reel"
+            info = {"folder": folder.name, "format": post.get("style") or ("릴스" if reel else "캐러셀")}
+            for plat, key in (("instagram", "media_id"), ("threads", "thread_id"), ("youtube", "video_id")):
+                pid = (r.get(plat) or {}).get(key)
+                if pid:
+                    idx[(plat, str(pid))] = info
+    return idx
+
+
+def tag_posts(result):
+    """수집한 게시물에 mentis{folder, format} 을 붙이고, 저장·공유율을 미리 계산해 둔다."""
+    idx = post_index()
+    ig = result.get("instagram") or {}
+    for p in ig.get("posts", []):
+        p["mentis"] = idx.get(("instagram", p["id"]))
+        i = p.get("insights") or {}
+        reach, ss = i.get("reach"), (i.get("saved") or 0) + (i.get("shares") or 0)
+        p["save_share"] = ss
+        p["save_share_rate"] = round(ss / reach * 100, 1) if reach else None   # 도달 100명당 저장+공유
+    th = result.get("threads") or {}
+    for p in th.get("posts", []):
+        p["mentis"] = idx.get(("threads", p["id"]))
+        i = p.get("insights") or {}
+        views, ss = i.get("views"), (i.get("reposts") or 0) + (i.get("shares") or 0) + (i.get("quotes") or 0)
+        p["save_share"] = ss
+        p["save_share_rate"] = round(ss / views * 100, 1) if views else None   # 조회 100회당 리포스트+공유+인용
+    yt = result.get("youtube") or {}
+    for v in yt.get("videos", []):
+        v["mentis"] = idx.get(("youtube", v["id"]))
+
+
 def cmd_collect():
     now = dt.datetime.now(KST)
     result = {"date": now.strftime("%Y-%m-%d"), "collected_at": now.isoformat(timespec="seconds"), "errors": {}}
@@ -347,6 +389,10 @@ def cmd_collect():
         reps = {}
         result["errors"]["aside"] = str(e)[:200]
     result["naver"], result["xhs"] = reps.get("naver"), reps.get("xhs")
+    try:
+        tag_posts(result)
+    except Exception as e:  # noqa: BLE001
+        result["errors"]["tag"] = str(e)[:200]
     OUT.mkdir(exist_ok=True)
     (OUT / f"{result['date']}.json").write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
     print(f"저장: metrics/{result['date']}.json")
