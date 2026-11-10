@@ -242,3 +242,4 @@ summary { cursor: pointer; font-weight: 600; }
 .pick.on, .design.on { border-color: var(--accent); }
 .chip-btn { border: 1px solid var(--line); background: var(--chip); color: var(--text); border-radius: 99px; padding: 6px 12px; font: inherit; font-size: 13px; cursor: pointer; text-align: left; }
 #thResuggest { margin-top: 6px; }
+#thCanvas { cursor: grab; touch-action: none; }

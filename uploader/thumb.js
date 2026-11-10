@@ -18,7 +18,7 @@
   };
   // 로고 버전별 크기 비율 (MENTIS 글자 기준). 심볼이 들어가면 세로가 길어서 작게
   const LOGO_SCALE = { text: 1, both: 0.55, symbol: 0.3, row: 0.85 };
-  const OPT_DEF = { size: 100, offset: 0, dim: 25, logo: "auto", text: {}, logoVariant: "text", logoColor: "#FFFFFF", logoSize: 100 };
+  const OPT_DEF = { size: 100, offset: 0, dim: 25, logo: "auto", text: {}, logoVariant: "text", logoColor: "#FFFFFF", logoSize: 100, logoX: 0, logoY: 0 };
 
   let job = null, jobData = null, subs = null;
   let frameT = 0, picks = [], lines = [], design = "magazine";
@@ -196,11 +196,13 @@
   }
 
   // 디자인마다 정해진 로고 자리. '위'·'아래'를 고르면 그 자리로, '없음'이면 안 그림
+  let logoBox = null;   // 큰 미리보기에 마지막으로 그린 로고 자리 (끌어서 옮기기용)
   function drawLogo(ctx, cx, cy, w) {
     const logoImg = logoImgs[opt.logoVariant] || logoImgs.text;
     if (opt.logo === "none" || !logoImg?.complete || !logoImg.naturalWidth) return;
     if (opt.logo === "top") cy = 300;
     if (opt.logo === "bottom") cy = 1640;
+    cx += opt.logoX || 0; cy += opt.logoY || 0;   // 사용자가 옮긴 만큼
     const color = opt.logoColor || "#FFFFFF";
     w = Math.round(w * (LOGO_SCALE[opt.logoVariant] ?? 1) * (opt.logoSize || 100) / 100);
     const h = w * logoImg.naturalHeight / logoImg.naturalWidth;
@@ -212,6 +214,7 @@
     t.globalCompositeOperation = "source-in"; t.fillStyle = color; t.fillRect(0, 0, tmp.width, tmp.height);
     ctx.save(); ctx.shadowColor = "rgba(0,0,0,.45)"; ctx.shadowBlur = 6;
     ctx.drawImage(tmp, cx - tmp.width / 2, cy - tmp.height / 2); ctx.restore();
+    logoBox = { x: cx - tmp.width / 2, y: cy - tmp.height / 2, w: tmp.width, h: tmp.height };
   }
 
   function render(ctx, which) {
@@ -270,8 +273,9 @@
   }
   function draw() {
     if (!job) return;
-    paint($("thCanvas"), design);
     document.querySelectorAll("#thDesigns canvas").forEach((c) => paint(c, c.dataset.d));
+    logoBox = null;
+    paint($("thCanvas"), design);
   }
 
   function syncControls() {
@@ -285,6 +289,8 @@
     $("thStroke").value = st.stroke; $("thStrokeV").textContent = `${st.stroke}px`; $("thStrokeColor").value = st.strokeColor;
     $("thLogoColor").value = opt.logoColor; $("thLogoSize").value = opt.logoSize; $("thLogoSizeV").textContent = `${opt.logoSize}%`;
     $("thLogoV").querySelectorAll("button").forEach((b) => b.classList.toggle("on", b.dataset.v === opt.logoVariant));
+    $("thLogoX").value = opt.logoX || 0; $("thLogoXV").textContent = opt.logoX || 0;
+    $("thLogoY").value = opt.logoY || 0; $("thLogoYV").textContent = opt.logoY || 0;
     document.fonts.ready.then(draw);
     draw();
   }
@@ -326,7 +332,7 @@
   for (const [id, k] of [["thSize", "size"], ["thOffset", "offset"], ["thDim", "dim"]]) {
     $(id).oninput = () => { opt[k] = Number($(id).value); syncControls(); };
   }
-  $("thLogo").onchange = () => { opt.logo = $("thLogo").value; syncControls(); };
+  $("thLogo").onchange = () => { opt.logo = $("thLogo").value; opt.logoX = 0; opt.logoY = 0; syncControls(); };
   // 멘트 글자: 바꾼 값만 opt.text 에 (디자인을 바꿔도 내가 고른 글꼴·색은 유지)
   const setText = (k, v) => { (opt.text ||= {})[k] = v; syncControls(); };
   $("thFont").onchange = () => setText("font", $("thFont").value);
@@ -337,6 +343,27 @@
   $("thTextReset").onclick = () => { opt.text = {}; syncControls(); };
   $("thLogoColor").oninput = () => { opt.logoColor = $("thLogoColor").value; syncControls(); };
   $("thLogoSize").oninput = () => { opt.logoSize = Number($("thLogoSize").value); syncControls(); };
+  $("thLogoX").oninput = () => { opt.logoX = Number($("thLogoX").value); syncControls(); };
+  $("thLogoY").oninput = () => { opt.logoY = Number($("thLogoY").value); syncControls(); };
+  $("thLogoMoveReset").onclick = () => { opt.logoX = 0; opt.logoY = 0; syncControls(); };
+  // 큰 미리보기에서 로고를 잡고 끌면 그만큼 옮긴다
+  const cv = $("thCanvas");
+  let drag = null;
+  const pt = (e) => { const r = cv.getBoundingClientRect(); return { x: (e.clientX - r.left) * W / r.width, y: (e.clientY - r.top) * H / r.height }; };
+  cv.onpointerdown = (e) => {
+    const p = pt(e), b = logoBox;
+    if (!b || p.x < b.x - 20 || p.x > b.x + b.w + 20 || p.y < b.y - 20 || p.y > b.y + b.h + 20) return;
+    drag = { p, x: opt.logoX || 0, y: opt.logoY || 0 }; cv.setPointerCapture(e.pointerId); cv.style.cursor = "grabbing";
+  };
+  cv.onpointermove = (e) => {
+    if (!drag) return;
+    const p = pt(e), clamp = (v, m) => Math.max(-m, Math.min(m, Math.round(v / 5) * 5));
+    opt.logoX = clamp(drag.x + p.x - drag.p.x, 460); opt.logoY = clamp(drag.y + p.y - drag.p.y, 1700);
+    $("thLogoX").value = opt.logoX; $("thLogoXV").textContent = opt.logoX;
+    $("thLogoY").value = opt.logoY; $("thLogoYV").textContent = opt.logoY;
+    draw();
+  };
+  cv.onpointerup = cv.onpointercancel = () => { drag = null; cv.style.cursor = ""; };
   $("thPreset").onclick = () => window.MENTIS_STUDIO?.savePreset();
   $("thResuggest").onclick = () => { lines = suggest(); renderSuggest(); };
   $("thSave").onclick = save;

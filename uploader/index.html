@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>맨티스 업로드</title>
-<link rel="stylesheet" href="style.css?v=20261110a">
+<link rel="stylesheet" href="style.css?v=20261110b">
 <!-- 릴스 만들기 미리보기용 글꼴 (영상에는 assets/fonts 의 같은 글꼴이 들어감) -->
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Do+Hyeon&family=Jua&family=Nanum+Myeongjo:wght@800&display=swap">
@@ -377,6 +377,10 @@
                 </label>
               </div>
               <label>크기 <span class="val" id="thLogoSizeV"></span><input type="range" id="thLogoSize" min="40" max="220" step="5"></label>
+              <label>좌우 <span class="val" id="thLogoXV"></span><input type="range" id="thLogoX" min="-460" max="460" step="5"></label>
+              <label>위아래 <span class="val" id="thLogoYV"></span><input type="range" id="thLogoY" min="-1700" max="1700" step="5"></label>
+              <div class="row"><button type="button" class="btn ghost small" id="thLogoMoveReset">로고 자리 처음대로</button>
+                <span class="hint">썸네일 위 로고를 끌어서 옮길 수도 있어요.</span></div>
             </div>
             <div class="row end">
               <button class="btn ghost small" id="thPreset" title="릴스 자막·로고 스타일과 썸네일 설정을 모두 기본값으로">지금 설정을 기본값으로</button>
@@ -435,8 +439,8 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.2/Sortable.min.js"></script>
 <script src="config.js"></script>
-<script src="app.js?v=20261110a"></script>
-<script src="studio.js?v=20261110a"></script>
-<script src="thumb.js?v=20261110a"></script>
+<script src="app.js?v=20261110b"></script>
+<script src="studio.js?v=20261110b"></script>
+<script src="thumb.js?v=20261110b"></script>
 </body>
 </html>
