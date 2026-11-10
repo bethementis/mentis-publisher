@@ -17,7 +17,7 @@
     minimal: { font: "pretendard-xb", color: "#FFFFFF", hl: "#FFD24A", stroke: 0, strokeColor: "#000000" },
   };
   // 로고 버전별 크기 비율 (MENTIS 글자 기준). 심볼이 들어가면 세로가 길어서 작게
-  const LOGO_SCALE = { text: 1, both: 0.55, symbol: 0.3 };
+  const LOGO_SCALE = { text: 1, both: 0.55, symbol: 0.3, row: 0.85 };
   const OPT_DEF = { size: 100, offset: 0, dim: 25, logo: "auto", text: {}, logoVariant: "text", logoColor: "#FFFFFF", logoSize: 100 };
 
   let job = null, jobData = null, subs = null;

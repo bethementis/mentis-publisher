@@ -13,7 +13,8 @@
       "variants": {
         "both": { "label": "심볼 + MENTIS", "file": "assets/logo.png", "width": 190 },
         "text": { "label": "MENTIS 글자만", "file": "assets/logo-text.png", "width": 300 },
-        "symbol": { "label": "심볼(Σ)만", "file": "assets/logo-symbol.png", "width": 110 }
+        "symbol": { "label": "심볼(Σ)만", "file": "assets/logo-symbol.png", "width": 110 },
+        "row": { "label": "심볼 옆에 MENTIS", "file": "assets/logo-row.png", "width": 280 }
       } },
     "corner": { "y": 398, "size": 34, "color": "#FFFFFFCC" },
     "credit": { "prefix": "영상: ", "suffix": "" },
