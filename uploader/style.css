@@ -161,7 +161,6 @@ summary { cursor: pointer; font-weight: 600; }
 .day .post { display: block; margin-top: 3px; border-radius: 5px; overflow: hidden; cursor: grab; }
 .day .post img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; display: block; }
 .day .post.done { opacity: .55; cursor: pointer; }
-.day .post.dup { outline: 2px solid var(--warn); }
 @media (max-width: 600px) { .day { min-height: 64px; } }
 
 .list { display: flex; flex-direction: column; gap: 8px; }

@@ -36,7 +36,7 @@
 ## 구조
 ```
 publisher/
-  publish.py        # check | preview | publish. queue/ 에서 하루 1개 발행
+  publish.py        # check | preview | publish. queue/ 에서 그날 날짜 게시물 전부 발행 (3분 간격, 날짜 없는 건 하루 1개)
   platforms.py      # 인스타(캐러셀)·쓰레드 API
   youtube.py        # 쇼츠 업로드
   tiktok.py         # 틱톡 inbox 업로드 (무음 영상)

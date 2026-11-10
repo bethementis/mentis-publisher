@@ -339,7 +339,7 @@
     const d = $("date").value, w = [];
     if (d && d < todayKST()) w.push("지난 날짜예요. 다음 자동 발행 때 바로 올라가요.");
     const same = posts.filter((p) => p.area === "queue" && p.date === d && p.folder !== editing?.folder);
-    if (d && same.length) w.push(`같은 날 예약이 이미 있어요 (${same.map((p) => p.slug).join(", ")}). 하루에 1개씩 올라가서 하나는 다음 날로 밀려요.`);
+    if (d && same.length) w.push(`같은 날 예약이 이미 있어요 (${same.map((p) => p.slug).join(", ")}). 그날 저녁에 이름 순서대로 3분 간격으로 같이 올라가요.`);
     $("dateWarn").textContent = w.join("\n");
   }
 
@@ -524,10 +524,9 @@
     for (let i = 0; i < 42; i++) {
       const d = new Date(startDay); d.setDate(startDay.getDate() + i);
       const key = ymd(d), list = byDate[key] || [];
-      const queued = list.filter((p) => p.area === "queue");
       html += `<div class="day ${d.getMonth() !== m ? "other" : ""} ${key === today ? "today" : ""}" data-date="${key}">
         <div class="num">${d.getDate()}</div>
-        ${list.map((p) => `<span class="post ${p.area === "published" ? "done" : ""} ${p.area === "queue" && queued.length > 1 ? "dup" : ""}"
+        ${list.map((p) => `<span class="post ${p.area === "published" ? "done" : ""} "
           data-folder="${esc(p.folder)}" draggable="${p.area === "queue"}" title="${esc(p.name)}">
           ${thumb(p)}</span>`).join("")}
       </div>`;

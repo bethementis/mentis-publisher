@@ -49,6 +49,11 @@ def commit_push(msg):
     if subprocess.run(["git", "diff", "--cached", "--quiet"], cwd=ROOT).returncode == 0:
         return False
     git("-c", "user.name=mentis-bot", "-c", "user.email=bot@users.noreply.github.com", "commit", "-m", msg)
+    for i in range(4):   # 같은 실행에서 여러 번 올리니, 그사이 다른 커밋이 생겼으면 받아서 다시
+        if subprocess.run(["git", "push", "-q", "origin", f"HEAD:{BRANCH}"], cwd=ROOT).returncode == 0:
+            return True
+        time.sleep(5 * (i + 1))
+        git("pull", "-q", "--rebase", "origin", BRANCH)
     git("push", "origin", f"HEAD:{BRANCH}")
     return True
 
@@ -278,11 +283,34 @@ def cmd_preview():
     return 0
 
 
-def cmd_publish():
+GAP_SECONDS = 180   # 같은 날 여러 개를 올릴 때 사이 간격 (한꺼번에 올라가지 않게)
+
+
+def todays_items():
+    """이번 발행에서 올릴 것: 날짜가 오늘(또는 지난 날짜)인 게시물은 전부, 날짜 없는 게시물은 그중 없을 때만 1개 (이름 순서대로 하루 1개)."""
     items = due_items()
+    dated = [d for d in items if re.match(r"\d{4}-\d{2}-\d{2}", d.name)]
+    return dated or items[:1]
+
+
+def cmd_publish():
+    items = todays_items()
     if not items:
         log("발행할 게시물이 없어요"); return 0
-    folder = items[0]
+    if len(items) > 1:
+        log(f"오늘 올릴 게시물 {len(items)}개: {', '.join(d.name for d in items)}")
+    code = 0
+    for i, folder in enumerate(items):
+        if i:
+            log(f"다음 게시물까지 {GAP_SECONDS // 60}분 쉬어요"); time.sleep(GAP_SECONDS)
+        try:
+            code |= publish_one(folder)
+        except SystemExit as e:   # post.json 이 없는 폴더 등: 그 게시물만 건너뛰고 다음 것
+            log(f"✗ {folder.name}: {e}"); code = 1
+    return code
+
+
+def publish_one(folder):
     post = load_post(folder)
     result_f = folder / "result.json"
     result = json.loads(result_f.read_text()) if result_f.exists() else {}
