@@ -142,67 +142,20 @@
   // 마지막 글자에 받침이 있는지 (12초 → 면, 1분 → 이면)
   const batchim = (w) => { const c = w.charCodeAt(w.length - 1); return c >= 0xac00 && c <= 0xd7a3 ? (c - 0xac00) % 28 !== 0 : true; };
 
-  // 11/6 회의: 대상을 좁히고(누구 얘기인지), 멘트마다 '저장할 이유'나 '친구에게 보낼 이유' 하나를 보이게.
-  // 자막에서 고민 키워드·제품 순서·숫자를 찾아 저장용 / 공유용 / 원래 훅 세 갈래로 추천한다.
-  const CONCERNS = [
-    [/좁쌀|여드름|트러블|뾰루지|acne|pimple|breakout/i, "좁쌀 트러블"],
-    [/색소|잡티|기미|자국|흔적|pigment|dark spot/i, "색소침착"],
-    [/번들|유분|기름|피지|oily|sebum/i, "세안 후 번들거림"],
-    [/건조|당김|당기|각질|dry|flak/i, "세안 후 당김"],
-    [/모공|블랙헤드|pore|blackhead/i, "넓은 모공"],
-    [/주름|탄력|노화|wrinkle|aging/i, "이른 주름"],
-    [/햇볕|자외선|선크림|선블록|탔|sunburn|sunscreen|spf/i, "자외선 손상"],
-    [/면도|쉐이빙|shav/i, "면도 후 따가움"],
-    [/거북목|목\s?통증|자세 교정|등이 굽|굽은 등|머리가 앞으로|posture|neck/i, "거북목"],
-    [/다크서클|눈\s?밑|dark circle/i, "다크서클"],
-    [/탈모|머리카락|두피|hair loss|scalp/i, "두피·탈모"],
-  ];
-  const PRODUCTS = [
-    [/클렌저|폼|세안제|cleanser/i, "클렌저"], [/토너|toner/i, "토너"], [/세럼|에센스|serum/i, "세럼"],
-    [/비타민\s?c|vitamin c/i, "비타민C"], [/레티놀|retinol/i, "레티놀"],
-    [/보습|수분크림|로션|moistur/i, "보습제"], [/선크림|자외선 차단|선블록|sunscreen|spf/i, "선크림"],
-  ];
-  let suggestRound = 0;
+  // 영상 주제와 맞는 게 먼저: 훅·자막에서 주제·숫자를 뽑아 3가지 (회의의 대상 좁히기는 억지로 끼우지 않는다)
   function suggest() {
     const clean = (s) => String(s || "").replace(/\*/g, "").replace(/\s+/g, " ").trim();
     const hook = clean(subs.hook);
-    const segs = (subs.segments || []).map((s) => `${s.text} ${s.src || ""}`);
-    const allText = [subs.hook, jobData.corner, ...segs].join(" ");
-    // 원래 추천 3개 (훅·숫자·주제)는 그대로 두고, 아래 회의 규칙 멘트는 영상에 그 정보가 실제로 있을 때만 덧붙인다
+    const allText = [subs.hook, ...(subs.segments || []).map((s) => s.text)].join(" ");
     const topic = clean(hook.split(/[,，.!?…]/)[0]) || clean(jobData.corner) || "자기관리";
-    const NUMS = [/(주|하루|매일)\s?\d+\s?(번|회|분|초)/, /\d+\s?(초|분)/, /\d+\s?(일|주|번|회|가지|단계|개|%|kg|cm)/];
-    const num = NUMS.map((re) => allText.match(re)?.[0]).find(Boolean)?.replace(/\s/g, "");
+    const num = (allText.match(/\d+\s?(초|분|일|주|번|가지|개|%|kg|cm)/) || [])[0]?.replace(/\s/g, "");
     const first = clean((subs.segments || [])[0]?.text).replace(/[,.]$/, "");
     const out = [
-      { text: hook ? String(subs.hook).replace(/\s*,\s*/, ",@@") : first || topic, why: "" },
-      { text: num ? `${topic},@@*${num}*${batchim(num) ? "이면" : "면"} 충분해요` : `${topic},@@*이렇게* 바꾸세요`, why: "" },
-      { text: `아직도 ${topic}?@@*이것* 하나면 끝`, why: "" },
+      hook ? String(subs.hook).replace(/\s*,\s*/, ",\n") : first || topic,
+      num ? `${topic},\n*${num}*${batchim(num) ? "이면" : "면"} 충분해요` : `${topic},\n*이렇게* 바꾸세요`,
+      `아직도 ${topic}?\n*이것* 하나면 끝`,
     ];
-    // 대상 좁히기: 그 고민이 영상의 주제일 때만 (훅·코너 이름에 있거나 자막 줄의 30% 이상). 스친 말로 억지로 만들지 않게
-    const head = `${subs.hook || ""} ${jobData.corner || ""}`;
-    const ko = (subs.segments || []).map((x) => x.text || "");
-    let target = "", best = 0;
-    for (const [re, name] of CONCERNS) {
-      const n = ko.filter((t) => re.test(t)).length;   // 그 고민이 나온 자막 줄 수 (나눈 줄은 영어 원문이 같아서 한국어로만 센다)
-      const main = re.test(head) || (n >= 3 && n >= ko.length * 0.3);
-      if (main && n + (re.test(head) ? 100 : 0) > best) { best = n + (re.test(head) ? 100 : 0); target = name; }
-    }
-    const r = suggestRound++;
-    // 저장할 이유: 영상에 제품이 두 개 이상 순서대로 나오면 그 순서를 그대로
-    const order = [];
-    for (const seg of segs) for (const [re, name] of PRODUCTS) if (re.test(seg) && !order.includes(name)) order.push(name);
-    if (order.length >= 2) {
-      const who = topic;
-      out.push({ text: [`${who}@@*${order.slice(0, 4).join(" → ")}*`, `${who}, 이 순서로@@*${order.slice(0, 4).join(" → ")}*`][r % 2], why: "저장용" });
-    }
-    // 친구에게 보낼 이유: 고민이 분명할 때만
-    if (target) {
-      const iga = batchim(target) ? "이" : "가";
-      out.push({ text: [`${target} 있는 친구@@*대부분 이걸* 놓쳐요`, `${target}${iga} 안 낫는 이유@@*매일 하는 이 습관*`][r % 2], why: "공유용" });
-    }
-    const seen = new Set();
-    return out.map((o) => ({ ...o, text: o.text.replaceAll("@@", "\n") }))
-      .filter((o) => o.text && !seen.has(o.text) && seen.add(o.text));
+    return [...new Set(out.filter(Boolean))].map((text) => ({ text, why: "" }));
   }
 
   function renderSuggest() {

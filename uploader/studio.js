@@ -161,7 +161,7 @@
       lines: $("stLinesBox").hidden ? "" : $("stLines").value.trim(), created_at: now(),
     };
     data.hook = $("stHook").value.trim();
-    if (style === "overseas") Object.assign(data, { cover_band: $("stBand").checked,
+    if (style === "overseas") Object.assign(data, { en_subs: $("stBand").checked,
       credit: { handle, permission: $("stPermission").value.trim() } });
     if (style === "format") data.step_lines = $("stSteps").value.trim();
     if (voice) data.voice = `voice.${ext(voice)}`;
@@ -468,10 +468,10 @@
     paintLogo(logo, variant, l);
     Object.assign(logo.style, { width: cq(l.width), top: top(l.y), opacity: l.opacity });
     const corner = $("ovCorner");
-    corner.textContent = show ? jobData.corner || "" : "";
+    corner.textContent = "";   // 코너 이름은 썸네일에만
     Object.assign(corner.style, { top: top(l.y + l.width / ratio / 2 + (l.bold || 0) + 30), fontSize: cq(conf.common.corner.size), color: l.color });
     const band = $("ovBand"), b = conf.styles[key()]?.band;
-    band.hidden = !(jobData.cover_band && b);
+    band.hidden = true;   // 원본 영어 자막은 가리지 않는다 (한국어 자막을 그 밑에)
     if (!band.hidden) Object.assign(band.style, { top: top(textStyle("subtitle").y - b.height / 2), height: top(b.height) });
     // 한 줄에 안 들어가 글자가 작아지는 자막 표시
     const st = textStyle("subtitle");

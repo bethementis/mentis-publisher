@@ -369,18 +369,13 @@ def paste_logo(img, ls):
 
 
 def static_layer(job, style, subs):
-    """영상 내내 같은 것: 원본 자막 가림 띠, 로고, 코너 이름, 위쪽 문구, 출처."""
+    """영상 내내 같은 것: 로고, 위쪽 문구, 출처.
+    원본 영어 자막은 가리지 않는다(한국어 자막을 그 밑에). 코너 이름(스킨케어 노트 등)은 썸네일에만 넣는다."""
     img = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     c, key, ov = CONF["common"], job.get("style"), subs.get("styles") or {}
-    if job.get("cover_band") and style.get("band"):
-        b, y = style["band"], text_style(key, "subtitle", ov)["y"]
-        ImageDraw.Draw(img).rectangle([0, y - b["height"] / 2, W, y + b["height"] / 2], fill=rgba(b["color"]))
     ls = logo_style(key, ov)
     if ls.get("show", True):
-        bottom = paste_logo(img, ls)
-        if job.get("corner"):
-            draw_text(img, job["corner"], {**CONF["text_defaults"], **c["corner"], "y": bottom + 30,
-                                           "color": ls["color"], "stroke": 2, "one_line": True})
+        paste_logo(img, ls)
     draw_text(img, subs.get("hook", ""), text_style(key, "hook", ov))
     if subs.get("credit") and subs.get("credit_on", True):
         draw_text(img, subs["credit"], text_style(key, "credit", ov))
