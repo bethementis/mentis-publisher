@@ -2,7 +2,7 @@
   "duration": 34.85,
   "segments": [
     {
-      "start": 0.0,
+      "start": 0,
       "end": 1.9,
       "text": "세안 전에 비누 한 조각을 얼굴에 문지르며",
       "src": "You rub a bar of soap on your face before"
@@ -105,12 +105,12 @@
     },
     {
       "start": 29.54,
-      "end": 32.0,
+      "end": 32,
       "text": "비타민 C, 세럼, 보습제, 그리고",
       "src": "vitamin C, serum, moisturizer, and then"
     },
     {
-      "start": 32.0,
+      "start": 32,
       "end": 33.29,
       "text": "자외선 차단제를 바르고, 더 많은 팁을",
       "src": "sunscreen and also go hard to count for more tips."
@@ -125,6 +125,15 @@
   "steps": [],
   "hook": "스킨케어 레벨 5단계, 당신의 레벨은?",
   "credit": "영상: @goharsguide",
-  "credit_on": true,
-  "styles": {}
+  "credit_on": false,
+  "styles": {
+    "logo": {
+      "variant": "row",
+      "width": 280
+    },
+    "subtitle": {
+      "size": 52,
+      "box": "#000000"
+    }
+  }
 }
