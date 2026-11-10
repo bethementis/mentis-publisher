@@ -1,10 +1,10 @@
 # 세딸 자동 제작 — Claude 예약 작업 지시문
 
-이 파일이 예약 작업(1시간마다)의 할 일 전부다. 설계 배경은 `docs/reel-auto-design.md`.
+이 파일이 예약 작업(매일 밤 11시, 한국 시간)의 할 일 전부다. 설계 배경은 `docs/reel-auto-design.md`.
 저장소: bethementis/mentis-publisher, 브랜치 main. **게시(업로드)는 절대 하지 않는다** — 사람이 업로드 툴 '후보'에서 골라 예약한다.
 
 ## 0. 할 일 찾기
-1. `git pull` 후 `studio/*/job.json` 중 아래를 모두 만족하는 작업을 찾는다 (한 번에 최대 5개, 오래된 것부터):
+1. `git pull` 후 `studio/*/job.json` 중 아래를 모두 만족하는 작업을 찾는다 (한 번에 최대 10개, 오래된 것부터):
    - `"auto": true`
    - `status.json` 이 `{"step": "subs", "state": "done"}`
    - `auto.json` 이 아직 없음

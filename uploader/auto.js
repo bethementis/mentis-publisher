@@ -14,7 +14,7 @@
   // ---------- 후보 ----------
   function stage({ j, s, auto }) {
     if (s?.state === "error") return { label: `✗ ${s.step === "render" ? "릴스 만들기" : "자막 만들기"} 실패: ${s.error || ""}`, cls: "err" };
-    if (!auto) return { label: s?.step === "subs" && s?.state === "done" ? "🤖 Claude 제작 기다리는 중 (1시간 안에)" : "⏳ 자막 만드는 중…" };
+    if (!auto) return { label: s?.step === "subs" && s?.state === "done" ? "🤖 Claude 제작 기다리는 중 (매일 밤 11시)" : "⏳ 자막 만드는 중…" };
     if (s?.step === "render" && s?.state === "done" && j.files["reel.mp4"]) return { ready: true };
     return { label: "⏳ 릴스 만드는 중…" };
   }
@@ -126,7 +126,7 @@
         ], (t) => A.setMsg($("stInboxMsg"), `${tag}: ${t}`));
         await window.MENTIS_STUDIO.dispatch(v.name, "subs");
       }
-      A.setMsg($("stInboxMsg"), `✓ ${inbox.length}개를 넣었어요. 자막 → Claude 제작·채점 → 완성까지 보통 1~2시간 안에 후보로 떠요.`, "ok");
+      A.setMsg($("stInboxMsg"), `✓ ${inbox.length}개를 넣었어요. 오늘 밤 11시에 Claude 가 만들고 채점해서 다음 날 아침 후보로 떠요.`, "ok");
       inbox = []; renderInbox(); $("stInboxAllowed").checked = false;
       await A.loadRepo();
     } catch (e) {
