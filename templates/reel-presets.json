@@ -5,8 +5,8 @@
       "y": 1510,
       "bold": 3,
       "color": "#0400e6",
-      "variant": "text",
-      "width": 300
+      "variant": "row",
+      "width": 280
     },
     "subtitle": {
       "highlight": "#1d00fa"
