@@ -243,3 +243,4 @@ summary { cursor: pointer; font-weight: 600; }
 .chip-btn { border: 1px solid var(--line); background: var(--chip); color: var(--text); border-radius: 99px; padding: 6px 12px; font: inherit; font-size: 13px; cursor: pointer; text-align: left; }
 #thResuggest { margin-top: 6px; }
 #thCanvas { cursor: grab; touch-action: none; }
+.chip-btn .why { font-size: 11px; color: var(--accent, #2B3A8C); margin-right: 4px; }
