@@ -244,3 +244,17 @@ summary { cursor: pointer; font-weight: 600; }
 #thResuggest { margin-top: 6px; }
 #thCanvas { cursor: grab; touch-action: none; }
 .chip-btn .why { font-size: 11px; color: var(--accent, #2B3A8C); margin-right: 4px; }
+/* 세딸 자동 제작 */
+.cand { display: flex; gap: 12px; border: 1px solid var(--line); border-radius: 10px; padding: 10px; }
+.cand video { width: 120px; aspect-ratio: 9 / 16; object-fit: cover; border-radius: 8px; background: #000; flex: none; }
+.cand .body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+.cand .score { font-size: 26px; font-weight: 800; color: var(--accent); white-space: nowrap; }
+.cand .score small { font-size: 13px; margin-left: 2px; }
+.cand .why { margin: 0; font-size: 13px; }
+.cand .row.end { margin-top: auto; }
+.inrow { border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; }
+.inrow .name { display: flex; align-items: center; gap: 8px; }
+.inrow .name button { margin-left: auto; }
+.grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0 10px; }
+@media (max-width: 600px) { .grid3 { grid-template-columns: 1fr; } .cand video { width: 90px; } }
+.sub.err { color: var(--err, #c0392b); }

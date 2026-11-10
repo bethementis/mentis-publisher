@@ -45,13 +45,14 @@ publisher/
   refresh_tokens.py # 쓰레드(+IG_INSIGHTS_TOKEN 이 IGAA면) 토큰 주간 연장
   metrics.py        # 전략비서 숫자 수집 collect / 권한 점검 probe
   checks.py         # 전략비서 저녁 점검 (문제 있을 때만 알림 재료)
-  reelmaker.py      # 릴스 만들기: subs(Whisper+DeepL→subs.json) / render(9:16·로고·자막·크레딧→reel.mp4) → docs/reel-studio.md
+  reelmaker.py      # 릴스 만들기: subs(Whisper+DeepL→subs.json) / render(9:16·로고·자막·크레딧→reel.mp4) / preview(완성 화면 jpg) → docs/reel-studio.md
 .github/workflows/
   publish.yml        # 매일 UTC 10:00 (~19:00 KST) + 0~25분 랜덤 지연. 수동: check/preview/publish
   refresh-tokens.yml # 매주 월
   tiktok-auth.yml    # 최초 연결용 (scope 추가 시 재인증에도 사용)
   metrics.yml        # 06:00 collect, 21:20 check (KST)
   reel-studio.yml    # 업로드 툴 '릴스 만들기'가 실행 (job, step=subs|render). DEEPL_API_KEY
+  reel-auto.yml      # 세딸 자동 제작: Claude 예약 작업이 studio/*/auto.json 을 push 하면 완성본 렌더 → docs/reel-auto-routine.md
 queue/               # 발행 대기. 폴더 1개 = 게시물 1개. 이름 앞 YYYY-MM-DD 면 그날 발행
 published/           # 발행 완료 + result.json (플랫폼별 링크/ID)
 outbox/              # 어사이드가 가져가는 파일 (naver/short.mp4, xhs/중국어 카드) + index.json, 14일 후 삭제

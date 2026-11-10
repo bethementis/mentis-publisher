@@ -1,0 +1,58 @@
+name: 맨티스 세딸 자동 제작 (완성본)
+
+# Claude 예약 작업(docs/reel-auto-routine.md)이 studio/작업/auto.json 을 커밋하면 실행된다.
+# status.json 이 render/queued 인 자동 제작 작업을 모두 찾아 완성본(reel.mp4)을 만든다.
+on:
+  push:
+    branches: [main]
+    paths: ["studio/**/auto.json"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: reel-auto
+  cancel-in-progress: false
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -q requests pillow
+      - name: ffmpeg 설치
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg > /dev/null
+      - name: 완성본 만들기
+        run: |
+          python - <<'EOF' > /tmp/jobs.txt
+          import json, pathlib
+          for d in sorted(pathlib.Path("studio").iterdir()):
+              try:
+                  s = json.loads((d / "status.json").read_text(encoding="utf-8"))
+              except Exception:
+                  continue
+              if (d / "auto.json").exists() and s.get("step") == "render" and s.get("state") == "queued":
+                  print(d.name)
+          EOF
+          cat /tmp/jobs.txt
+          while IFS= read -r job; do
+            [ -n "$job" ] && python publisher/reelmaker.py render "studio/$job" || true
+          done < /tmp/jobs.txt
+      - name: 결과 저장
+        if: always()
+        run: |
+          git config user.name mentis-bot
+          git config user.email bot@users.noreply.github.com
+          git add studio
+          git diff --cached --quiet && exit 0
+          git commit -q -m "reel auto: 완성본"
+          for i in 1 2 3 4; do
+            git pull -q --rebase origin "$GITHUB_REF_NAME" && git push -q origin "HEAD:$GITHUB_REF_NAME" && exit 0
+            sleep $((i * 5))
+          done
+          exit 1

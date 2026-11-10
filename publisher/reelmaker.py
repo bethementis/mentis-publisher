@@ -3,6 +3,7 @@
 
   python publisher/reelmaker.py subs   studio/이름   # 자막 만들기: 받아쓰기(Whisper) + 번역(DeepL) → subs.json
   python publisher/reelmaker.py render studio/이름   # 릴스 완성: 9:16 + 로고 + 자막 + 크레딧 → reel.mp4 (95MB 이하)
+  python publisher/reelmaker.py preview studio/이름 출력폴더 [초,초,...]   # 완성본과 같은 화면을 몇 장 jpg 로 (자동 제작 예약 작업이 위치·색 확인용)
 
 작업 폴더:
   raw.mp4 (또는 raw.mov)  원본 영상. 권리가 있는 영상만 (직접 촬영, 스톡, 원작자 허락)
@@ -417,6 +418,49 @@ def pick_music(choice):
     return named if named.exists() else random.choice(tracks)
 
 
+def base_filter(job, raw):
+    """원본을 1080x1920 으로 맞추는 필터 (꽉 채우기 crop / 흐린 배경 blur). 끝에 라벨은 안 붙는다."""
+    fit = job.get("fit", "auto")
+    if fit == "auto":
+        fit = "crop" if raw["h"] and abs(raw["w"] / raw["h"] - 9 / 16) < 0.12 else "blur"
+    cover = f"scale={W}:{H}:force_original_aspect_ratio=increase,crop={W}:{H}"
+    if fit == "blur":
+        return fit, (f"[0:v]split[a][b];[a]{cover},boxblur=40:2,eq=brightness=-0.08[bg];"
+                     f"[b]scale={W}:{H}:force_original_aspect_ratio=decrease[fg];[bg][fg]overlay=(W-w)/2:(H-h)/2")
+    return fit, f"[0:v]{cover}"
+
+
+def preview(job_dir, out_dir, times=None):
+    """완성본과 같은 화면(맞추기 + 로고·위쪽 문구·그 시간의 자막)을 jpg 로 저장한다. 영상 파일은 안 만든다."""
+    job, style = load_job(job_dir)
+    subs = read_json(job_dir / "subs.json") or {}
+    raw_path = find_file(job_dir, "raw")
+    raw, _, total = total_length(job_dir, job)
+    out_dir = Path(out_dir); out_dir.mkdir(parents=True, exist_ok=True)
+    segs = subs.get("segments") or []
+    if not times:   # 자막 가운데 시점 몇 개 (없으면 영상 고르게)
+        times = [round((float(s["start"]) + float(s["end"])) / 2, 2) for s in segs[:: max(1, len(segs) // 4)]][:5]             or [round(total * k, 2) for k in (0.1, 0.4, 0.7)]
+    _, vf = base_filter(job, raw)
+    base = static_layer(job, style, subs)
+    saved = []
+    for t in times:
+        t = min(max(0.0, float(t)), max(0.0, raw["duration"] - 0.05))
+        frame = out_dir / f"_base_{t:.2f}.png"
+        subprocess.run([FFMPEG, "-y", "-loglevel", "error", "-ss", f"{t:.2f}", "-i", str(raw_path),
+                        "-filter_complex", vf + "[v]", "-map", "[v]", "-frames:v", "1", str(frame)], check=True)
+        img = Image.open(frame).convert("RGBA")
+        layer = base.copy()
+        for s in segs:
+            if float(s["start"]) <= t < float(s["end"]):
+                draw_text(layer, s["text"], text_style(job.get("style"), "subtitle", subs.get("styles")))
+        img.alpha_composite(layer)
+        out = out_dir / f"preview_{t:05.2f}s.jpg"
+        img.convert("RGB").save(out, quality=85)
+        frame.unlink()
+        saved.append(str(out))
+    return saved
+
+
 def render(job_dir):
     job, style = load_job(job_dir)
     subs = read_json(job_dir / "subs.json")
@@ -430,15 +474,7 @@ def render(job_dir):
     tmp = Path(tempfile.mkdtemp())
     ov = overlay_track(job, style, subs, total, tmp)
 
-    fit = job.get("fit", "auto")
-    if fit == "auto":
-        fit = "crop" if raw["h"] and abs(raw["w"] / raw["h"] - 9 / 16) < 0.12 else "blur"
-    cover = f"scale={W}:{H}:force_original_aspect_ratio=increase,crop={W}:{H}"
-    if fit == "blur":
-        vf = (f"[0:v]split[a][b];[a]{cover},boxblur=40:2,eq=brightness=-0.08[bg];"
-              f"[b]scale={W}:{H}:force_original_aspect_ratio=decrease[fg];[bg][fg]overlay=(W-w)/2:(H-h)/2")
-    else:
-        vf = f"[0:v]{cover}"
+    fit, vf = base_filter(job, raw)
     extend = total - raw["duration"]
     vf += f",setsar=1,fps={FPS}" + (f",tpad=stop_mode=clone:stop_duration={extend + 0.5:.2f}" if extend > 0.05 else "") + "[base];"
     vf += "[1:v]format=rgba[ov];[base][ov]overlay=0:0:eof_action=repeat,format=yuv420p[v]"
@@ -488,6 +524,11 @@ def render(job_dir):
 
 
 def main():
+    if len(sys.argv) >= 4 and sys.argv[1] == "preview":
+        times = [float(x) for x in sys.argv[4].split(",")] if len(sys.argv) > 4 else None
+        for f in preview((ROOT / sys.argv[2]).resolve(), sys.argv[3], times):
+            print(f)
+        return
     if len(sys.argv) != 3 or sys.argv[1] not in ("subs", "render"):
         sys.exit(__doc__)
     step, job_dir = sys.argv[1], (ROOT / sys.argv[2]).resolve()

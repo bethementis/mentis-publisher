@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>맨티스 업로드</title>
-<link rel="stylesheet" href="style.css?v=20261110h">
+<link rel="stylesheet" href="style.css?v=20261110j">
 <!-- 릴스 만들기 미리보기용 글꼴 (영상에는 assets/fonts 의 같은 글꼴이 들어감) -->
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Do+Hyeon&family=Jua&family=Nanum+Myeongjo:wght@800&display=swap">
@@ -142,6 +142,25 @@
         </div>
         <p class="hint">원본 영상 → 9:16 맞추기 · 맨티스 로고 · 한국어 자막 · 크레딧 → 완성본을 바로 예약해요. 권리가 있는 영상만 넣어 주세요.</p>
         <div id="stJobs" class="list"></div>
+      </div>
+
+      <!-- 세딸 자동 제작: 영상함 → Claude 예약 작업이 제작·채점 → 후보에서 골라 올리기 -->
+      <div class="panel" id="stAuto" style="margin-top:12px">
+        <h2>세딸 자동 제작</h2>
+        <p class="hint">허락받은 영상을 영상함에 넣으면 Claude 가 자막·로고·썸네일·캡션까지 만들고, 다른 Claude 가 조회·공유·저장 기준으로 채점해요. 마음에 드는 후보만 골라 올리면 돼요. (Claude 예약 작업이 1시간마다 영상함을 확인해요)</p>
+        <h3>후보 <small>점수 높은 순</small></h3>
+        <div id="stCands" class="list"></div>
+        <h3>영상함에 넣기 <small>mp4·mov · 하나에 95MB 이하 · 여러 개 한 번에</small></h3>
+        <label class="drop small" id="stInboxDrop">
+          <input type="file" id="stInboxInput" accept="video/mp4,video/quicktime" multiple hidden>
+          영상들을 여기로 끌어다 놓거나 <u>눌러서 선택</u>
+        </label>
+        <div id="stInboxRows" class="list"></div>
+        <div id="stInboxFoot" hidden>
+          <label class="check"><input type="checkbox" id="stInboxAllowed"> 모두 원작자에게 맨티스에 올려도 된다는 허락을 받았어요</label>
+          <div class="row end"><button id="stInboxStart" class="btn primary">영상함에 넣기</button></div>
+        </div>
+        <p id="stInboxMsg" class="msg"></p>
       </div>
 
       <!-- 새 작업 -->
@@ -443,8 +462,9 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.2/Sortable.min.js"></script>
 <script src="config.js"></script>
-<script src="app.js?v=20261110h"></script>
-<script src="studio.js?v=20261110h"></script>
-<script src="thumb.js?v=20261110h"></script>
+<script src="app.js?v=20261110j"></script>
+<script src="studio.js?v=20261110j"></script>
+<script src="thumb.js?v=20261110j"></script>
+<script src="auto.js?v=20261110j"></script>
 </body>
 </html>

@@ -28,7 +28,10 @@
   const frame = document.createElement("canvas"); frame.width = W; frame.height = H;   // 고른 장면 (9:16)
 
   // ---------- 열기 ----------
-  async function open(j, data, s) {
+  // 여는 중인 작업 (자동 제작 '올리기'가 썸네일이 다 그려질 때까지 기다리는 데 씀)
+  let opening = Promise.resolve();
+  function open(j, data, s) { return (opening = openInner(j, data, s)); }
+  async function openInner(j, data, s) {
     const same = job?.name === j.name;
     job = j; jobData = data || {}; subs = s || {};
     const box = $("stThumb");
@@ -320,6 +323,18 @@
     } finally { btn.disabled = false; }
   }
 
+  // 자동 제작 후보 '올리기': 저장된 thumb.json 설정 그대로 cover.jpg 를 그려 커밋한다 (실패하면 오류를 그대로 던짐)
+  async function saveCover(j) {
+    await opening;
+    if (job?.name !== j.name) throw new Error("썸네일을 아직 못 열었어요");
+    const blob = await toBlob();
+    const settings = { design, text: $("thText").value, t: frameT, opt };
+    await A.commit(`reel studio: 썸네일 ${job.name}`, [
+      { path: `${job.folder}/cover.jpg`, file: blob },
+      { path: `${job.folder}/thumb.json`, text: JSON.stringify(settings, null, 2) + "\n" },
+    ]);
+  }
+
   async function download() {
     const blob = await toBlob();
     const a = document.createElement("a");
@@ -372,7 +387,7 @@
   $("thDownload").onclick = download;
 
   window.MENTIS_THUMB = {
-    open, close: () => { job = null; $("stThumb").hidden = true; },
+    open, saveCover, close: () => { job = null; $("stThumb").hidden = true; },
     current: () => (job ? { design, opt: structuredClone(opt) } : null),   // '기본값으로 저장'에 같이 들어감
     setPresets: (p) => { presets = p; },
   };

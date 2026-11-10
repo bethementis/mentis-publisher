@@ -30,11 +30,13 @@
   // ---------- 목록 ----------
   async function refresh() {
     const jobs = A.jobs();
+    const extra = (j) => (j.files["auto.json"] ? A.readJson(j, "auto.json").catch(() => null) : null);
     const rows = await Promise.all(jobs.map(async (j) => {
-      const [s, d] = await Promise.all([A.readJson(j, "status.json").catch(() => null), A.readJson(j, "job.json").catch(() => null)]);
-      return { j, s, d };
+      const [s, d, auto] = await Promise.all([A.readJson(j, "status.json").catch(() => null), A.readJson(j, "job.json").catch(() => null), extra(j)]);
+      return { j, s, d, auto };
     }));
-    $("stJobs").innerHTML = rows.length ? rows.map(({ j, s, d }) => `
+    const manual = rows.filter(({ d }) => !d?.auto);   // 자동 제작 작업은 '세딸 자동 제작' 칸에
+    $("stJobs").innerHTML = manual.length ? manual.map(({ j, s, d }) => `
       <div class="item click" data-job="${esc(j.name)}">
         <span class="reelthumb">🎬</span>
         <div class="body"><div class="name">${esc(j.name)}</div>
@@ -42,6 +44,7 @@
       </div>`).join("") : `<p class="hint">진행 중인 작업이 없어요. 아래에서 새로 만들어 보세요.</p>`;
     $("stJobs").querySelectorAll("[data-job]").forEach((el) => (el.onclick = () => openJob(el.dataset.job)));
     renderMusic();
+    window.MENTIS_AUTO?.render(rows);
     const running = rows.some(({ s }) => s?.state === "queued");
     clearTimeout(poll);
     if (running && !$("tab-studio").hidden) poll = setTimeout(() => A.loadRepo().catch(() => {}), 20000);
@@ -592,6 +595,6 @@
   $("stDelete").onclick = deleteJob;
   $("stRetry").onclick = retry;
 
-  window.MENTIS_STUDIO = { refresh, savePreset };
+  window.MENTIS_STUDIO = { refresh, savePreset, openJob, dispatch, STYLES };
   renderMusic(); setStyle("overseas");
 })();
