@@ -1,1 +1,10 @@
-{"step":"render","state":"queued","at":"2026-11-10T19:35:17+09:00"}
+{
+  "step": "render",
+  "state": "done",
+  "at": "2026-11-10T19:36:43+09:00",
+  "seconds": 34.9,
+  "mb": 15.7,
+  "fit": "crop",
+  "music": null,
+  "warnings": []
+}
