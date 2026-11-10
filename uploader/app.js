@@ -448,6 +448,11 @@
       // 릴스 만들기에서 만든 썸네일(인스타 릴스 커버)도 같이
       const cover = fromStudio?.files["cover.jpg"] || editing?.files["cover.jpg"];
       if (cover) put(`${folder}/cover.jpg`, { sha: cover });
+      // 만든 설정(자막·스타일·썸네일·Claude 초안)도 reel-make/ 에 같이 남긴다 → 세딸 자동 제작이 다음에 참고하는 예시가 된다
+      for (const f of ["job.json", "subs.json", "thumb.json", "auto.json", "draft.json"]) {
+        const sha = fromStudio?.files[f] || editing?.files[`reel-make/${f}`];
+        if (sha) put(`${folder}/reel-make/${f}`, { sha });
+      }
     } else {
       cards.forEach((c, i) => put(`${folder}/${i === 0 ? "00_cover" : pad(i)}.${c.ext}`, c.file ? { file: c.file } : { sha: c.sha }));
       zhCards.forEach((c, i) => put(`${folder}/zh/${i === 0 ? "00_cover" : pad(i)}.${c.ext}`, c.file ? { file: c.file } : { sha: c.sha }));

@@ -19,6 +19,18 @@ export FFMPEG=$(python -c "import imageio_ffmpeg;print(imageio_ffmpeg.get_ffmpeg
 읽을 것: `templates/reel-styles.json`(기본 스타일), `templates/reel-presets.json` 의 `overseas`(성현님이 저장한 기본값 — **이게 출발점**),
 `docs/caption-project.md`(캡션 규칙 · 저장·공유 원칙 · 정체 숨기기).
 
+## 1-1. 완성된 릴스에서 배우기 (만들기 전에 꼭)
+성현님이 직접 확인하고 예약한 릴스가 **정답 예시**다. 새로 만들 때 그 느낌·자막·썸네일을 따라간다.
+1. 예시 찾기: `queue/*/reel-make/` 와 `published/*/reel-make/` (최근 것부터 최대 10개). 폴더마다
+   `subs.json`(최종 자막·훅·styles) · `thumb.json`(썸네일 디자인·멘트·장면) · `job.json` · 같은 폴더의 `post.json`(최종 캡션) ·
+   있으면 `draft.json`(Claude 가 처음 낸 초안) · `auto.json`(그때 점수).
+2. 성적: `metrics/` 의 가장 최근 날짜 파일에서 `instagram.posts[].mentis.folder` 가 같은 게시물의 `save_share_rate`(도달 100명당 저장+공유)·조회.
+   성적이 좋은 예시를 더 따른다. 아직 숫자가 없으면 모두 같은 무게.
+3. `draft.json` 이 있으면 **초안 → 최종에서 사람이 바꾼 것**을 본다 (훅을 지웠나·짧게 했나, 자막 말투, 위치·색, 썸네일 멘트·장면). 이게 가장 중요한 신호다. 같은 방향으로 처음부터 만든다.
+4. `docs/reel-learned.md` 를 읽고, 새 예시에서 알게 된 게 있으면 고친다 (짧은 목록, 30줄 이내, 근거 폴더 이름 같이). 예시가 늘면 오래된 추측은 지운다.
+   이 파일의 내용은 기본값(presets)보다 우선하지 않는다 — 기본값은 그대로 두고, 그 안에서 고르는 기준(훅 말투·자막 길이·썸네일 장면 고르는 법 등)으로 쓴다.
+   단 같은 수정이 예시 3개 이상에서 반복되면(예: 로고 위치를 매번 같은 곳으로 옮김) 그 값을 새 작업 `styles` 에 바로 넣는다.
+
 ## 2. 작업마다 만들기 (Claude 1 = 제작)
 작업 폴더 `studio/<이름>/` 의 `job.json`, `subs.json`(segments: start·end·text(한국어)·src(영어 원문)) 을 읽는다.
 
@@ -58,7 +70,7 @@ export FFMPEG=$(python -c "import imageio_ffmpeg;print(imageio_ffmpeg.get_ffmpeg
 
 ### 2-6. 캡션
 `docs/caption-project.md` 의 '1. 인스타 캡션' 규칙대로. 맨 끝 줄은 반드시:
-`🎥 영상: @원작자 (원작자 허락 받고 사용)` — 원작자 정보는 여기에만.
+`🎥 영상: @원작자` — 원작자 정보는 여기에만 (형식은 `docs/reel-learned.md` 를 따른다).
 
 ## 3. 채점 (Claude 2 = 채점자, 만든 쪽과 따로)
 **Agent 도구로 새 서브에이전트를 띄워** 채점시킨다 (만든 과정·이유는 넘기지 않는다. 결과물과 채점표만).
@@ -80,6 +92,7 @@ export FFMPEG=$(python -c "import imageio_ffmpeg;print(imageio_ffmpeg.get_ffmpeg
 - `subs.json` (다듬은 자막, `hook`, `credit_on: false`, `styles`)
 - `job.json` (`corner` 만 바꿈, 다른 값은 그대로)
 - `thumb.json`
+- `draft.json` = 지금 낸 초안 그대로 (나중에 사람이 고친 것과 비교해서 배우는 용도): `{"hook": "...", "segments": [자막 text 목록], "styles": {...}, "thumb": {thumb.json 과 같음}, "caption": "..."}`
 - `auto.json`:
 ```json
 { "made_at": "2026-11-10T15:00:00+09:00", "hook": "고른 훅", "hooks": [{"text": "...", "total": 78}, {"text": "...", "total": 71}],
@@ -88,12 +101,12 @@ export FFMPEG=$(python -c "import imageio_ffmpeg;print(imageio_ffmpeg.get_ffmpeg
 ```
 - `status.json` = `{"step": "render", "state": "queued", "at": "<지금, +09:00>"}`
 
-전부 한 커밋으로: `git add studio/<이름들>` → `git commit -m "reel auto: 제작·채점 N개"` → `git push origin HEAD:main` (충돌이면 `git pull --rebase origin main` 후 다시).
-main 에 push 가 막혀 있으면 지금 브랜치(`claude/…`)에 push 한다 — 워크플로가 그 브랜치의 studio/ 파일(subs·job·thumb·auto·status.json)만 main 으로 가져온다.
+전부 한 커밋으로: `git add studio/<이름들> docs/reel-learned.md` → `git commit -m "reel auto: 제작·채점 N개"` → `git push origin HEAD:main` (충돌이면 `git pull --rebase origin main` 후 다시).
+main 에 push 가 막혀 있으면 지금 브랜치(`claude/…`)에 push 한다 — 워크플로가 그 브랜치의 studio/ 파일(subs·job·thumb·auto·draft·status.json)과 docs/reel-learned.md 만 main 으로 가져온다.
 push 하면 `.github/workflows/reel-auto.yml` 이 완성본(reel.mp4)을 만들고, 업로드 툴 '후보'에 점수 순으로 뜬다.
 
 ## 하지 말 것
-- 게시·예약 (queue/ 건드리지 않기), studio/ 밖의 파일 수정, 다른 작업 폴더 수정.
+- 게시·예약 (queue/·published/ 는 읽기만), studio/ 와 `docs/reel-learned.md` 밖의 파일 수정, 다른 작업 폴더 수정.
 - 남의 영상 내려받기, 새 영상 추가.
 - 비밀값·토큰 출력.
 - raw 영상 수정·삭제.

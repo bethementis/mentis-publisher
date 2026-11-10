@@ -536,7 +536,7 @@
 
   function schedule() {
     const lines = [];
-    if (jobData.style === "overseas" && jobData.credit?.handle) lines.push(`🎥 영상: ${jobData.credit.handle} (원작자 허락 받고 사용)`);
+    if (jobData.style === "overseas" && jobData.credit?.handle) lines.push(`🎥 영상: ${jobData.credit.handle}`);
     A.scheduleFromStudio(job, { slug: job.name, caption: lines.length ? `\n\n${lines.join("\n")}` : "" });
     A.toast("날짜·캡션을 넣고 '예약하기'를 누르면 끝이에요. 예약하면 이 작업은 정리돼요.", 5000);
   }

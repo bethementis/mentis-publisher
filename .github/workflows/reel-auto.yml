@@ -33,11 +33,11 @@ jobs:
           git config user.name mentis-bot
           git config user.email bot@users.noreply.github.com
           git fetch -q origin "$BR"
-          files=$(git -c core.quotepath=off diff --name-only --diff-filter=AM HEAD "origin/$BR" -- studio/ | grep -E '^studio/[^/]+/(subs|job|thumb|auto|status)\.json$' || true)
+          files=$(git -c core.quotepath=off diff --name-only --diff-filter=AM HEAD "origin/$BR" -- studio/ docs/reel-learned.md | grep -E '^(studio/[^/]+/(subs|job|thumb|auto|draft|status)\.json|docs/reel-learned\.md)$' || true)
           echo "$files"
           [ -z "$files" ] && exit 0
           printf '%s\n' "$files" | while IFS= read -r f; do git checkout "origin/$BR" -- "$f"; done
-          git add studio
+          git add studio docs/reel-learned.md
           git commit -q -m "reel auto: 예약 작업 결과 ($BR)"
       - uses: actions/setup-python@v5
         with:
