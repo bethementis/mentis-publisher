@@ -88,7 +88,8 @@ export FFMPEG=$(python -c "import imageio_ffmpeg;print(imageio_ffmpeg.get_ffmpeg
 ```
 - `status.json` = `{"step": "render", "state": "queued", "at": "<지금, +09:00>"}`
 
-전부 한 커밋으로: `git add studio/<이름들>` → `git commit -m "reel auto: 제작·채점 N개"` → `git push` (충돌이면 `git pull --rebase` 후 다시).
+전부 한 커밋으로: `git add studio/<이름들>` → `git commit -m "reel auto: 제작·채점 N개"` → `git push origin HEAD:main` (충돌이면 `git pull --rebase origin main` 후 다시).
+main 에 push 가 막혀 있으면 지금 브랜치(`claude/…`)에 push 한다 — 워크플로가 그 브랜치의 studio/ 파일(subs·job·thumb·auto·status.json)만 main 으로 가져온다.
 push 하면 `.github/workflows/reel-auto.yml` 이 완성본(reel.mp4)을 만들고, 업로드 툴 '후보'에 점수 순으로 뜬다.
 
 ## 하지 말 것
