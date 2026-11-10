@@ -39,16 +39,17 @@
     }
   ],
   "steps": [],
-  "hook": "거북목, *12초*면펴져요",
-  "credit": "영상: @drrodpt",
+  "hook": "",
+  "credit": "",
   "credit_on": false,
   "styles": {
     "logo": {
-      "y": 1510,
-      "bold": 3,
+      "y": 1600,
+      "bold": 2,
       "color": "#0400e6",
-      "variant": "text",
-      "width": 300
+      "variant": "row",
+      "width": 310,
+      "opacity": 0.9
     },
     "subtitle": {
       "highlight": "#1d00fa"
