@@ -133,11 +133,19 @@
     window.MENTIS_STUDIO?.refresh();
   }
 
+  // 캐러셀 마지막 장: 맨티스 엔딩 카드 2종 중 하나를 저장할 때 자동으로 붙인다 (편집기 카드 목록에는 안 보임)
+  const END = "99_end.jpg";
+  const END_IMGS = ["uploader/assets/end-1.jpg", "uploader/assets/end-2.jpg"];
+  async function endingSha() {
+    const path = END_IMGS[Math.floor(Math.random() * END_IMGS.length)];
+    return (await gh(`/repos/${CFG.repo}/contents/${path}?ref=${CFG.branch}`)).sha;
+  }
+
   function cardFiles(post, sub = "") {
     return Object.keys(post.files)
       .filter((f) => {
         const rest = sub ? f.startsWith(sub + "/") && f.slice(sub.length + 1) : f;
-        return rest && !rest.includes("/") && IMG_EXT.includes(rest.split(".").pop().toLowerCase());
+        return rest && rest !== END && !rest.includes("/") && IMG_EXT.includes(rest.split(".").pop().toLowerCase());
       })
       .sort((a, b) => (/cover/i.test(b) - /cover/i.test(a)) || natural(a, b));
   }
@@ -455,6 +463,9 @@
       }
     } else {
       cards.forEach((c, i) => put(`${folder}/${i === 0 ? "00_cover" : pad(i)}.${c.ext}`, c.file ? { file: c.file } : { sha: c.sha }));
+      // 수정할 때는 처음 뽑힌 엔딩 카드를 그대로 유지
+      try { put(`${folder}/${END}`, { sha: editing?.files[END] || await endingSha() }); }
+      catch (e) { return err("엔딩 카드를 불러오지 못했어요. 잠시 후 다시 저장해 주세요."); }
       zhCards.forEach((c, i) => put(`${folder}/zh/${i === 0 ? "00_cover" : pad(i)}.${c.ext}`, c.file ? { file: c.file } : { sha: c.sha }));
     }
     put(`${folder}/post.json`, { text: JSON.stringify(buildPostJson(), null, 2) + "\n" });
@@ -644,7 +655,7 @@
 
   // ---------- 연결 ----------
   document.querySelectorAll(".tabs button").forEach((b) => (b.onclick = () => showTab(b.dataset.tab)));
-  setupDrop($("drop"), $("fileInput"), () => cards, 20);
+  setupDrop($("drop"), $("fileInput"), () => cards, 19);   // + 엔딩 카드 = 인스타 최대 20장
   setupDrop($("zhDrop"), $("zhInput"), () => zhCards, 18);
   $("reelInput").onchange = () => { addReel($("reelInput").files); $("reelInput").value = ""; };
   $("reelDrop").ondragover = (e) => { e.preventDefault(); $("reelDrop").classList.add("over"); };
