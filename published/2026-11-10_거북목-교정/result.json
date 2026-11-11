@@ -1,0 +1,28 @@
+{
+  "instagram": {
+    "ok": true,
+    "media_id": "18105522434031733",
+    "permalink": "https://www.instagram.com/reel/DfmV4uoEZvq/"
+  },
+  "youtube": {
+    "ok": true,
+    "video_id": "N-hXtGxv-WQ",
+    "url": "https://youtube.com/shorts/N-hXtGxv-WQ",
+    "privacy": "public",
+    "music": null
+  },
+  "tiktok": {
+    "ok": true,
+    "publish_id": "v_inbox_file~v2.7706869682845812742",
+    "mode": "inbox"
+  },
+  "outbox": {
+    "ok": true,
+    "path": "outbox/2026-11-10_거북목-교정",
+    "platforms": [
+      "naver"
+    ],
+    "skipped": []
+  },
+  "updated_at": "2026-11-11T20:10:50+09:00"
+}
