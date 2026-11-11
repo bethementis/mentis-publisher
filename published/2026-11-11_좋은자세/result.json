@@ -1,0 +1,33 @@
+{
+  "instagram": {
+    "ok": true,
+    "media_id": "18201670651378664",
+    "permalink": "https://www.instagram.com/p/DfmXeVyF9GF/"
+  },
+  "threads": {
+    "ok": true,
+    "thread_id": "18113558060614546",
+    "permalink": "https://www.threads.com/@bethementis/post/DfmXgKboPhY"
+  },
+  "youtube": {
+    "ok": true,
+    "video_id": "Qoo8imAa0Q0",
+    "url": "https://youtube.com/shorts/Qoo8imAa0Q0",
+    "privacy": "public",
+    "music": "how-to-love-you.mp3"
+  },
+  "tiktok": {
+    "ok": true,
+    "publish_id": "v_inbox_file~v2.7706873278644733958",
+    "mode": "inbox"
+  },
+  "outbox": {
+    "ok": true,
+    "path": "outbox/2026-11-11_좋은자세",
+    "platforms": [
+      "naver"
+    ],
+    "skipped": []
+  },
+  "updated_at": "2026-11-11T20:25:26+09:00"
+}
