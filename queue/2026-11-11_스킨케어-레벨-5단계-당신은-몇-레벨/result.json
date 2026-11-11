@@ -1,0 +1,27 @@
+{
+  "instagram": {
+    "ok": true,
+    "media_id": "18185868061430924",
+    "permalink": "https://www.instagram.com/reel/DfmW6X-ETX0/"
+  },
+  "youtube": {
+    "ok": true,
+    "video_id": "PDj1IOWbkoQ",
+    "url": "https://youtube.com/shorts/PDj1IOWbkoQ",
+    "privacy": "public",
+    "music": null
+  },
+  "tiktok": {
+    "ok": false,
+    "error": "HTTP 400: {'code': 'invalid_params', 'message': 'The chunk size is invalid', 'log_id': '20261111191951841D21CB77A095659C32'}"
+  },
+  "outbox": {
+    "ok": true,
+    "path": "outbox/2026-11-11_스킨케어-레벨-5단계-당신은-몇-레벨",
+    "platforms": [
+      "naver"
+    ],
+    "skipped": []
+  },
+  "updated_at": "2026-11-11T20:19:51+09:00"
+}
