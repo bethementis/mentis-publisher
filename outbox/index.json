@@ -2,6 +2,14 @@
   "items": [
     {
       "date": "2026-11-10",
+      "folder": "2026-11-10_휘핑토닉",
+      "platforms": [
+        "naver"
+      ],
+      "base_url": "https://raw.githubusercontent.com/bethementis/mentis-publisher/main/outbox/2026-11-10_휘핑토닉/"
+    },
+    {
+      "date": "2026-11-10",
       "folder": "2026-11-10_거북목-교정",
       "platforms": [
         "naver"
