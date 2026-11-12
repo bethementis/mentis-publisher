@@ -3,16 +3,22 @@
   "overseas": {
     "logo": {
       "y": 1510,
-      "bold": 3,
+      "bold": 2,
       "color": "#0400e6",
       "variant": "row",
-      "width": 280
+      "width": 280,
+      "opacity": 0.8
     },
     "subtitle": {
-      "highlight": "#1d00fa"
+      "highlight": "#1d00fa",
+      "box": "#000000",
+      "y": 1270,
+      "box_opacity": 1
     },
     "hook": {
-      "highlight": "#e4de2f"
+      "highlight": "#e4de2f",
+      "box": "",
+      "y": 530
     },
     "thumb": {
       "design": "magazine",
