@@ -371,7 +371,8 @@
   }
   function renderHookSuggest() {
     const list = hookSuggest();
-    $("edHookSuggest").innerHTML = `<small class="hint">추천 (누르면 들어가요)</small> ` + list.map((t, i) =>
+    const empty = !$("edHook").value.trim();
+    $("edHookSuggest").innerHTML = `<small class="hint">${empty ? "👇 위쪽 문구 추천 — 하나 골라 보세요" : "추천 (누르면 들어가요)"}</small> ` + list.map((t, i) =>
       `<button type="button" class="chip-btn" data-i="${i}">${esc(t.replace(/\*/g, "")).replace(/\n/g, " / ")}</button>`).join("");
     $("edHookSuggest").querySelectorAll("button").forEach((b) => (b.onclick = () => {
       checkpoint(); $("edHook").value = list[+b.dataset.i]; drawOverlay();
