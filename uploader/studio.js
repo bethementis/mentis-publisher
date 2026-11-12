@@ -17,6 +17,7 @@
   const STATE = {
     "subs:queued": "⏳ 자막 만드는 중… (보통 3~8분)", "subs:done": "✏️ 자막 확인 필요", "subs:error": "✗ 자막 만들기 실패",
     "render:queued": "⏳ 릴스 만드는 중… (보통 2~5분)", "render:done": "✓ 완성", "render:error": "✗ 릴스 완성 실패",
+    "trim:queued": "⏳ 영상 자르는 중… (보통 1~3분)", "trim:done": "✂ 잘랐어요 · 자막을 확인하고 릴스 완성", "trim:error": "✗ 자르기 실패",
   };
 
   let style = "overseas", raw = null, voice = null;
@@ -84,7 +85,8 @@
     const w = [];
     if (audio === "mute" && lang !== "none") w.push("소리 없이 만들면 받아쓸 말이 없어요. 자막은 직접 써 주세요.");
     if (raw?.w && raw.w / raw.h > 0.6 && $("stFit").value === "crop") w.push(`가로 영상(${raw.w}×${raw.h})을 꽉 채우면 양옆이 많이 잘려요.`);
-    if (raw?.sec > 180) w.push(`영상이 ${Math.round(raw.sec)}초예요. 유튜브 쇼츠는 3분까지만 쇼츠로 올라가요.`);
+    const sec = raw?.trim ? raw.trim.end - raw.trim.start : raw?.sec;
+    if (sec > 180) w.push(`영상이 ${Math.round(sec)}초예요. 유튜브 쇼츠는 3분까지만 쇼츠로 올라가요. 위 '자르기'로 줄여 보세요.`);
     $("stWarn").textContent = w.join("\n");
   }
 
@@ -100,9 +102,46 @@
       v.onloadedmetadata = () => {
         raw.w = v.videoWidth; raw.h = v.videoHeight; raw.sec = v.duration;
         box.querySelector(".dim").textContent = `${raw.w}×${raw.h} · ${Math.round(raw.sec)}초`;
+        const tb = document.createElement("div"); box.appendChild(tb);
+        trimBox(tb, v, Math.round(raw.sec * 10) / 10, null, (t) => { raw.trim = t; checkForm(); });
         checkForm();
       };
     }
+  }
+
+  // ---------- 자르기: 시작·끝 막대 + '지금 위치로' + 자른 부분만 재생 ----------
+  // 실제 자르기는 GitHub 에서 (reelmaker apply_trim). 여기선 시작·끝 초만 고른다.
+  function trimBox(box, video, dur, init, onChange) {
+    const st = { start: init?.start ?? 0, end: init?.end ?? dur };
+    const f = (t) => `${(+t).toFixed(1)}초`;
+    box.innerHTML = `<div class="trim">
+      <div class="row between"><b>✂ 자르기 <span class="val" data-len></span></b><button type="button" class="btn ghost small" data-reset>처음대로</button></div>
+      <label>시작 <span class="val" data-sv></span><input type="range" data-s min="0" max="${dur}" step="0.1"></label>
+      <label>끝 <span class="val" data-ev></span><input type="range" data-e min="0" max="${dur}" step="0.1"></label>
+      <div class="row"><button type="button" class="btn ghost small" data-hs>지금 위치를 시작으로</button>
+        <button type="button" class="btn ghost small" data-he>지금 위치를 끝으로</button>
+        <button type="button" class="btn small" data-play>▶ 자른 부분만 보기</button></div></div>`;
+    const q = (k) => box.querySelector(`[${k}]`);
+    let playing = false;
+    const sync = (from) => {
+      st.start = Math.max(0, Math.min(st.start, dur - 1)); st.end = Math.min(dur, Math.max(st.end, st.start + 1));
+      q("data-s").value = st.start; q("data-e").value = st.end;
+      q("data-sv").textContent = f(st.start); q("data-ev").textContent = f(st.end);
+      const cut = st.start > 0.05 || st.end < dur - 0.05;
+      q("data-len").textContent = cut ? `${f(st.end - st.start)} (원래 ${f(dur)})` : `안 자름 · ${f(dur)}`;
+      if (from) video.currentTime = from === "s" ? st.start : Math.max(st.start, st.end - 1.5);
+      onChange(cut ? { start: Math.round(st.start * 10) / 10, end: Math.round(st.end * 10) / 10 } : null);
+    };
+    q("data-s").oninput = () => { st.start = +q("data-s").value; sync("s"); };
+    q("data-e").oninput = () => { st.end = +q("data-e").value; sync("e"); };
+    q("data-hs").onclick = () => { st.start = video.currentTime; sync(); };
+    q("data-he").onclick = () => { st.end = video.currentTime; sync(); };
+    q("data-reset").onclick = () => { st.start = 0; st.end = dur; sync(); };
+    q("data-play").onclick = () => { playing = true; video.currentTime = st.start; video.play(); };
+    video.addEventListener("timeupdate", () => { if (playing && video.currentTime >= st.end) { video.pause(); playing = false; } });
+    video.addEventListener("pause", () => { playing = false; });
+    sync();
+    return st;
   }
 
   function setRaw(f) {
@@ -168,6 +207,7 @@
       credit: { handle, permission: $("stPermission").value.trim() } });
     if (style === "format") data.step_lines = $("stSteps").value.trim();
     if (voice) data.voice = `voice.${ext(voice)}`;
+    if (raw.trim) data.trim = raw.trim;   // 자막 만들기 전에 GitHub 에서 자른다
 
     const folder = `studio/${name}`;
     const changes = [
@@ -331,15 +371,20 @@
     renderEls();
     const v = $("stVideo");
     const rawFile = Object.keys(job.files).find((f) => /^raw\./.test(f));
-    const src = A.rawUrl(`${job.folder}/${rawFile}`);
-    if (v.dataset.src !== src) { v.src = src; v.dataset.src = src; }
+    const src = `${A.rawUrl(`${job.folder}/${rawFile}`)}?v=${String(job.files[rawFile]).slice(0, 8)}`;   // 자르면 같은 이름이라 새로 받게
+    if (v.dataset.src !== src) {
+      v.src = src; v.dataset.src = src;
+      v.addEventListener("loadedmetadata", () => {
+        edTrim = null;
+        trimBox($("edTrimBox"), v, Math.round(v.duration * 10) / 10, null, (t) => { edTrim = t; $("edTrimApply").disabled = !t; });
+      }, { once: true });
+    }
     v.style.objectFit = jobData.fit === "blur" ? "contain" : "cover";
     v.ontimeupdate = drawOverlay;
     document.fonts.ready.then(drawOverlay);
     drawOverlay();
   }
 
-  // 자막 한 줄을 둘로 (자를 곳을 고르지 않았으면 가운데 띄어쓰기). 시간은 글자 수 비율
   // ---------- 위쪽 문구(훅) 추천: 작업 이름·자막에서 주제와 숫자를 뽑아 몇 가지 말투로 (규칙 기반) ----------
   const batchim = (w) => { const c = w.charCodeAt(w.length - 1); return c >= 0xac00 && c <= 0xd7a3 ? (c - 0xac00) % 28 !== 0 : true; };
   const EN_UNIT = { second: "초", seconds: "초", minute: "분", minutes: "분", day: "일", days: "일", week: "주", weeks: "주", step: "단계", steps: "단계", times: "번", ways: "가지", things: "가지" };
@@ -379,6 +424,7 @@
     }));
   }
 
+  // 자막 한 줄을 둘로 (자를 곳을 고르지 않았으면 가운데 띄어쓰기). 시간은 글자 수 비율
   function splitRow(list, i, caret = null) {
     const s = list[i], text = s.text.replace(/\s+/g, " ");
     const spaces = [...text].map((c, k) => (c === " " ? k : -1)).filter((k) => k > 0);
@@ -552,6 +598,28 @@
     renderEditor();
   }
 
+  // 자막 화면에서 자르기: job.json 에 trim 을 적고 GitHub 에서 자른다 (자막 시간도 같이 당겨짐)
+  let edTrim = null;
+  async function applyTrim() {
+    if (!edTrim) return;
+    if (!confirm(`${edTrim.start}초 ~ ${edTrim.end}초만 남기고 자를까요?
+(고친 자막은 먼저 저장돼요. 자른 뒤엔 되돌릴 수 없어요)`)) return;
+    const btn = $("edTrimApply"); btn.disabled = true;
+    try {
+      subs.hook = $("edHook").value; subs.credit = $("edCredit").value; subs.credit_on = $("edCreditOn").checked;
+      await A.commit(`reel studio: 자르기 ${job.name}`, [
+        { path: `${job.folder}/subs.json`, text: JSON.stringify(subs, null, 2) + "\n" },
+        { path: `${job.folder}/job.json`, text: JSON.stringify({ ...jobData, trim: edTrim }, null, 2) + "\n" },
+        { path: `${job.folder}/status.json`, text: JSON.stringify({ step: "trim", state: "queued", at: now() }) + "\n" },
+      ], (t) => A.setMsg($("stJobMsg"), t));
+      await dispatch(job.name, "trim");
+      A.setMsg($("stJobMsg"), "영상을 자르고 있어요. 1~3분 뒤 이 화면에서 확인해요.", "ok");
+      await A.loadRepo();
+    } catch (e) {
+      if (e.message !== "401") A.setMsg($("stJobMsg"), `자르기 실패: ${e.message}`, "err");
+    } finally { btn.disabled = !edTrim; }
+  }
+
   async function saveAndRender() {
     const err = (t) => A.setMsg($("stJobMsg"), t, "err");
     subs.hook = $("edHook").value.trim(); subs.credit = $("edCredit").value.trim(); subs.credit_on = $("edCreditOn").checked;
@@ -630,6 +698,7 @@
   });
   bindStyler();
   $("edRender").onclick = saveAndRender;
+  $("edTrimApply").onclick = applyTrim;
   $("stReedit").onclick = () => { $("stDone").hidden = true; $("stEdit").hidden = false; renderEditor(); };
   $("stSchedule").onclick = schedule;
   $("stDelete").onclick = deleteJob;

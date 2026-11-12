@@ -3,6 +3,7 @@
 
   python publisher/reelmaker.py subs   studio/이름   # 자막 만들기: 받아쓰기(Whisper) + 번역(DeepL) → subs.json
   python publisher/reelmaker.py render studio/이름   # 릴스 완성: 9:16 + 로고 + 자막 + 크레딧 → reel.mp4 (95MB 이하)
+  python publisher/reelmaker.py trim   studio/이름   # 자르기만: job.json 의 trim 대로 원본을 자르고 자막 시간을 당긴다 (subs·render 도 먼저 이걸 한다)
   python publisher/reelmaker.py preview studio/이름 출력폴더 [초,초,...]   # 완성본과 같은 화면을 몇 장 jpg 로 (자동 제작 예약 작업이 위치·색 확인용)
 
 작업 폴더:
@@ -95,6 +96,54 @@ def total_length(job_dir, job):
     return raw, voice, round(total, 2)
 
 
+# ---------- 자르기 ----------
+def apply_trim(job_dir):
+    """job.json 의 trim {start, end}(초) 대로 원본을 잘라 raw.mp4 를 바꾼다. 이미 있는 자막·썸네일 시간도 그만큼 당긴다.
+    한 번 자르면 trim 은 지우고 trimmed 에 기록한다 (다시 자르면 자른 영상 기준)."""
+    job = read_json(job_dir / "job.json", {})
+    t = job.get("trim")
+    if not t:
+        return None
+    raw_path = find_file(job_dir, "raw")
+    dur = probe(raw_path)["duration"]
+    s = max(0.0, float(t.get("start") or 0))
+    e = min(dur, float(t.get("end") or dur)) if dur else float(t.get("end") or 0)
+    if e - s < 1:
+        raise RuntimeError(f"자른 길이가 너무 짧아요 ({e - s:.1f}초)")
+    if s > 0.05 or e < dur - 0.05:
+        out = job_dir / "_trim.mp4"
+        subprocess.run([FFMPEG, "-y", "-loglevel", "error", "-ss", f"{s:.3f}", "-i", str(raw_path), "-t", f"{e - s:.3f}",
+                        "-map", "0:v:0", "-map", "0:a?", "-c:v", "libx264", "-preset", "veryfast", "-crf", "18",
+                        "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "192k", "-movflags", "+faststart", str(out)], check=True)
+        raw_path.unlink()
+        out.rename(job_dir / "raw.mp4")
+        job["raw"] = "raw.mp4"
+        length = e - s
+        subs = read_json(job_dir / "subs.json")
+        if subs:
+            for k in ("segments", "steps"):
+                moved = []
+                for x in subs.get(k) or []:
+                    a, b = float(x["start"]) - s, float(x["end"]) - s
+                    if b <= 0.05 or a >= length - 0.05:
+                        continue
+                    moved.append({**x, "start": round(max(0.0, a), 2), "end": round(min(length, b), 2)})
+                subs[k] = moved
+            subs["duration"] = round(length, 2)
+            write_json(job_dir / "subs.json", subs)
+        thumb = read_json(job_dir / "thumb.json")
+        if thumb and "t" in thumb:
+            thumb["t"] = round(min(max(0.0, float(thumb["t"]) - s), max(0.0, length - 0.1)), 2)
+            write_json(job_dir / "thumb.json", thumb)
+        (job_dir / "cover.jpg").unlink(missing_ok=True)   # 장면이 바뀌었을 수 있으니 썸네일은 다시 저장
+    job.pop("trim", None)
+    job["trimmed"] = {"start": round(s, 2), "end": round(e, 2), "from": round(dur, 2),
+                      "at": dt.datetime.now(KST).isoformat(timespec="seconds")}
+    write_json(job_dir / "job.json", job)
+    log(f"자르기: {s:.1f}~{e:.1f}초 (원래 {dur:.1f}초)")
+    return {"trimmed": round(e - s, 2)}
+
+
 # ---------- 자막 만들기 ----------
 def spread(lines, total, start=0.0):
     """직접 쓴 줄들을 영상 길이에 맞춰 나눈다 (긴 줄은 오래 보이게)."""
@@ -182,6 +231,7 @@ def translate(texts, context):
 
 
 def make_subs(job_dir):
+    apply_trim(job_dir)
     job, style = load_job(job_dir)
     raw, voice, total = total_length(job_dir, job)
     warnings, segments = [], []
@@ -462,6 +512,7 @@ def preview(job_dir, out_dir, times=None):
 
 
 def render(job_dir):
+    apply_trim(job_dir)
     job, style = load_job(job_dir)
     subs = read_json(job_dir / "subs.json")
     if subs is None:
@@ -529,7 +580,7 @@ def main():
         for f in preview((ROOT / sys.argv[2]).resolve(), sys.argv[3], times):
             print(f)
         return
-    if len(sys.argv) != 3 or sys.argv[1] not in ("subs", "render"):
+    if len(sys.argv) != 3 or sys.argv[1] not in ("subs", "render", "trim"):
         sys.exit(__doc__)
     step, job_dir = sys.argv[1], (ROOT / sys.argv[2]).resolve()
     if job_dir.parent != (ROOT / "studio").resolve() or not job_dir.is_dir():
@@ -538,7 +589,7 @@ def main():
         set_status(job_dir, step, "error", error="원본 영상(raw.mp4)이 없어요")
         sys.exit(1)
     try:
-        info = make_subs(job_dir) if step == "subs" else render(job_dir)
+        info = make_subs(job_dir) if step == "subs" else render(job_dir) if step == "render" else (apply_trim(job_dir) or {})
         set_status(job_dir, step, "done", **info)
         log("완료:", json.dumps(info, ensure_ascii=False))
     except Exception as e:

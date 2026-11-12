@@ -32,7 +32,8 @@
   let opening = Promise.resolve();
   function open(j, data, s) { return (opening = openInner(j, data, s)); }
   async function openInner(j, data, s) {
-    const same = job?.name === j.name;
+    const rawOf = (x) => Object.entries(x?.files || {}).find(([f]) => /^raw\./.test(f))?.[1];
+    const same = job?.name === j.name && rawOf(job) === rawOf(j);   // 잘라서 원본이 바뀌면 다시 연다
     job = j; jobData = data || {}; subs = s || {};
     const box = $("stThumb");
     const rawFile = Object.keys(j.files).find((f) => /^raw\./.test(f));
@@ -66,7 +67,7 @@
     }
     const v = $("thVideo");
     v.crossOrigin = "anonymous"; v.muted = true; v.preload = "auto";
-    v.src = A.rawUrl(`${j.folder}/${rawFile}`);
+    v.src = `${A.rawUrl(`${j.folder}/${rawFile}`)}?v=${String(j.files[rawFile]).slice(0, 8)}`;   // 자르면 같은 이름이라 새로 받게
     $("thPicks").innerHTML = `<p class="hint">장면 고르는 중…</p>`;
     await new Promise((ok) => { v.onloadeddata = ok; v.onerror = ok; });
     $("thTime").max = Math.max(0.1, v.duration - 0.05);

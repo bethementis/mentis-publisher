@@ -257,3 +257,10 @@ summary { cursor: pointer; font-weight: 600; }
 .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0 10px; }
 @media (max-width: 600px) { .grid3 { grid-template-columns: 1fr; } .cand video { width: 90px; } }
 .sub.err { color: var(--err, #c0392b); }
+/* 자르기 */
+.trim { border: 1px solid var(--line); border-radius: 10px; padding: 8px 12px; margin-top: 8px; }
+.trim label { margin: 4px 0; }
+.trim .row { flex-wrap: wrap; gap: 6px; }
+.trimwrap { margin: 10px 0; }
+.trimwrap summary { font-weight: 600; }
+.trim input[type=range] { display: block; width: 100%; }

@@ -11,11 +11,11 @@ on:
         required: true
         type: string
       step:
-        description: "subs = 자막 만들기 / render = 릴스 완성"
+        description: "subs = 자막 만들기 / render = 릴스 완성 / trim = 자르기만"
         required: true
         default: subs
         type: choice
-        options: [subs, render]
+        options: [subs, render, trim]
 
 permissions:
   contents: write

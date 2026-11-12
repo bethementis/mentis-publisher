@@ -45,7 +45,7 @@ publisher/
   refresh_tokens.py # 쓰레드(+IG_INSIGHTS_TOKEN 이 IGAA면) 토큰 주간 연장
   metrics.py        # 전략비서 숫자 수집 collect / 권한 점검 probe
   checks.py         # 전략비서 저녁 점검 (문제 있을 때만 알림 재료)
-  reelmaker.py      # 릴스 만들기: subs(Whisper+DeepL→subs.json) / render(9:16·로고·자막·크레딧→reel.mp4) / preview(완성 화면 jpg) → docs/reel-studio.md
+  reelmaker.py      # 릴스 만들기: subs(Whisper+DeepL→subs.json) / render(9:16·로고·자막·크레딧→reel.mp4) / trim(자르기) / preview(완성 화면 jpg) → docs/reel-studio.md
 .github/workflows/
   publish.yml        # 매일 UTC 10:00 (~19:00 KST) + 0~25분 랜덤 지연. 수동: check/preview/publish
   refresh-tokens.yml # 매주 월
