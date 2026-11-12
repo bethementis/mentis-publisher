@@ -306,6 +306,7 @@
     subs.credit_on ??= true;
     showFor($("stEdit"), key());
     $("edHook").value = subs.hook || ""; $("edCredit").value = subs.credit || ""; $("edCreditOn").checked = subs.credit_on;
+    renderHookSuggest();
     $("edCreditBox").hidden = !subs.credit;
     $("edSegs").innerHTML = rowsHtml(subs.segments || [], "segments");
     $("edSteps").innerHTML = rowsHtml(subs.steps || [], "steps");
@@ -339,6 +340,44 @@
   }
 
   // 자막 한 줄을 둘로 (자를 곳을 고르지 않았으면 가운데 띄어쓰기). 시간은 글자 수 비율
+  // ---------- 위쪽 문구(훅) 추천: 작업 이름·자막에서 주제와 숫자를 뽑아 몇 가지 말투로 (규칙 기반) ----------
+  const batchim = (w) => { const c = w.charCodeAt(w.length - 1); return c >= 0xac00 && c <= 0xd7a3 ? (c - 0xac00) % 28 !== 0 : true; };
+  const EN_UNIT = { second: "초", seconds: "초", minute: "분", minutes: "분", day: "일", days: "일", week: "주", weeks: "주", step: "단계", steps: "단계", times: "번", ways: "가지", things: "가지" };
+  function hookSuggest() {
+    const clean = (s) => String(s || "").replace(/\*/g, "").replace(/\s+/g, " ").trim();
+    const segs = subs.segments || [];
+    const ko = segs.map((s) => s.text).join(" "), en = segs.map((s) => s.src || "").join(" ");
+    // 주제: 작업 이름(예: 거북목-교정) 앞쪽 몇 단어, 너무 길면 줄인다
+    const words = clean((job?.name || "").replace(/[-_]+/g, " ")).split(" ").filter(Boolean);
+    while (words.length > 1 && words.join(" ").length > 8) words.pop();
+    const topic = words.join(" ") || clean(jobData.corner) || "자기관리";
+    const main = words[0] && words[0].length >= 2 ? words[0] : topic;   // "아직도 거북목?" 처럼 짧게 쓸 때
+    // 숫자: 자막(한국어) → 영어 원문 순서로
+    let num = ([clean(jobData.hook), ko].join(" ").match(/\d+\s?(초|분|일|주|번|회|가지|단계|개|%)/) || [])[0]?.replace(/\s/g, "");
+    if (!num) { const m = en.match(/(\d+)\s?(seconds?|minutes?|days?|weeks?|steps?|times|ways|things)/i); if (m) num = m[1] + EN_UNIT[m[2].toLowerCase()]; }
+    const eun = (w) => (batchim(w) ? "이면" : "면");
+    let first = clean(segs[0]?.text).replace(/[,.]$/, "");
+    if (first.length > 18) first = "";   // 첫 자막이 짧을 때만 그대로 훅으로
+    const out = [
+      clean(jobData.hook) ? jobData.hook : "",
+      num && !/단계|가지|개/.test(num) ? `${topic}, *${num}*${eun(num)} 돼요` : `${main}, *이렇게* 바꿔 봐`,
+      `아직도 ${main}?
+*이것* 하나면 끝`,
+      `${topic} *제대로* 하는 법`,
+      num && /단계|가지|개/.test(num) ? `${topic} *${num}*, 너는 몇 ${/단계/.test(num) ? "단계" : "개"}?` : "",
+      first.length >= 6 ? first : "",
+    ];
+    return [...new Set(out.filter(Boolean))].slice(0, 5);
+  }
+  function renderHookSuggest() {
+    const list = hookSuggest();
+    $("edHookSuggest").innerHTML = `<small class="hint">추천 (누르면 들어가요)</small> ` + list.map((t, i) =>
+      `<button type="button" class="chip-btn" data-i="${i}">${esc(t.replace(/\*/g, "")).replace(/\n/g, " / ")}</button>`).join("");
+    $("edHookSuggest").querySelectorAll("button").forEach((b) => (b.onclick = () => {
+      checkpoint(); $("edHook").value = list[+b.dataset.i]; drawOverlay();
+    }));
+  }
+
   function splitRow(list, i, caret = null) {
     const s = list[i], text = s.text.replace(/\s+/g, " ");
     const spaces = [...text].map((c, k) => (c === " " ? k : -1)).filter((k) => k > 0);
