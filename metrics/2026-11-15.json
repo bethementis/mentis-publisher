@@ -1,0 +1,652 @@
+{
+  "date": "2026-11-15",
+  "collected_at": "2026-11-15T06:26:19+09:00",
+  "errors": {
+    "tiktok": "HTTP 401: {'code': 'scope_not_authorized', 'message': 'The user did not authorize the scope required for completing this request.', 'log_id': '20261115052636720CB1F716CB498DAFAE'}"
+  },
+  "instagram": {
+    "token": "IG_INSIGHTS_TOKEN",
+    "account": {
+      "followers_count": 0,
+      "follows_count": 13,
+      "media_count": 9,
+      "yesterday": {
+        "reach": 1,
+        "views": 2,
+        "profile_views": 0,
+        "accounts_engaged": 0,
+        "total_interactions": 0
+      },
+      "online_followers": null
+    },
+    "posts": [
+      {
+        "id": "18201670651378664",
+        "timestamp": "2026-11-11T11:24:19+0000",
+        "permalink": "https://www.instagram.com/p/DfmXeVyF9GF/",
+        "media_type": "CAROUSEL_ALBUM",
+        "like_count": 0,
+        "comments_count": 0,
+        "caption_head": "좋은 자세가 남자를 만든다  지금 당신의 자세는 거북목, 라운드 숄더, 골반 전방경사 중 하나다. 대부분은 셋 다 조금씩 가지고 있다.  자세가 무너지는 건 굳어서가 아니라, 한쪽은 짧아지고 반대쪽은 약해져서다. 짧아진 곳만 풀면 그때뿐이고, 약해진 곳을 조여야 자세가 유지된다.  교정은 세 갈래. ① 늘리기: 가슴·흉추·고관절 앞·목 옆뒤. 샤워 후 몸이 따뜻할 때 ② 조이기: 페이스 풀, 턱 당기기, 힙 브릿지, 데드버그·플랭크 ③ 습관: 모니터는 눈높이, 엉덩이뼈로 앉기, 30분마다 일어나기  하나 더. 입은 다물고 코로 숨 쉬길. 들숨 5초, 멈춤 5초, 날숨 7초 이상을 다섯 번.  운동 1시간은 16시간의 습관을 이기지 못한다. 통증이 있다면 무리하지 말길.  자가 진단법부터 횟수까지 카드에 정리했다. 나중에 다시 꺼내 보려면 저장해두길.  #남자자기관리 #맨티스 #자세교정 #거북목 #라운드숄더 #골반전방경사 #남자운동",
+        "insights": {
+          "reach": 3,
+          "views": 8,
+          "likes": 0,
+          "comments": 0,
+          "shares": 0,
+          "saved": 0,
+          "follows": 0,
+          "profile_visits": 1,
+          "total_interactions": 0
+        },
+        "mentis": {
+          "folder": "2026-11-11_좋은자세",
+          "format": "캐러셀"
+        },
+        "save_share": 0,
+        "save_share_rate": 0.0
+      },
+      {
+        "id": "18185868061430924",
+        "timestamp": "2026-11-11T11:19:41+0000",
+        "permalink": "https://www.instagram.com/reel/DfmW6X-ETX0/",
+        "media_type": "VIDEO",
+        "like_count": 0,
+        "comments_count": 0,
+        "caption_head": "스킨케어 레벨 5단계, 당신은 몇 단계인가  남자 스킨케어는 대부분 문제가 터지고 나서야 한 단계씩 올라간다.  비누로 세안하다 여드름이 나고, 클렌저로 바꾸니 얼굴이 당긴다. 밖에서 몇 시간 있었더니 햇볕에 탄 흔적이 남고, 20년 뒤엔 주름이 보이기 시작한다.  레벨은 이렇게 올라간다. ① 비누 하나로 세안 ② 얼굴용 클렌저 + 비누 ③ 클렌저 + 보습제 ④ 클렌저 + 보습제 + 선크림 ⑤ 클렌저 + 비타민C 세럼 + 보습제 + 선크림  단계마다 하나씩 더해진 데는 이유가 있다. 여드름, 건조함, 햇볕, 주름.  아직 1단계에서 버티는 친구 있으면 보내줘.  #남자자기관리 #맨티스 #남자스킨케어 #남자피부관리 #스킨케어루틴 #선크림 #보습제 #클렌저  🎥 영상: @goharsguide",
+        "insights": {
+          "reach": 107,
+          "views": 123,
+          "likes": 0,
+          "comments": 0,
+          "shares": 1,
+          "saved": 0,
+          "follows": null,
+          "profile_visits": null,
+          "total_interactions": 1
+        },
+        "mentis": {
+          "folder": "2026-11-11_스킨케어-레벨-5단계-당신은-몇-레벨",
+          "format": "세딸"
+        },
+        "save_share": 1,
+        "save_share_rate": 0.9
+      },
+      {
+        "id": "18131441882497718",
+        "timestamp": "2026-11-11T11:15:03+0000",
+        "permalink": "https://www.instagram.com/p/DfmWbDhF8De/",
+        "media_type": "CAROUSEL_ALBUM",
+        "like_count": 0,
+        "comments_count": 0,
+        "caption_head": "얇고 처지는 모발은 스타일링이 가장 까다로운 타입이다. 무거운 제품은 떡지게 하고, 가벼운 제품은 볼륨을 받치지 못한다. 오늘의 추천은 GRAFEN 볼륨업 휘핑토닉.  쓰는 순서는 세 단계. ① 머리를 말리기 전에 바른다 ② 그대로 말린다 ③ 그 다음에 스타일링한다  건조 전에 바르길 권한다.  #남자자기관리 #맨티스 #남자헤어 #남자머리스타일링 #얇은머리 #휘핑토닉 #남자머리볼륨",
+        "insights": {
+          "reach": 1,
+          "views": 2,
+          "likes": 0,
+          "comments": 0,
+          "shares": 0,
+          "saved": 0,
+          "follows": 0,
+          "profile_visits": 0,
+          "total_interactions": 0
+        },
+        "mentis": {
+          "folder": "2026-11-10_휘핑토닉",
+          "format": "캐러셀"
+        },
+        "save_share": 0,
+        "save_share_rate": 0.0
+      },
+      {
+        "id": "18105522434031733",
+        "timestamp": "2026-11-11T11:10:38+0000",
+        "permalink": "https://www.instagram.com/reel/DfmV4uoEZvq/",
+        "media_type": "VIDEO",
+        "like_count": 1,
+        "comments_count": 0,
+        "caption_head": "휴지 한 롤로 자세 교정하는 법  거북목, 굽은 등, 허리 통증. 셋 다 비싼 장비 없이 바닥에서 잡을 수 있다.  공통점은 몸이 앞으로 말려 있다는 거다. 머리는 앞으로 빠지고, 등은 둥글게 말린다. 방법은 세 가지. 하루에 1분씩만 유지해. ① 거북목: 엎드려서 이마를 휴지 롤에 댄다 ② 굽은 등: 등 뒤에 롤을 받치고 누워 손은 머리 뒤로 ③ 허리 통증: 무릎 세우고 누워 허리 아래에 롤을 받친다  통증이 있으면 무리하지 말고 편한 범위까지만.  오늘 밤 자기 전에 따라 하려면 저장해둬.  #남자자기관리 #맨티스 #자세교정 #거북목 #굽은등 #허리통증 #스트레칭 #홈트  🎥 영상: @drrodpt",
+        "insights": {
+          "reach": 109,
+          "views": 126,
+          "likes": 1,
+          "comments": 0,
+          "shares": 1,
+          "saved": 0,
+          "follows": null,
+          "profile_visits": null,
+          "total_interactions": 2
+        },
+        "mentis": {
+          "folder": "2026-11-10_거북목-교정",
+          "format": "세딸"
+        },
+        "save_share": 1,
+        "save_share_rate": 0.9
+      },
+      {
+        "id": "18153410656519743",
+        "timestamp": "2026-11-09T10:55:20+0000",
+        "permalink": "https://www.instagram.com/p/DfhKksjmGZw/",
+        "media_type": "CAROUSEL_ALBUM",
+        "like_count": 0,
+        "comments_count": 0,
+        "caption_head": "모공은 기구로 관리하자  모공패임, 여드름 흉터. 한 번 생기면 쉽게 없어지지 않는다. 남자들이 가장 없애고 싶어 하는 피부 고민 1순위다.  염증이 심했거나 압출 후 관리가 부족하면 피부 조직이 손상되면서 패인 흉터가 남는다. 아직 100% 해결법은 없다. 없어진 살을 자연적으로 끌어올리는 건 불가능하거든.  핵심은 피부에 미세한 자극을 줘서 회복을 유도하는 것. 방법은 두 가지. ① 여유가 있다면 프락셀 시술 + 철저한 홈케어. 시술 후 자외선 차단과 보습까지 챙겨야 결과가 좋다 ② 비용이 부담되면 MTS. 저녁 스킨케어 때 토너 다음 부드럽게 롤링하고, 히알루론산·PDRN 같은 기능성 앰플이나 크림을 바른다  단, MTS는 자극이 있는 만큼 처음부터 무리하지 말고 횟수를 천천히 늘려라.  좋은 피부는 화장품으로 덮는 게 아니라 재생으로 만들어진다.  #남자자기관리 #맨티스 #남자피부관리 #모공관리 #여드름흉터 #프락셀 #MTS #홈디바이스",
+        "insights": {
+          "reach": 1,
+          "views": 2,
+          "likes": 0,
+          "comments": 0,
+          "shares": 0,
+          "saved": 0,
+          "follows": 0,
+          "profile_visits": 0,
+          "total_interactions": 0
+        },
+        "mentis": {
+          "folder": "2026-11-09_모공-기구로-관리하자",
+          "format": "캐러셀"
+        },
+        "save_share": 0,
+        "save_share_rate": 0.0
+      },
+      {
+        "id": "17866041321696480",
+        "timestamp": "2026-11-08T10:41:48+0000",
+        "permalink": "https://www.instagram.com/p/DfekOujkQs5/",
+        "media_type": "CAROUSEL_ALBUM",
+        "like_count": 0,
+        "comments_count": 0,
+        "caption_head": "너만 빼고 다 발라  아직도 게이니 뭐니 하면서 얼굴에 아무것도 안 바르냐. 밖으로 나가봐라. 요즘 남자들은 티 안 나게 점점 잘생겨지고 있다.  눈화장, 색조화장은 티가 날 수밖에 없어서 추천 안 한다. 근데 피부 정도는 티 나게 다 뜨게 하는 게 아니면 여자들도 거부감 전혀 없다.  고르는 기준은 이렇다. ① 파데·쿠션: 가릴 게 많을 때. 대신 눈썰미 좋은 여자들은 알아챌 확률이 크다 ② 남성용 톤로션·커버로션: 커버력이 낮고 톤정리만 해줘서 자연스럽다 ③ 추천은 미닉 커버로션: 커버력과 자연스러움 둘 다 놓치지 않는다  외출 전 1분이면 된다. 인상은 분명히 바뀐다.  #남자자기관리 #맨티스 #남자피부관리 #남자화장 #톤업로션 #커버로션 #남자스킨케어",
+        "insights": {
+          "reach": 3,
+          "views": 10,
+          "likes": 0,
+          "comments": 0,
+          "shares": 0,
+          "saved": 0,
+          "follows": 0,
+          "profile_visits": 0,
+          "total_interactions": 0
+        },
+        "mentis": {
+          "folder": "2026-11-08_너만빼고다발라",
+          "format": "캐러셀"
+        },
+        "save_share": 0,
+        "save_share_rate": 0.0
+      },
+      {
+        "id": "17910197280329730",
+        "timestamp": "2026-11-07T10:57:53+0000",
+        "permalink": "https://www.instagram.com/p/DfcBRwfj35n/",
+        "media_type": "CAROUSEL_ALBUM",
+        "like_count": 0,
+        "comments_count": 0,
+        "caption_head": "얼굴에 지방부터 걷어내자  몸이 좋아도 얼굴에 지방이 남아 있으면 인상이 둔해 보인다.  얼굴살만 따로 뺄 순 없다. 굶는다고 턱선이 생기지도 않는다. 고강도 운동으로 만든 적은 체지방, 이래야 얼굴선이 산다.  루틴은 네 가지. ① 저탄고단 식단 ② 주 4~5회 이상 고강도 웨이트 ③ 경사 7, 속도 3~5로 30분 유산소 ④ 자기 전 폰 자제, 블루라이트 차단  여기에 나무 괄사로 림프까지 풀어주면 부종이 빠진다.  #남자자기관리 #맨티스 #데스페이스 #얼굴살빼기 #턱선관리 #괄사마사지 #체지방관리",
+        "insights": {
+          "reach": 3,
+          "views": 8,
+          "likes": 0,
+          "comments": 0,
+          "shares": 0,
+          "saved": 0,
+          "follows": 0,
+          "profile_visits": 0,
+          "total_interactions": 0
+        },
+        "mentis": {
+          "folder": "2026-11-07_데스페이스",
+          "format": "캐러셀"
+        },
+        "save_share": 0,
+        "save_share_rate": 0.0
+      },
+      {
+        "id": "18113471897166961",
+        "timestamp": "2026-10-31T07:07:07+0000",
+        "permalink": "https://www.instagram.com/p/DfJlTCAILAq/",
+        "media_type": "CAROUSEL_ALBUM",
+        "like_count": 0,
+        "comments_count": 0,
+        "caption_head": "얼굴 때를 왜 밀어  세안을 아무리 잘해도 피부가 칙칙하고 거칠다면, 쌓인 각질 때문일 확률이 높다.  피부는 약 28일마다 새로 바뀌는데, 20대 후반부터 이 주기가 느려진다. 떨어져야 할 각질이 그대로 남아 모공을 막고, 뭘 발라도 흡수가 안 되는 이유다.  관리 방법은 세 가지. ① 스크럽·필링젤: 주 1회, 코·이마 위주로 가볍게 ② AHA/BHA 앰플: 자극이 적어서 꾸준히 쓰기 좋다 ③ 레티놀: 턴오버 주기 자체를 앞당긴다  단, 셋을 한 번에 하는 건 절대 금지.  주간 각질 관리 루틴표 무료로 나눠줄 예정. 필요한 사람은 DM으로 '각질' 보내줘.  #남자피부관리 #남자스킨케어 #남자자기관리 #각질관리 #각질제거 #레티놀 #맨티스",
+        "insights": {
+          "reach": 6,
+          "views": 10,
+          "likes": 0,
+          "comments": 0,
+          "shares": 0,
+          "saved": 0,
+          "follows": 0,
+          "profile_visits": 0,
+          "total_interactions": 0
+        },
+        "mentis": {
+          "folder": "2026-10-31_ep-face-peeling",
+          "format": "캐러셀"
+        },
+        "save_share": 0,
+        "save_share_rate": 0.0
+      },
+      {
+        "id": "18110867036258591",
+        "timestamp": "2026-10-31T05:52:34+0000",
+        "permalink": "https://www.instagram.com/p/DfJcx6yk8cL/",
+        "media_type": "CAROUSEL_ALBUM",
+        "like_count": 0,
+        "comments_count": 0,
+        "caption_head": "피부과에 돈 쏟아붓기 전에 이것부터 봐. 남자한테 가성비 확실한 시술 5개만 골랐다.  1. 레이저 제모: 수염자국 있으면 필수 2. 턱보톡스: 가격, 효과 둘 다 가성비 1황 3. 인모드: 얼굴살 고민이면 이거 4. 울쎄라: 비싸도 라인은 확실하게 5. 스킨보톡스: 피부결, 모공 한 번에  다 할 필요 없어. 지금 내 얼굴에 제일 필요한 것 하나만 골라.  너라면 뭐부터 받을래? 번호로 댓글 남겨줘 👇 나중에 피부과 갈 때 보려면 저장해둬.  *시술 효과와 부작용은 사람마다 달라. 받기 전에 꼭 전문의랑 상담하고 결정해. 남자의 자기관리, Mentis  #남자시술 #턱보톡스 #남자피부관리 #맨즈뷰티 #Mentis",
+        "insights": {
+          "reach": 6,
+          "views": 13,
+          "likes": 0,
+          "comments": 0,
+          "shares": 0,
+          "saved": 0,
+          "follows": 0,
+          "profile_visits": 0,
+          "total_interactions": 0
+        },
+        "mentis": null,
+        "save_share": 0,
+        "save_share_rate": 0.0
+      }
+    ],
+    "comments": [],
+    "reference": [
+      {
+        "username": "iamtheserkan",
+        "followers_count": 129220,
+        "media_count": 260,
+        "media": [
+          {
+            "timestamp": "2026-11-14T06:00:01+0000",
+            "permalink": "https://www.instagram.com/p/Dftg06wmvg2/",
+            "media_type": "CAROUSEL_ALBUM",
+            "like_count": null,
+            "comments_count": 2,
+            "caption_head": "제품마다 필요한 양을 명확히 알기 🪙  덜어내야 하는 제품이 있고, 아끼면 제 역할을 하기 어려운 제품도 있습니다. 세정제는 피부를 과하게 씻어내지 않도록, 기능성 제품은 자극 없이 사용할 수 있도록, 선크림은 충분"
+          },
+          {
+            "timestamp": "2026-11-13T06:00:03+0000",
+            "permalink": "https://www.instagram.com/p/Dfq8DhOmjiM/",
+            "media_type": "CAROUSEL_ALBUM",
+            "like_count": null,
+            "comments_count": 2,
+            "caption_head": "자기관리는 공간에서부터 시작됩니다 🧺  옷을 세탁하는 세탁기, 얼굴을 묻는 베개, 몸을 씻는 욕실과 음식을 준비하는 주방. 내 몸에 닿고, 하루의 습관이 이어지는 곳들입니다. 청소는 외모관리와 별개의 집안일이 아니라"
+          },
+          {
+            "timestamp": "2026-11-12T06:00:01+0000",
+            "permalink": "https://www.instagram.com/p/DfoXO_sGoto/",
+            "media_type": "CAROUSEL_ALBUM",
+            "like_count": 812,
+            "comments_count": 12,
+            "caption_head": "저는 운전하다 신호 걸릴 때마다 합니다"
+          },
+          {
+            "timestamp": "2026-11-10T06:09:21+0000",
+            "permalink": "https://www.instagram.com/p/DfjOpp7IfEI/",
+            "media_type": "CAROUSEL_ALBUM",
+            "like_count": null,
+            "comments_count": 3,
+            "caption_head": "모공 넓혀놓는 최악의 습관 8가지 🔎  모공 세럼은 꼬박꼬박 바르면서, 선크림 지우는 건 내일로 미룹니다. 코에 피지가 보이면 손부터 올라가고, 세안은 뽀득해야 잘 씻었다 싶죠. 모공 때문에 챙긴 관리가 오히려 피부"
+          },
+          {
+            "timestamp": "2026-11-09T08:51:37+0000",
+            "permalink": "https://www.instagram.com/p/Dfg8bRhIQve/",
+            "media_type": "CAROUSEL_ALBUM",
+            "like_count": 137,
+            "comments_count": 3,
+            "caption_head": "‘이번 주에 실행할 단 하나의 스킨 케어 루틴을 골라보세요.’   🗓️ 2026年 11月 2週   더 다양한 자기관리 루틴은 매일 스토리에서 확인할 수 있습니다 👉🏿"
+          },
+          {
+            "timestamp": "2026-11-08T06:00:02+0000",
+            "permalink": "https://www.instagram.com/p/DfeEDcEIcAG/",
+            "media_type": "CAROUSEL_ALBUM",
+            "like_count": 651,
+            "comments_count": 14,
+            "caption_head": "자기 전에 먹는 방법도 있겠네요.  *다만 먹고 더부룩하거나 잠이 불편하다면 취침 전 섭취를 고집하지 마세요. 하루 섭취량을 고려하지 않고 40g을 추가할 필요는 없습니다.   *출처: Medicine & Scien"
+          },
+          {
+            "timestamp": "2026-11-06T06:23:14+0000",
+            "permalink": "https://www.instagram.com/p/DfY9D0ioTpr/",
+            "media_type": "CAROUSEL_ALBUM",
+            "like_count": 137,
+            "comments_count": 2,
+            "caption_head": "‘이번 주에 실행할 단 하나의 헤어 관련 루틴을 골라보세요.’   🗓️ 2026年 11月 1週   더 다양한 자기관리 루틴은 매일 스토리에서 확인할 수 있습니다 👉🏿"
+          },
+          {
+            "timestamp": "2026-11-05T06:00:02+0000",
+            "permalink": "https://www.instagram.com/p/DfWVtDWmu1o/",
+            "media_type": "CAROUSEL_ALBUM",
+            "like_count": null,
+            "comments_count": 2,
+            "caption_head": "아침에 잘해두면 미스트 쓸 일 없어집니다 🌧️  토너 레이어링 하는 법 3단계  1️⃣ 손바닥으로 얇게 펴 바르기 세안 후 물기를 가볍게 닦고, 보습 토너를 손바닥에 소량 덜어 얼굴에 얇게 펴 발라주세요. 손바닥에 "
+          },
+          {
+            "timestamp": "2026-11-04T06:00:07+0000",
+            "permalink": "https://www.instagram.com/p/DfTw50JGqKF/",
+            "media_type": "CAROUSEL_ALBUM",
+            "like_count": null,
+            "comments_count": 3,
+            "caption_head": "얼굴의 좌우 차이가 신경 쓰일 때 확인할 것 🚩  1️⃣ 눈가 주변 움직이기 👀 시선을 움직일 때 이마와 미간까지 잔뜩 힘주지 말고, 편안한 범위에서 천천히 움직이세요. 눈 운동으로 눈높이나 짝눈이 교정된다고 기대하"
+          },
+          {
+            "timestamp": "2026-11-03T06:25:10+0000",
+            "permalink": "https://www.instagram.com/p/DfRO5XPoSkl/",
+            "media_type": "CAROUSEL_ALBUM",
+            "like_count": 855,
+            "comments_count": 4,
+            "caption_head": "구석구석 못생겨지는 습관 8가지 🔎  트리트먼트까지는 사뒀는데 쓰지도 않고, 수건으로 머리를 박박 비빕니다. 선크림은 목까지 발랐는데, 클렌징 제품은 얼굴에만 쓰죠. 챙겨 바르는 제품은 늘어도 습관이 움직이는 방식은"
+          },
+          {
+            "timestamp": "2026-11-03T02:53:16+0000",
+            "permalink": "https://www.instagram.com/reel/DfQ2jQDvCjh/",
+            "media_type": "VIDEO",
+            "like_count": 259,
+            "comments_count": 2,
+            "caption_head": "러닝 기록 단축을 위한 호흡법 💨  달리다 숨이 턱까지 차오른다면, 잠시 속도를 늦추고 호흡을 가다듬어보세요.   ① 입으로 ‘후—’ 하고 길게 내쉬기 ② 이어서 ‘흡, 흡’ 두 번에 나눠 들이마시기 ③ 다시 천천히"
+          },
+          {
+            "timestamp": "2026-11-01T08:20:39+0000",
+            "permalink": "https://www.instagram.com/reel/DfMSWcXv_z0/",
+            "media_type": "VIDEO",
+            "like_count": null,
+            "comments_count": 11,
+            "caption_head": "오늘도 자신의 한계를 시험하는 사람들 ☔  2026 JTBC 서울마라톤을 찾았습니다. 첫 완주를 꿈꾸는 사람부터 자신의 기록을 넘어서려는 사람까지. 지금보다 한 걸음 더 나아가려는 이들이 어떤 마음으로 어려운 도전을"
+          }
+        ]
+      }
+    ]
+  },
+  "threads": {
+    "account": {
+      "followers_count": 0
+    },
+    "posts": [
+      {
+        "id": "18113558060614546",
+        "timestamp": "2026-11-11T11:24:59+0000",
+        "permalink": "https://www.threads.com/@bethementis/post/DfmXgKboPhY",
+        "text_head": "스트레칭을 열심히 하는데도 자세가 그대로라면 절반만 하고 있는 것이다.  자세가 무너지는 건 굳어서가 아니다. 한쪽은 짧아지고, 반대쪽은 약해져서다.  가슴·목 앞·고관절 앞은 짧아지고 등 뒤·엉덩이·목 심부 근육은",
+        "insights": {
+          "views": 32,
+          "likes": 0,
+          "replies": 1,
+          "reposts": 0,
+          "quotes": 0,
+          "shares": 0
+        },
+        "mentis": {
+          "folder": "2026-11-11_좋은자세",
+          "format": "캐러셀"
+        },
+        "save_share": 0,
+        "save_share_rate": 0.0
+      },
+      {
+        "id": "18137508379675116",
+        "timestamp": "2026-11-11T11:15:42+0000",
+        "permalink": "https://www.threads.com/@bethementis/post/DfmWcRboG8Z",
+        "text_head": "오후만 되면 머리가 주저앉는다면 손질 실력보다 바닥부터 다시 볼 일이다.  얇은 머리는 무거운 제품에 떡지고 가벼운 제품으로는 버티지 못한다.  그래서 손질 전에 기초공사가 필요하다. 전처리 제품은 그루밍토닉, 휘핑",
+        "insights": {
+          "views": 33,
+          "likes": 0,
+          "replies": 1,
+          "reposts": 0,
+          "quotes": 0,
+          "shares": 0
+        },
+        "mentis": {
+          "folder": "2026-11-10_휘핑토닉",
+          "format": "캐러셀"
+        },
+        "save_share": 0,
+        "save_share_rate": 0.0
+      },
+      {
+        "id": "18119590901054881",
+        "timestamp": "2026-11-09T10:55:58+0000",
+        "permalink": "https://www.threads.com/@bethementis/post/DfhKmEeG5MI",
+        "text_head": "모공 흉터에 좋은 크림 찾고 있다면 방향부터 틀렸다.  패인 흉터는 바른다고 안 채워진다. 없어진 살을 자연적으로 끌어올리는 방법은 아직 없다.  그래서 공식은 하나다. 피부에 미세한 자극을 줘서 스스로 회복하게 만",
+        "insights": {
+          "views": 22,
+          "likes": 0,
+          "replies": 1,
+          "reposts": 0,
+          "quotes": 0,
+          "shares": 0
+        },
+        "mentis": {
+          "folder": "2026-11-09_모공-기구로-관리하자",
+          "format": "캐러셀"
+        },
+        "save_share": 0,
+        "save_share_rate": 0.0
+      },
+      {
+        "id": "17917367121548676",
+        "timestamp": "2026-11-08T10:41:58+0000",
+        "permalink": "https://www.threads.com/@bethementis/post/DfekP_XFahr",
+        "text_head": "남자가 뭘 바르냐는 말, 이제 너만 하고 있다.  밖에 나가봐라. 요즘 남자들은 티 안 나게 잘생겨지고 있다.  색조는 하지 마라. 티 난다. 피부만 해라.  파데, 쿠션은 가릴 게 많을 때만. 눈썰미 좋은 사람은 ",
+        "insights": {
+          "views": 73,
+          "likes": 0,
+          "replies": 1,
+          "reposts": 0,
+          "quotes": 0,
+          "shares": 0
+        },
+        "mentis": {
+          "folder": "2026-11-08_너만빼고다발라",
+          "format": "캐러셀"
+        },
+        "save_share": 0,
+        "save_share_rate": 0.0
+      },
+      {
+        "id": "18112389026626745",
+        "timestamp": "2026-11-07T10:58:34+0000",
+        "permalink": "https://www.threads.com/@bethementis/post/DfcBTLkm2Qs",
+        "text_head": "몸은 좋은데 인상이 둔해 보인다면 얼굴에 지방이 남아 있는 거다.  몸보다 먼저 보이는 건 얼굴이다.  얼굴살만 따로 빼는 방법은 없다. 굶어서 마른다고 턱선이 생기지도 않는다. 높은 운동 강도로 만든 적은 체지방.",
+        "insights": {
+          "views": 171,
+          "likes": 2,
+          "replies": 1,
+          "reposts": 0,
+          "quotes": 0,
+          "shares": 0
+        },
+        "mentis": {
+          "folder": "2026-11-07_데스페이스",
+          "format": "캐러셀"
+        },
+        "save_share": 0,
+        "save_share_rate": 0.0
+      },
+      {
+        "id": "17997514116045697",
+        "timestamp": "2026-10-31T07:07:45+0000",
+        "permalink": "https://www.threads.com/@bethementis/post/DfJlUm0FtBy",
+        "text_head": "얼굴 각질 관리, 이 3개만 기억하면 끝  1. 스크럽은 주 1회, 코·이마만 2. 매일 쓸 거면 AHA/BHA 앰플 3. 근본적으로 바꾸려면 레티놀 (주 2회부터)  셋 다 한 번에 하는 사람 생각보다 많음. 피부",
+        "insights": {
+          "views": 10,
+          "likes": 0,
+          "replies": 0,
+          "reposts": 0,
+          "quotes": 0,
+          "shares": 0
+        },
+        "mentis": {
+          "folder": "2026-10-31_ep-face-peeling",
+          "format": "캐러셀"
+        },
+        "save_share": 0,
+        "save_share_rate": 0.0
+      }
+    ],
+    "replies": []
+  },
+  "youtube": {
+    "channel": {
+      "viewCount": 5682,
+      "subscriberCount": 44,
+      "videoCount": 9
+    },
+    "videos": [
+      {
+        "id": "Qoo8imAa0Q0",
+        "title": "좋은 자세가 남자를 만든다 #Shorts",
+        "published_at": "2026-11-11T11:25:41Z",
+        "url": "https://youtube.com/shorts/Qoo8imAa0Q0",
+        "statistics": {
+          "viewCount": 64,
+          "likeCount": 0,
+          "dislikeCount": 0,
+          "favoriteCount": 0,
+          "commentCount": 0
+        },
+        "mentis": {
+          "folder": "2026-11-11_좋은자세",
+          "format": "캐러셀"
+        }
+      },
+      {
+        "id": "PDj1IOWbkoQ",
+        "title": "스킨케어 레벨 5단계, 당신은 몇 단계인가 #Shorts",
+        "published_at": "2026-11-11T11:20:09Z",
+        "url": "https://youtube.com/shorts/PDj1IOWbkoQ",
+        "statistics": {
+          "viewCount": 1243,
+          "likeCount": 9,
+          "dislikeCount": 0,
+          "favoriteCount": 0,
+          "commentCount": 0
+        },
+        "mentis": {
+          "folder": "2026-11-11_스킨케어-레벨-5단계-당신은-몇-레벨",
+          "format": "세딸"
+        }
+      },
+      {
+        "id": "z2WmD5gfwp8",
+        "title": "얇은 머리 볼륨 살리는 법, 휘핑토닉 하나면 된다 #Shorts",
+        "published_at": "2026-11-11T11:16:26Z",
+        "url": "https://youtube.com/shorts/z2WmD5gfwp8",
+        "statistics": {
+          "viewCount": 166,
+          "likeCount": 2,
+          "dislikeCount": 0,
+          "favoriteCount": 0,
+          "commentCount": 0
+        },
+        "mentis": {
+          "folder": "2026-11-10_휘핑토닉",
+          "format": "캐러셀"
+        }
+      },
+      {
+        "id": "N-hXtGxv-WQ",
+        "title": "휴지 한 롤로 자세 교정하는 법 #Shorts",
+        "published_at": "2026-11-11T11:11:11Z",
+        "url": "https://youtube.com/shorts/N-hXtGxv-WQ",
+        "statistics": {
+          "viewCount": 5,
+          "likeCount": 0,
+          "dislikeCount": 0,
+          "favoriteCount": 0,
+          "commentCount": 0
+        },
+        "mentis": {
+          "folder": "2026-11-10_거북목-교정",
+          "format": "세딸"
+        }
+      },
+      {
+        "id": "MyKZRmKjRtI",
+        "title": "휴지 한 롤로 자세 교정하는 법 #Shorts",
+        "published_at": "2026-11-10T11:10:11Z",
+        "url": "https://youtube.com/shorts/MyKZRmKjRtI",
+        "statistics": {
+          "viewCount": 2726,
+          "likeCount": 52,
+          "dislikeCount": 0,
+          "favoriteCount": 0,
+          "commentCount": 0
+        },
+        "mentis": null
+      },
+      {
+        "id": "rnkKpiUvSqY",
+        "title": "모공 흉터 없애는 법, 프락셀 vs MTS #Shorts",
+        "published_at": "2026-11-09T10:56:45Z",
+        "url": "https://youtube.com/shorts/rnkKpiUvSqY",
+        "statistics": {
+          "viewCount": 104,
+          "likeCount": 0,
+          "dislikeCount": 0,
+          "favoriteCount": 0,
+          "commentCount": 0
+        },
+        "mentis": {
+          "folder": "2026-11-09_모공-기구로-관리하자",
+          "format": "캐러셀"
+        }
+      },
+      {
+        "id": "SFTankv6QEI",
+        "title": "남자 커버로션, 티 안 나게 피부 정리하는 법 #Shorts",
+        "published_at": "2026-11-08T10:42:35Z",
+        "url": "https://youtube.com/shorts/SFTankv6QEI",
+        "statistics": {
+          "viewCount": 92,
+          "likeCount": 1,
+          "dislikeCount": 0,
+          "favoriteCount": 0,
+          "commentCount": 0
+        },
+        "mentis": {
+          "folder": "2026-11-08_너만빼고다발라",
+          "format": "캐러셀"
+        }
+      },
+      {
+        "id": "7GltovFdXD8",
+        "title": "얼굴에 지방부터 걷어내자 #Shorts",
+        "published_at": "2026-11-07T10:59:09Z",
+        "url": "https://youtube.com/shorts/7GltovFdXD8",
+        "statistics": {
+          "viewCount": 1206,
+          "likeCount": 1,
+          "dislikeCount": 0,
+          "favoriteCount": 0,
+          "commentCount": 0
+        },
+        "mentis": {
+          "folder": "2026-11-07_데스페이스",
+          "format": "캐러셀"
+        }
+      },
+      {
+        "id": "Nim9T1Mcuu0",
+        "title": "얼굴 때를 왜 밀어 | 남자 각질 관리 3가지 #Shorts",
+        "published_at": "2026-10-31T09:38:57Z",
+        "url": "https://youtube.com/shorts/Nim9T1Mcuu0",
+        "statistics": {
+          "viewCount": 83,
+          "likeCount": 0,
+          "dislikeCount": 0,
+          "favoriteCount": 0,
+          "commentCount": 0
+        },
+        "mentis": {
+          "folder": "2026-10-31_yt-test2-face-peeling",
+          "format": "캐러셀"
+        }
+      }
+    ]
+  },
+  "tiktok": null,
+  "naver": null,
+  "xhs": null
+}
