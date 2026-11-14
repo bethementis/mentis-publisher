@@ -1,0 +1,28 @@
+{
+  "date": "2026-11-14",
+  "checked_at": "2026-11-14T22:05:43+09:00",
+  "status": "문제 있음",
+  "problems": [
+    {
+      "level": "problem",
+      "area": "예약",
+      "msg": "2일 뒤(11/16)부터 올릴 게시물이 없어요. 업로드 툴에서 예약해 주세요."
+    },
+    {
+      "level": "problem",
+      "area": "발행",
+      "msg": "tiktok 실패 — 2일 연속 실패 (2026-11-11_스킨케어-레벨-5단계-당신은-몇-레벨): HTTP 400: {'code': 'invalid_params', 'message': 'The chunk size is invalid', 'log_id': '20261114184249E6B100B0D71980D9EF85'}"
+    },
+    {
+      "level": "warn",
+      "area": "릴스 만들기",
+      "msg": "'세안-1번으로-끝내는-22초-아침-루틴' 작업이 2026-11-06 이후 그대로예요. 예약하거나 지워 주세요 (원본 영상이 저장소 용량을 차지해요)."
+    }
+  ],
+  "fails": {
+    "tiktok": {
+      "post": "2026-11-11_스킨케어-레벨-5단계-당신은-몇-레벨",
+      "error": "HTTP 400: {'code': 'invalid_params', 'message': 'The chunk size is invalid', 'log_id': '20261114184249E6B100B0D71980D9EF85'}"
+    }
+  }
+}
