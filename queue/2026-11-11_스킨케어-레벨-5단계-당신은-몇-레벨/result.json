@@ -13,7 +13,7 @@
   },
   "tiktok": {
     "ok": false,
-    "error": "HTTP 400: {'code': 'invalid_params', 'message': 'The chunk size is invalid', 'log_id': '20261114184249E6B100B0D71980D9EF85'}"
+    "error": "HTTP 400: {'code': 'invalid_params', 'message': 'The chunk size is invalid', 'log_id': '202611151841268C25705F1C121FB68571'}"
   },
   "outbox": {
     "ok": true,
@@ -23,5 +23,5 @@
     ],
     "skipped": []
   },
-  "updated_at": "2026-11-14T19:42:49+09:00"
+  "updated_at": "2026-11-15T19:41:26+09:00"
 }
