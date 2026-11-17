@@ -286,11 +286,38 @@ def cmd_preview():
 GAP_SECONDS = 180   # 같은 날 여러 개를 올릴 때 사이 간격 (한꺼번에 올라가지 않게)
 
 
+def _new_on_instagram(folder):
+    """이번에 인스타에 새 게시물이 생기는지 (이미 인스타에 올라갔고 다른 곳만 재시도하는 건 아님)."""
+    try:
+        post = load_post(folder)
+    except SystemExit:
+        return True
+    if "instagram" not in post["platforms"]:
+        return False
+    rf = folder / "result.json"
+    done = json.loads(rf.read_text()).get("instagram", {}).get("ok") if rf.exists() else False
+    return not done
+
+
 def todays_items():
-    """이번 발행에서 올릴 것: 날짜가 오늘(또는 지난 날짜)인 게시물은 전부, 날짜 없는 게시물은 그중 없을 때만 1개 (이름 순서대로 하루 1개)."""
+    """이번 발행에서 올릴 것.
+    날짜가 오늘(또는 지난 날짜)인 게시물 중 하루에 캐러셀 1개 + 릴스 1개까지 (이름 순서대로).
+    나머지는 다음 날로 밀린다. 인스타엔 이미 올라갔고 다른 플랫폼만 재시도하는 건 개수에 안 센다.
+    (11/17 Meta 비즈니스 '자동화' 제한 이후: 한 번에 몰아 올리지 않기)
+    날짜 없는 게시물은 날짜 있는 게 없을 때만 1개."""
     items = due_items()
     dated = [d for d in items if re.match(r"\d{4}-\d{2}-\d{2}", d.name)]
-    return dated or items[:1]
+    pool = dated or items[:1]
+    picked, used = [], set()
+    for d in pool:
+        if not _new_on_instagram(d):
+            picked.append(d); continue
+        kind = "reel" if reel_video(d) else "carousel"
+        if kind in used:
+            log(f"{d.name}: 오늘은 {'릴스를' if kind == 'reel' else '캐러셀을'} 이미 1개 올려서 내일로 미뤄요")
+            continue
+        used.add(kind); picked.append(d)
+    return picked
 
 
 def cmd_publish():

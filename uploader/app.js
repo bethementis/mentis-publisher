@@ -347,7 +347,7 @@
     const d = $("date").value, w = [];
     if (d && d < todayKST()) w.push("지난 날짜예요. 다음 자동 발행 때 바로 올라가요.");
     const same = posts.filter((p) => p.area === "queue" && p.date === d && p.folder !== editing?.folder);
-    if (d && same.length) w.push(`같은 날 예약이 이미 있어요 (${same.map((p) => p.slug).join(", ")}). 그날 저녁에 이름 순서대로 3분 간격으로 같이 올라가요.`);
+    if (d && same.length) w.push(`같은 날 예약이 이미 있어요 (${same.map((p) => p.slug).join(", ")}). 하루에 캐러셀 1개 + 릴스 1개까지만 올라가고, 같은 종류가 겹치면 이름 순서로 다음 날로 밀려요.`);
     $("dateWarn").textContent = w.join("\n");
   }
 
