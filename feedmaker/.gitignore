@@ -1,0 +1,20 @@
+# 비밀값 — 절대 올리지 않음
+.env
+.env.*
+!.env.example
+
+# 설치물·가상환경
+node_modules/
+.venv/
+venv/
+__pycache__/
+
+# 피드메이커로 만든 결과물 (카드 이미지·압축 파일)
+output/
+*.zip
+*.png
+*.jpg
+*.jpeg
+*.webp
+
+.DS_Store
