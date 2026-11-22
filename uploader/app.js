@@ -318,11 +318,47 @@
     });
   }
 
-  function setupDrop(zone, input, getList, max) {
-    input.onchange = () => { addFiles(input.files, getList(), max); input.value = ""; };
+  function setupDrop(zone, input, getList, max, zipOk) {
+    const take = (list) => {
+      const zip = zipOk && [...list].find((f) => /\.zip$/i.test(f.name));
+      if (zip) addZip(zip).catch((e) => toast("ZIP 을 읽지 못했어요: " + e.message, 5000));
+      else addFiles(list, getList(), max);
+    };
+    input.onchange = () => { take(input.files); input.value = ""; };
     zone.ondragover = (e) => { e.preventDefault(); zone.classList.add("over"); };
     zone.ondragleave = () => zone.classList.remove("over");
-    zone.ondrop = (e) => { e.preventDefault(); zone.classList.remove("over"); addFiles(e.dataTransfer.files, getList(), max); };
+    zone.ondrop = (e) => { e.preventDefault(); zone.classList.remove("over"); take(e.dataTransfer.files); };
+  }
+
+  // 피드 메이커(feedmaker/)에서 받은 ZIP: 01.png… = 카드(01 이 표지), caption.txt = 캡션.
+  // '모든 언어' ZIP 이면 ko/ 는 카드, zh-CN/ 은 중국어 카드(샤오홍슈)로 넣는다.
+  async function addZip(file) {
+    const zip = await JSZip.loadAsync(file);
+    const all = Object.values(zip.files).filter((f) => !f.dir && !/(^|\/)(__MACOSX|\.)/.test(f.name));
+    const hasKo = all.some((f) => f.name.startsWith("ko/"));
+    const inDir = (dir) => all.filter((f) => (dir ? f.name.startsWith(dir + "/") && !f.name.slice(dir.length + 1).includes("/") : !f.name.includes("/")));
+    const toFiles = (list) => Promise.all(list.filter((f) => IMG_EXT.includes(f.name.split(".").pop().toLowerCase()))
+      .map(async (f) => new File([await f.async("blob")], f.name.split("/").pop(), { type: "image/" + (f.name.endsWith(".png") ? "png" : "jpeg") })));
+    const main = inDir(hasKo ? "ko" : ""), zh = hasKo ? inDir("zh-CN") : [];
+    const imgs = await toFiles(main);
+    if (!imgs.length) return toast("ZIP 안에 카드 이미지가 없어요.", 4000);
+    if (cards.length && !confirm(`지금 넣어 둔 카드 ${cards.length}장을 ZIP 카드로 바꿀까요?`)) return;
+    if (format !== "carousel") setFormat("carousel");
+    cards.length = 0;
+    addFiles(imgs, cards, 19);
+    if (imgs.length > 19) toast(`카드가 ${imgs.length}장이라 앞 19장만 넣었어요 (엔딩 카드 자리 1장).`, 5000);
+    if (zh.length) {
+      zhCards.length = 0; addFiles(await toFiles(zh), zhCards, 18); $("xhsBox").open = true;
+    }
+    const cap = main.find((f) => /(^|\/)caption\.txt$/i.test(f.name));
+    const capText = cap ? (await cap.async("string")).trim() : "";
+    let note = "";
+    if (capText) {
+      if (!$("caption").value.trim()) $("caption").value = capText;
+      else note = " 캡션 칸이 차 있어서 캡션은 그대로 뒀어요.";
+    }
+    if (!$("slug").value.trim()) $("slug").value = file.name.replace(/\.zip$/i, "").replace(/_\d{8}(_[a-zA-Z-]+)?$/, "");
+    toast(`피드 메이커 ZIP: 카드 ${Math.min(imgs.length, 19)}장${zh.length ? `, 중국어 카드 ${zh.length}장` : ""}${capText && !note ? ", 캡션" : ""} 넣었어요.${note}`, 5000);
   }
 
   function renderPlatforms(selected) {
@@ -655,7 +691,7 @@
 
   // ---------- 연결 ----------
   document.querySelectorAll(".tabs button").forEach((b) => (b.onclick = () => showTab(b.dataset.tab)));
-  setupDrop($("drop"), $("fileInput"), () => cards, 19);   // + 엔딩 카드 = 인스타 최대 20장
+  setupDrop($("drop"), $("fileInput"), () => cards, 19, true);   // + 엔딩 카드 = 인스타 최대 20장
   setupDrop($("zhDrop"), $("zhInput"), () => zhCards, 18);
   $("reelInput").onchange = () => { addReel($("reelInput").files); $("reelInput").value = ""; };
   $("reelDrop").ondragover = (e) => { e.preventDefault(); $("reelDrop").classList.add("over"); };
