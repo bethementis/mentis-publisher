@@ -347,8 +347,9 @@
     cards.length = 0;
     addFiles(imgs, cards, 19);
     if (imgs.length > 19) toast(`카드가 ${imgs.length}장이라 앞 19장만 넣었어요 (엔딩 카드 자리 1장).`, 5000);
-    if (zh.length) {
-      zhCards.length = 0; addFiles(await toFiles(zh), zhCards, 18); $("xhsBox").open = true;
+    const zhImgs = zh.length ? await toFiles(zh) : [];
+    if (zhImgs.length) {
+      zhCards.length = 0; addFiles(zhImgs, zhCards, 18); $("xhsBox").open = true;
     }
     const cap = main.find((f) => /(^|\/)caption\.txt$/i.test(f.name));
     const capText = cap ? (await cap.async("string")).trim() : "";
@@ -358,7 +359,7 @@
       else note = " 캡션 칸이 차 있어서 캡션은 그대로 뒀어요.";
     }
     if (!$("slug").value.trim()) $("slug").value = file.name.replace(/\.zip$/i, "").replace(/_\d{8}(_[a-zA-Z-]+)?$/, "");
-    toast(`피드 메이커 ZIP: 카드 ${Math.min(imgs.length, 19)}장${zh.length ? `, 중국어 카드 ${zh.length}장` : ""}${capText && !note ? ", 캡션" : ""} 넣었어요.${note}`, 5000);
+    toast(`피드 메이커 ZIP: 카드 ${Math.min(imgs.length, 19)}장${zhImgs.length ? `, 중국어 카드 ${zhImgs.length}장` : ""}${capText && !note ? ", 캡션" : ""} 넣었어요.${note}`, 5000);
   }
 
   function renderPlatforms(selected) {
