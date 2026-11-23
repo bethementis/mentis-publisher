@@ -1,0 +1,35 @@
+name: 피드 메이커 팀 스타일 반영
+
+# feedmaker/style.json(팀 기본 스타일)을 고치거나,
+# 피드 메이커에서 받은 mentis-style.json 을 feedmaker/ 에 올리면
+# feedmaker/index.html 안의 팀 기본 스타일을 자동으로 바꿔 넣는다.
+on:
+  push:
+    branches: [main]
+    paths:
+      - "feedmaker/style.json"
+      - "feedmaker/mentis-style*.json"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: feedmaker-style
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: 팀 스타일을 index.html 에 넣기
+        run: python3 feedmaker/sync_style.py
+      - name: 저장
+        run: |
+          git add -A feedmaker/
+          git diff --cached --quiet && exit 0
+          git -c user.name=mentis-bot -c user.email=bot@users.noreply.github.com commit -m "feedmaker: 팀 기본 스타일 반영"
+          git pull --rebase --autostash -q origin main
+          git push origin HEAD:main
