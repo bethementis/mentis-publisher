@@ -127,6 +127,8 @@ details.grp > div{display:flex;flex-direction:column;gap:12px}
 .libbar{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:14px;align-items:start}
 @media (max-width:760px){.libbar{grid-template-columns:minmax(0,1fr)}}
 .libgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:8px}
+.libgrid.peek .lp .cap,.libgrid.peek .lp .x{display:none}
+.pgrid .pc.empty-cell{background:rgba(127,127,127,.12)}
 .lp{position:relative;aspect-ratio:4/5;border-radius:4px;overflow:hidden;background:var(--bg);border:1px solid var(--line)}
 .lp img{width:100%;height:100%;object-fit:cover;display:block}
 .lp .cap{position:absolute;left:0;right:0;bottom:0;padding:16px 6px 5px;font-size:10.5px;line-height:1.35;color:#fff;background:linear-gradient(transparent,rgba(0,0,0,.78));opacity:0;transition:opacity .15s}
@@ -185,6 +187,15 @@ details.grp > div{display:flex;flex-direction:column;gap:12px}
 .s-sub{font-family:var(--csf);font-size:calc(var(--css) * var(--fit));font-weight:var(--csw);color:var(--csc);line-height:1.2;letter-spacing:-0.01em}
 .s-meta{position:absolute;z-index:3;right:var(--pad);bottom:calc(var(--pad) * 1.1);text-align:right;font-family:var(--mf);font-size:var(--ms);font-weight:500;letter-spacing:.05em;line-height:1.5;color:var(--c-text);text-transform:uppercase;white-space:pre}
 .t-cover.cv-top.ph-full .s-shade{background:linear-gradient(180deg,var(--sh3) 0%,var(--sh2) 24%,var(--c-bg-0) 52%,var(--c-bg-0) 78%,var(--sh1) 100%)}
+.t-cover.cl .s-photo{filter:var(--cfil,none)}
+.t-cover.cl.cv-bottom.ph-full .s-shade{background:linear-gradient(180deg,var(--c-bg-0) 0%,var(--c-bg-0) 34%,var(--cb1) 58%,var(--cb2) 100%)}
+.t-cover.cl.cv-top.ph-full .s-shade{background:linear-gradient(180deg,var(--cb2) 0%,var(--cb1) 42%,var(--c-bg-0) 66%,var(--c-bg-0) 100%)}
+.t-cover.cl.cv-center.ph-full .s-shade{background:linear-gradient(180deg,var(--c-bg-0) 0%,var(--cb1) 30%,var(--cb2) 50%,var(--cb1) 70%,var(--c-bg-0) 100%)}
+.t-cover.cl .s-title{text-shadow:0 2px 24px rgba(0,0,0,.28)}
+.pgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:3px;max-width:390px;background:var(--line);border:1px solid var(--line)}
+.pgrid .pc{position:relative;aspect-ratio:3/4;overflow:hidden;background:#000}
+.pgrid .pc > .slide{position:absolute;top:0;transform-origin:0 0}
+.pgrid .pc.now{outline:2px solid var(--brass);outline-offset:-2px;z-index:1}
 .t-cover.cv-bottom.ph-full .s-shade{background:linear-gradient(180deg,var(--c-bg-0) 0%,var(--c-bg-0) 42%,var(--sh2) 68%,var(--sh3) 100%)}
 .s-div{width:96px;height:4px;background:var(--c-accent);border:0;margin:0}
 .d-off .s-div{display:none}
@@ -303,8 +314,9 @@ details.grp > div{display:flex;flex-direction:column;gap:12px}
             <label class="sw"><input type="color" id="cHlColor" aria-label="표지 강조 색">강조 색</label>
             <button class="btn small" id="cColReset">글자 색·포인트 색 따라가기</button>
           </div>
-          <div class="toggles"><label><input type="checkbox" id="cBody"> 표지 본문 문장</label></div>
-          <p class="hint">여기 값이 모든 표지의 기본값이에요. 표지마다 다르게 하고 싶으면 미리보기에서 제목을 끌어 위치를, 모서리 동그라미를 끌어 크기를 바꾸세요.</p>
+          <div class="toggles"><label><input type="checkbox" id="cLock"> 모든 표지를 같은 위치·크기·색으로 고정</label><label><input type="checkbox" id="cAuto"> 배경이 밝으면 글자 뒤를 더 어둡게 (자동)</label><label><input type="checkbox" id="cBody"> 표지 본문 문장</label></div>
+          <div class="kv"><div class="field"><label class="lbl" for="cTone">표지 사진 톤</label><select id="cTone"><option value="calm">차분하게 (채도·밝기 낮춤)</option><option value="mono">흑백</option><option value="none">원본 그대로</option></select></div></div>
+          <p class="hint">고정을 켜 두면 사진이 달라도 모든 표지의 제목이 같은 자리·크기·색으로 나오고, 사진 톤과 글자 뒤 어두운 띠가 똑같이 깔려요. 인스타 프로필에서 표지들이 한 세트처럼 보여요.</p>
         </div></details>
 
         <details class="grp"><summary>레이아웃</summary><div>
@@ -355,6 +367,7 @@ details.grp > div{display:flex;flex-direction:column;gap:12px}
       </div>
       <div class="progress hidden" id="libProg"><i></i></div>
       <div class="status" id="libStatus"></div>
+      <div class="row" id="libBar" style="justify-content:space-between"><span class="hint" id="libSum"></span><button class="btn small" id="libToggle" aria-expanded="false">전체 보기</button></div>
       <div class="libgrid" id="libGrid"></div>
       <div class="empty" id="libEmpty">아직 사진이 없어요. 위에서 사진을 넣으면 여기에 쌓이고, 피드를 만들 때 장마다 추천돼요.</div>
       <button class="btn small hidden" id="libMore" style="align-self:center">더 보기</button>
@@ -375,6 +388,7 @@ details.grp > div{display:flex;flex-direction:column;gap:12px}
         <div class="row">
           <button class="btn primary" id="genBtn">피드 만들기</button>
           <button class="btn hidden" id="genStop">중단</button>
+          <button class="btn" id="genReset" title="지금 피드는 보관함에 저장하고 빈 상태로 돌아가요">새로 시작</button>
         </div>
         <div class="status" id="genStatus"></div>
         <div class="notes hidden" id="genNotes"></div>
@@ -407,6 +421,10 @@ details.grp > div{display:flex;flex-direction:column;gap:12px}
           <div class="empty" id="archEmpty">아직 저장된 피드가 없어요. 피드를 만들면 여기에 자동으로 쌓이고, 언제든 열어서 다시 고칠 수 있어요.</div>
         </div></details>
         <div class="status" id="archStatus"></div>
+        <details class="grp" id="pgWrap" style="border-top:0;padding-top:0"><summary>인스타 프로필에서 보기</summary><div>
+          <div class="pgrid" id="pgrid"></div>
+          <p class="hint">지금 표지(테두리)와 보관함의 최근 표지를 인스타 프로필처럼 3칸씩, 3:4로 잘라서 보여줘요. 제목 자리와 색이 한 줄로 맞는지 확인해 보세요.</p>
+        </div></details>
         <div class="row" style="justify-content:space-between">
           <div class="row"><div class="lbl">슬라이드 <span class="count" id="deckCount"></span></div><span class="tag" id="deckTag">예시 피드</span><div class="langtabs" id="langTabs" role="group" aria-label="보는 언어"></div></div>
           <div class="row"><button class="btn small" id="archSave">보관함에 저장</button><button class="btn small" id="undoBtn" disabled>되돌리기</button><button class="btn small" id="redoBtn" disabled>다시 실행</button></div>
@@ -434,7 +452,7 @@ details.grp > div{display:flex;flex-direction:column;gap:12px}
 </div>
 <div id="exportStage" aria-hidden="true"></div>
 <!-- 팀 기본 스타일: feedmaker/style.json 을 고치면 GitHub Actions 가 이 칸을 자동으로 바꿔요. 여기를 직접 고치지 마세요. -->
-<script type="application/json" id="team-style">{"brandName":"Mentis","handle":"","summary":"어두운 톤의 풀블리드 사진 위에 하단 그라데이션을 깔고 흰색 굵은 고딕 제목과 짧은 본문을 왼쪽 정렬로 얹은 남성 그루밍·자기관리 카드뉴스다. 좌상단의 큰 파란 세리프 숫자와 좌하단의 파란 이탤릭 세리프 로고 'Mentis'가 일관된 시그니처이며, 친구에게 조언하듯 단정적인 반말 톤이다.","colors":{"bg":"#1A1A1A","bg2":"#2A2A2A","text":"#FFFFFF","sub":"#D9D9D9","accent":"#3F4FD8"},"fonts":{"title":"Noto Sans KR","body":"Noto Sans KR"},"type":{"titleWeight":700,"coverTitleSize":64,"titleSize":52,"bodySize":28,"bodyLineHeight":1.5,"align":"left","titleLetterSpacing":"tight"},"layout":{"padding":60,"textPosition":"bottom","divider":false,"kicker":false,"photoTreatment":"full","listStyle":"dash","arrow":false},"pageNum":{"style":"bigNumber","font":"Playfair Display","weight":700,"color":"accent","position":"tl","size":96},"brand":{"show":true,"font":"Playfair Display","italic":true,"weight":700,"color":"accent","position":"bl","size":53,"image":""},"cover":{"font":"Noto Sans KR","weight":800,"size":78,"lineHeight":1.25,"letterSpacing":-0.02,"pos":"bottom","dx":0,"dy":0,"titleColor":"","hlColor":"","body":false,"sub":false,"subFont":"Inter","subSize":44,"subWeight":400,"subColor":"sub","series":"GROOMING REPORT","metaFont":"IBM Plex Mono","metaSize":26,"nextIssue":1,"meta":false},"structure":{"typicalSlides":7,"flow":"훅이 되는 표지 → 번호가 붙은 본문 장들(큰 숫자, 제목, 한 줄 부제, 2~4줄 설명, 필요시 대시 목록) → 마무리. 장마다 전면 사진 위에 하단 텍스트 블록과 로고를 고정한다.","typesUsed":["cover","body","list"]},"voice":{"tone":"친구에게 조언하듯 단정적이고 담백한 반말. 직설적이고 가끔 위트가 있으며 독자를 '당신들'로 부르기도 한다.","endings":"~다, ~이다, ~야, ~해, ~하자, 명사형 종결","titlePattern":"짧은 명사구나 단정형·의문형 제목 아래에 굵은 한 줄 부제를 붙이고, 그 아래 짧은 본문을 둔다. 표지는 숫자나 질문을 활용한 훅이다.","emphasis":"색 강조 없이 굵은 흰 제목과 작고 연한 본문의 크기 대비, 큰 파란 숫자로 위계를 만든다. 대시 목록, 화살표 표기, '포인트 :' 라벨, 괄호 부연을 쓴다.","dos":["장마다 큰 파란 숫자를 좌상단에 둔다","제목, 부제, 본문 3단 위계를 지킨다","본문은 2~4줄로 짧게 끊는다","어두운 사진 위에 하단 그라데이션을 깔아 글자를 읽기 쉽게 한다","모든 장 좌하단에 파란 이탤릭 로고를 고정한다","수치와 구체적 방법을 함께 적는다"],"donts":["쪽수(03 / 07)를 표기하지 않는다","이모지를 쓰지 않는다","화살표 아이콘이나 장식선, 박스를 쓰지 않는다","밝은 배경이나 여러 강조색을 쓰지 않는다","긴 문단을 나열하지 않는다"]},"caption":{"pattern":"한 줄 훅 → 핵심 요약 2~3줄 → 저장·팔로우 유도 → 해시태그","length":"짧음(3~5줄)","emoji":"거의 쓰지 않음(있어도 1~2개)","cta":"저장해두고 필요할 때 다시 보거나 따라 해보라는 권유, 팔로우 유도","hashtags":["#남자자기관리","#남자스킨케어","#그루밍","#멘티스","#Mentis"]},"samples":[{"role":"cover","kicker":"","title":"DEATH FACE\n얼굴에 지방부터 걷어내자","body":""},{"role":"cover","kicker":"","title":"당신들이 놓치는\n매력 포인트 5가지","body":""},{"role":"cover","kicker":"","title":"면도,\n**매일매일**\n대충하지마세요","body":""},{"role":"cover","kicker":"","title":"연예인들이\n목숨걸고 하는\n붓기 관리 루틴 6가지","body":""},{"role":"cover","kicker":"","title":"**Nice** Posture\nMade **Men**","body":""},{"role":"body","kicker":"1","title":"은은한 잔향","body":"향수 냄새로 떡칠한 게 아니고 바디워시, 바디로션, 샴푸, 향수를 같은 향을 계속\n쓰다 보면 그게 너의 체취가 된다\n코를 찌르는 향이 아닌 누군가 옆을 지나갈 때 살짝 나는 부담없는 좋은 향\n\n포인트 : 좋아하는 향과 같은 계열로 샤워용품들을 바꾸고 향수보다 바디스프레\n이 계열로 바꿔보는 것도 좋은 방법"},{"role":"body","kicker":"2","title":"규칙적인 사우나","body":"회복도 실력이야\n건식으로 20분 안으로 이후 냉수마찰\n사우나는 윤기있는 피부는 물론 원활한 혈액순환으로 얼굴과 몸 이곳저곳에 도움이 되는 최고의 관리지"},{"role":"body","kicker":"","title":"잠들기 전에 온열안대 10분","body":"사람은 눈부터 마주친다.\n눈이 건조할수록 눈은 생기를 잃고 총기를 잃는다.\n스마트폰 자주 보고 모니터 자주 들여보면 자기 전 10분 정도는 온열찜질으로 고생한\n눈한테 휴식을 주자."},{"role":"body","kicker":"","title":"100% 해결법은?","body":"화장품 ->트러블 폭탄\n아직까지 100% 해결법은 없어. 없어진 살을 회복하여 끌어올리는\n건 자연적으로는 불가능하거든"},{"role":"body","kicker":"","title":"28일마다 새로워진다","body":"표피 가장 아래 기저층에서 새 세포가 만들어지고, 약 28일에 걸쳐 위로 올라와 각질층이 된 뒤 자연스럽게 떨어져 나가는데 이걸 '턴오버'라고 해\n\n문제는 이 주기가 20대 후반부터 느려지고, 수면 부족·스트레스·건조한 환경에서 더 길어진다는 것. 떨어져야 할 각질이 그대로 남아 쌓여 피부 모공을 막는다."},{"role":"body","kicker":"1","title":"귀에 고무줄 걸기","body":"씻고 나와서 준비하는 20분동안만\n가장 드는 노력이 적지만 효과는 확실한 붓기 제거 루틴이다.\n머리하고 스킨케어하는동안 귀에 고무줄을 걸고만 있어라.\n당신의 아침 잔붓기를 완전히 잡아줄것이다."},{"role":"body","kicker":"","title":"턱보톡스","body":"모두가 인정하는 가성비 1황\n단연컨데 모든 남자가 한가지 시술만은 해야한다면 가격으로 봐도 효과로 봐도 턱보톡스가 1등이다. 양옆 턱근육이 줄어들면서 얼굴이 즉각적으로 갸름해지고 작아진다. 말도안되는 저렴한 가격이 턱보톡스의 강점"},{"role":"body","kicker":"터치 금지","title":"얼굴 만지지 마","body":"우리 손은 생각이상으로 훨씬 더럽다\n깨끗이 씻는 손이든 아닌 손이든 만질일이 없다면 최대한 만지지 마라\n트러블에 직접적인 원인이 될 수있다"},{"role":"body","kicker":"조금은 편한 무드","title":"덜어냄의 미학","body":"어느정도 스타일링을 할 줄 아는 사람들을 위한 이야기이다\n잘꾸미는 것은 물론 중요하지만 헤어, 피부, 패션 모든부분에서 과하게\n꾸민티가 난다면 오히려 역효과가 날 가능성이 매우 크다\n핵심은 너무 힘준티가 나지 않는 것이다"},{"role":"body","kicker":"","title":"유수분 밸런스","body":"왜그래야 할까 바로 \"유수분 밸런스\"를 맞춰야 하기 때문이다.\n외부습도가 높아지면 유분감이 적은 스킨로션을 선택하여\n얼굴의 유수분 밸런스를 맞춰줘야 한다."},{"role":"body","kicker":"","title":"스트레칭만 해서는 절대 안 돌아온다","body":"자세가 무너지는 건 '굳어서'가 아니라 '한쪽은 짧아지고 반대쪽은 약해져서'이다\n하루 종일 앉아 있으면 가슴·목 앞·고관절 앞쪽은 짧아지고, 등 뒤·엉덩이·목 심부 근육은 늘어난 채 힘을 잃게되는데 이게 큰 문제가된다\n짧아진 곳만 풀면 그때뿐이고 약해진 곳을 조여줘야 그 자세가 유지되는거다\n\n뭘 해야할 지 모르겠다면 따라와봐라"},{"role":"list","kicker":"알면서도 누구도 못하는","title":"가장 확실한 루틴","body":"- 저탄고단 식단\n- 주 4~5회 이상의 고강도 웨이트\n- 체지방 감량을 위한 꾸준한 저강도 유산소->경사7,속도3~5 30분\n- 질 높은 수면->취침 전 핸드폰 자제, 블루라이트 차단 안경 착용"},{"role":"list","kicker":"","title":"면도기의 종류는","body":"- 카트리지(질레트 등) — 빠르고 안전, 날 교체 비용 높음, 다중 날이 피부를 당겨 자극 가능\n- 안전 면도기(양날) — 날 하나로 깔끔하게, 날 교체 비용 저렴, 익숙해지면 자극 가장 적음\n- 면도칼(스트레이트) — 가장 밀착 면도, 관리와 숙련 필요, 취미의 영역"},{"role":"list","kicker":"","title":"For skin","body":"- 아연 — 피지 조절, 트러블 회복 (10~15mg)\n  공복 섭취 시 어지러움 유발\n- 비타민C — 콜라겐 합성, 톤 개선 (500~3,000mg)\n  개인에 따라 복용량 상이\n- 오메가3 — 염증성 여드름·건조 완화 (EPA+DHA 1,000mg 이상)\n  성분이 가장 중요"},{"role":"list","kicker":"","title":"정리된 눈썹","body":"눈썹은 얼굴 인상의 70%. 정리만으로 눈이 또렷해 보임\n\n- 기본: 미간 잡털, 눈썹 아래 잔털만 제거. 눈썹산은 건드리지 않기\n- 눈썹 결 정리용 브러시·눈썹칼로 2주에 한 번\n\n지저분한 눈썹털은 이성이 당신의 말에 집중을 하지 못하게 할 거다. 매주 시간을 정해서 깔끔하게 정리하자"},{"role":"list","kicker":"","title":"각질이 쌓이면","body":"피부톤이 어둡고 거칠어 보임\n- 스킨케어 제품이 흡수되지 않고 겉돎\n- 모공 막힘 → 블랙헤드·트러블\n- 면도 후 자극과 인그로운 헤어 증가"},{"role":"list","kicker":"","title":"늘려야 할 4곳","body":"① 가슴(대흉근) — 문틀에 팔꿈치 90도로 대고 한 발 앞으로. 30초 × 2\n② 흉추(등 윗부분) — 폼롤러를 등에 가로로 두고 뒤로 넘어가기. 10회\n③ 고관절 앞(장요근) — 무릎 꿇은 런지 자세에서 골반을 앞으로 밀기. 30초 × 2\n④ 목 옆·뒤(상부승모근) — 한 손으로 반대쪽 머리를 당기고 어깨는 내리기. 20초 × 2"},{"role":"list","kicker":"","title":"이제는 실전","body":"1. 눈썹 주변을 쉐이빙품 목적으로 로션 혹은 바세린을 도포하고 시작한다\n\n2. 준비해둔 아이브로우로 눈썹 머리, 산, 꼬리를 1번 2번 3번 선과 같이 눈썹 옆에 표시해주고 전체적인 가이드라인을 그려준다\n\n3. 가이드라인 바깥의 눈썹들을 알콜로 소독 후 차례로 정리해준다."},{"role":"list","kicker":"완벽한 고정과 과한 디테일","title":"1\n헤어","body":"헤어 스타일링을 잘하는것은 매우 큰 강점이다\n다만 완벽한 고정과 과한 디테일을 준다면 사람이 악착 같아 보일 수 있다\n바람에 약간 흩날리는 머리와 자연스럽게 손질된 머리가\n사람의 여유를 보여준다"}],"captionSamples":[],"notes":"전체적인 무드를 내가 넣은 피드랑 똑같이 해줘, 목록은 빼줘. 그리고 박스로 설명하지말고 내가 첨부한 피드처럼 밑에 글로 설명해주고 브랜드 로고도 첨부한 거랑 똑같이 해줘","analyzedFeeds":17}</script>
+<script type="application/json" id="team-style">{"brandName":"Mentis","handle":"","summary":"어두운 톤의 풀블리드 사진 위에 하단 그라데이션을 깔고 흰색 굵은 고딕 제목과 짧은 본문을 왼쪽 정렬로 얹은 남성 그루밍·자기관리 카드뉴스다. 좌상단의 큰 파란 세리프 숫자와 좌하단의 파란 이탤릭 세리프 로고 'Mentis'가 일관된 시그니처이며, 친구에게 조언하듯 단정적인 반말 톤이다.","colors":{"bg":"#1A1A1A","bg2":"#2A2A2A","text":"#FFFFFF","sub":"#D9D9D9","accent":"#3F4FD8"},"fonts":{"title":"Noto Sans KR","body":"Noto Sans KR"},"type":{"titleWeight":700,"coverTitleSize":64,"titleSize":52,"bodySize":28,"bodyLineHeight":1.5,"align":"left","titleLetterSpacing":"tight"},"layout":{"padding":60,"textPosition":"bottom","divider":false,"kicker":false,"photoTreatment":"full","listStyle":"dash","arrow":false},"pageNum":{"style":"bigNumber","font":"Playfair Display","weight":700,"color":"accent","position":"tl","size":96},"brand":{"show":true,"font":"Playfair Display","italic":true,"weight":700,"color":"accent","position":"bl","size":53,"image":""},"cover":{"font":"Noto Sans KR","weight":800,"size":78,"lineHeight":1.25,"letterSpacing":-0.02,"pos":"bottom","dx":0,"dy":0,"titleColor":"","hlColor":"","body":false,"sub":false,"subFont":"Inter","subSize":44,"subWeight":400,"subColor":"sub","series":"GROOMING REPORT","metaFont":"IBM Plex Mono","metaSize":26,"nextIssue":1,"meta":false,"lock":true,"tone":"calm","autoContrast":true},"structure":{"typicalSlides":7,"flow":"훅이 되는 표지 → 번호가 붙은 본문 장들(큰 숫자, 제목, 한 줄 부제, 2~4줄 설명, 필요시 대시 목록) → 마무리. 장마다 전면 사진 위에 하단 텍스트 블록과 로고를 고정한다.","typesUsed":["cover","body","list"]},"voice":{"tone":"친구에게 조언하듯 단정적이고 담백한 반말. 직설적이고 가끔 위트가 있으며 독자를 '당신들'로 부르기도 한다.","endings":"~다, ~이다, ~야, ~해, ~하자, 명사형 종결","titlePattern":"짧은 명사구나 단정형·의문형 제목 아래에 굵은 한 줄 부제를 붙이고, 그 아래 짧은 본문을 둔다. 표지는 숫자나 질문을 활용한 훅이다.","emphasis":"색 강조 없이 굵은 흰 제목과 작고 연한 본문의 크기 대비, 큰 파란 숫자로 위계를 만든다. 대시 목록, 화살표 표기, '포인트 :' 라벨, 괄호 부연을 쓴다.","dos":["장마다 큰 파란 숫자를 좌상단에 둔다","제목, 부제, 본문 3단 위계를 지킨다","본문은 2~4줄로 짧게 끊는다","어두운 사진 위에 하단 그라데이션을 깔아 글자를 읽기 쉽게 한다","모든 장 좌하단에 파란 이탤릭 로고를 고정한다","수치와 구체적 방법을 함께 적는다"],"donts":["쪽수(03 / 07)를 표기하지 않는다","이모지를 쓰지 않는다","화살표 아이콘이나 장식선, 박스를 쓰지 않는다","밝은 배경이나 여러 강조색을 쓰지 않는다","긴 문단을 나열하지 않는다"]},"caption":{"pattern":"한 줄 훅 → 핵심 요약 2~3줄 → 저장·팔로우 유도 → 해시태그","length":"짧음(3~5줄)","emoji":"거의 쓰지 않음(있어도 1~2개)","cta":"저장해두고 필요할 때 다시 보거나 따라 해보라는 권유, 팔로우 유도","hashtags":["#남자자기관리","#남자스킨케어","#그루밍","#멘티스","#Mentis"]},"samples":[{"role":"cover","kicker":"","title":"DEATH FACE\n얼굴에 지방부터 걷어내자","body":""},{"role":"cover","kicker":"","title":"당신들이 놓치는\n매력 포인트 5가지","body":""},{"role":"cover","kicker":"","title":"면도,\n**매일매일**\n대충하지마세요","body":""},{"role":"cover","kicker":"","title":"연예인들이\n목숨걸고 하는\n붓기 관리 루틴 6가지","body":""},{"role":"cover","kicker":"","title":"**Nice** Posture\nMade **Men**","body":""},{"role":"body","kicker":"1","title":"은은한 잔향","body":"향수 냄새로 떡칠한 게 아니고 바디워시, 바디로션, 샴푸, 향수를 같은 향을 계속\n쓰다 보면 그게 너의 체취가 된다\n코를 찌르는 향이 아닌 누군가 옆을 지나갈 때 살짝 나는 부담없는 좋은 향\n\n포인트 : 좋아하는 향과 같은 계열로 샤워용품들을 바꾸고 향수보다 바디스프레\n이 계열로 바꿔보는 것도 좋은 방법"},{"role":"body","kicker":"2","title":"규칙적인 사우나","body":"회복도 실력이야\n건식으로 20분 안으로 이후 냉수마찰\n사우나는 윤기있는 피부는 물론 원활한 혈액순환으로 얼굴과 몸 이곳저곳에 도움이 되는 최고의 관리지"},{"role":"body","kicker":"","title":"잠들기 전에 온열안대 10분","body":"사람은 눈부터 마주친다.\n눈이 건조할수록 눈은 생기를 잃고 총기를 잃는다.\n스마트폰 자주 보고 모니터 자주 들여보면 자기 전 10분 정도는 온열찜질으로 고생한\n눈한테 휴식을 주자."},{"role":"body","kicker":"","title":"100% 해결법은?","body":"화장품 ->트러블 폭탄\n아직까지 100% 해결법은 없어. 없어진 살을 회복하여 끌어올리는\n건 자연적으로는 불가능하거든"},{"role":"body","kicker":"","title":"28일마다 새로워진다","body":"표피 가장 아래 기저층에서 새 세포가 만들어지고, 약 28일에 걸쳐 위로 올라와 각질층이 된 뒤 자연스럽게 떨어져 나가는데 이걸 '턴오버'라고 해\n\n문제는 이 주기가 20대 후반부터 느려지고, 수면 부족·스트레스·건조한 환경에서 더 길어진다는 것. 떨어져야 할 각질이 그대로 남아 쌓여 피부 모공을 막는다."},{"role":"body","kicker":"1","title":"귀에 고무줄 걸기","body":"씻고 나와서 준비하는 20분동안만\n가장 드는 노력이 적지만 효과는 확실한 붓기 제거 루틴이다.\n머리하고 스킨케어하는동안 귀에 고무줄을 걸고만 있어라.\n당신의 아침 잔붓기를 완전히 잡아줄것이다."},{"role":"body","kicker":"","title":"턱보톡스","body":"모두가 인정하는 가성비 1황\n단연컨데 모든 남자가 한가지 시술만은 해야한다면 가격으로 봐도 효과로 봐도 턱보톡스가 1등이다. 양옆 턱근육이 줄어들면서 얼굴이 즉각적으로 갸름해지고 작아진다. 말도안되는 저렴한 가격이 턱보톡스의 강점"},{"role":"body","kicker":"터치 금지","title":"얼굴 만지지 마","body":"우리 손은 생각이상으로 훨씬 더럽다\n깨끗이 씻는 손이든 아닌 손이든 만질일이 없다면 최대한 만지지 마라\n트러블에 직접적인 원인이 될 수있다"},{"role":"body","kicker":"조금은 편한 무드","title":"덜어냄의 미학","body":"어느정도 스타일링을 할 줄 아는 사람들을 위한 이야기이다\n잘꾸미는 것은 물론 중요하지만 헤어, 피부, 패션 모든부분에서 과하게\n꾸민티가 난다면 오히려 역효과가 날 가능성이 매우 크다\n핵심은 너무 힘준티가 나지 않는 것이다"},{"role":"body","kicker":"","title":"유수분 밸런스","body":"왜그래야 할까 바로 \"유수분 밸런스\"를 맞춰야 하기 때문이다.\n외부습도가 높아지면 유분감이 적은 스킨로션을 선택하여\n얼굴의 유수분 밸런스를 맞춰줘야 한다."},{"role":"body","kicker":"","title":"스트레칭만 해서는 절대 안 돌아온다","body":"자세가 무너지는 건 '굳어서'가 아니라 '한쪽은 짧아지고 반대쪽은 약해져서'이다\n하루 종일 앉아 있으면 가슴·목 앞·고관절 앞쪽은 짧아지고, 등 뒤·엉덩이·목 심부 근육은 늘어난 채 힘을 잃게되는데 이게 큰 문제가된다\n짧아진 곳만 풀면 그때뿐이고 약해진 곳을 조여줘야 그 자세가 유지되는거다\n\n뭘 해야할 지 모르겠다면 따라와봐라"},{"role":"list","kicker":"알면서도 누구도 못하는","title":"가장 확실한 루틴","body":"- 저탄고단 식단\n- 주 4~5회 이상의 고강도 웨이트\n- 체지방 감량을 위한 꾸준한 저강도 유산소->경사7,속도3~5 30분\n- 질 높은 수면->취침 전 핸드폰 자제, 블루라이트 차단 안경 착용"},{"role":"list","kicker":"","title":"면도기의 종류는","body":"- 카트리지(질레트 등) — 빠르고 안전, 날 교체 비용 높음, 다중 날이 피부를 당겨 자극 가능\n- 안전 면도기(양날) — 날 하나로 깔끔하게, 날 교체 비용 저렴, 익숙해지면 자극 가장 적음\n- 면도칼(스트레이트) — 가장 밀착 면도, 관리와 숙련 필요, 취미의 영역"},{"role":"list","kicker":"","title":"For skin","body":"- 아연 — 피지 조절, 트러블 회복 (10~15mg)\n  공복 섭취 시 어지러움 유발\n- 비타민C — 콜라겐 합성, 톤 개선 (500~3,000mg)\n  개인에 따라 복용량 상이\n- 오메가3 — 염증성 여드름·건조 완화 (EPA+DHA 1,000mg 이상)\n  성분이 가장 중요"},{"role":"list","kicker":"","title":"정리된 눈썹","body":"눈썹은 얼굴 인상의 70%. 정리만으로 눈이 또렷해 보임\n\n- 기본: 미간 잡털, 눈썹 아래 잔털만 제거. 눈썹산은 건드리지 않기\n- 눈썹 결 정리용 브러시·눈썹칼로 2주에 한 번\n\n지저분한 눈썹털은 이성이 당신의 말에 집중을 하지 못하게 할 거다. 매주 시간을 정해서 깔끔하게 정리하자"},{"role":"list","kicker":"","title":"각질이 쌓이면","body":"피부톤이 어둡고 거칠어 보임\n- 스킨케어 제품이 흡수되지 않고 겉돎\n- 모공 막힘 → 블랙헤드·트러블\n- 면도 후 자극과 인그로운 헤어 증가"},{"role":"list","kicker":"","title":"늘려야 할 4곳","body":"① 가슴(대흉근) — 문틀에 팔꿈치 90도로 대고 한 발 앞으로. 30초 × 2\n② 흉추(등 윗부분) — 폼롤러를 등에 가로로 두고 뒤로 넘어가기. 10회\n③ 고관절 앞(장요근) — 무릎 꿇은 런지 자세에서 골반을 앞으로 밀기. 30초 × 2\n④ 목 옆·뒤(상부승모근) — 한 손으로 반대쪽 머리를 당기고 어깨는 내리기. 20초 × 2"},{"role":"list","kicker":"","title":"이제는 실전","body":"1. 눈썹 주변을 쉐이빙품 목적으로 로션 혹은 바세린을 도포하고 시작한다\n\n2. 준비해둔 아이브로우로 눈썹 머리, 산, 꼬리를 1번 2번 3번 선과 같이 눈썹 옆에 표시해주고 전체적인 가이드라인을 그려준다\n\n3. 가이드라인 바깥의 눈썹들을 알콜로 소독 후 차례로 정리해준다."},{"role":"list","kicker":"완벽한 고정과 과한 디테일","title":"1\n헤어","body":"헤어 스타일링을 잘하는것은 매우 큰 강점이다\n다만 완벽한 고정과 과한 디테일을 준다면 사람이 악착 같아 보일 수 있다\n바람에 약간 흩날리는 머리와 자연스럽게 손질된 머리가\n사람의 여유를 보여준다"}],"captionSamples":[],"notes":"전체적인 무드를 내가 넣은 피드랑 똑같이 해줘, 목록은 빼줘. 그리고 박스로 설명하지말고 내가 첨부한 피드처럼 밑에 글로 설명해주고 브랜드 로고도 첨부한 거랑 똑같이 해줘","analyzedFeeds":17}</script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
@@ -460,7 +478,7 @@ const DEFAULT_PROFILE = {
   layout:{padding:60,textPosition:"bottom",divider:false,kicker:false,photoTreatment:"full",listStyle:"dash",arrow:false},
   pageNum:{style:"bigNumber",font:"Playfair Display",weight:900,color:"accent",position:"tl",size:160},
   brand:{show:true,font:"Playfair Display",italic:true,weight:700,color:"accent",position:"bl",size:58,image:""},
-  cover:{font:"Noto Sans KR",weight:800,size:78,lineHeight:1.25,letterSpacing:-0.02,pos:"bottom",dx:0,dy:0,titleColor:"",hlColor:"",body:false,sub:false,subFont:"Inter",subSize:44,subWeight:400,subColor:"sub",series:"GROOMING REPORT",metaFont:"IBM Plex Mono",metaSize:26,nextIssue:1,meta:false},
+  cover:{font:"Noto Sans KR",weight:800,size:78,lineHeight:1.25,letterSpacing:-0.02,pos:"bottom",dx:0,dy:0,titleColor:"",hlColor:"",body:false,sub:false,subFont:"Inter",subSize:44,subWeight:400,subColor:"sub",series:"GROOMING REPORT",metaFont:"IBM Plex Mono",metaSize:26,nextIssue:1,meta:false,lock:true,tone:"calm",autoContrast:true},
   structure:{typicalSlides:7,flow:"표지 → 번호 붙은 핵심 팁 여러 장 → 마무리",typesUsed:["cover","body","list","closing"]},
   voice:{tone:"친구에게 알려주듯 짧고 단정한 반말",endings:"~해봐 / ~하지 / ~다",titlePattern:"짧은 명사구 한 줄",emphasis:"핵심 단어 하나만 포인트 색",dos:["도입 한두 줄 + - 목록"],donts:["긴 문단"]},
   caption:{pattern:"한 줄 훅 → 요약 → 저장 유도",length:"짧게",emoji:"거의 쓰지 않음",cta:"저장해 두고 다시 보기",hashtags:["#남자피부관리","#그루밍","#맨즈뷰티"]},
@@ -519,6 +537,8 @@ function langFont(f, lang){
   const cj = isSerif(f) ? L.serif : L.sans;
   return `"${cj}", ${fontStack(f)}`;
 }
+const LIB_PEEK = 8;
+let libOpen = false; try { libOpen = localStorage.getItem("mfm.libOpen")==="1"; } catch {}
 let assets = null, libCol = null, lib = [], libShown = 60, libReady = false, recBusy = false;
 const libBlobs = {}; // assetId -> Blob kept from upload, for tagging without refetch
 
@@ -585,7 +605,7 @@ function normProfile(p){
   { const C = o.cover;
     C.font = pick(C.font,TITLE_FONTS,"Noto Sans KR"); C.weight = [400,500,700,800,900].includes(+C.weight)?+C.weight:800;
     C.size = clampN(C.size,30,220,78); C.dx = clampN(C.dx,-900,900,0); C.dy = clampN(C.dy,-1100,1100,0); C.titleColor = hexOk(C.titleColor,""); C.hlColor = hexOk(C.hlColor,""); C.lineHeight = clampN(C.lineHeight,1.05,1.6,1.25); C.letterSpacing = clampN(C.letterSpacing,-0.08,0.05,-0.02);
-    C.pos = pick(C.pos,["top","center","bottom"],"bottom"); C.body = !!C.body; C.sub = false; C.meta = false;
+    C.pos = pick(C.pos,["top","center","bottom"],"bottom"); C.body = !!C.body; C.sub = false; C.meta = false; C.lock = C.lock !== false; C.tone = pick(C.tone,["none","calm","mono"],"calm"); C.autoContrast = C.autoContrast !== false;
     C.subFont = pick(C.subFont,SUB_FONTS,"Inter"); C.subSize = clampN(C.subSize,24,72,44); C.subWeight = [300,400,500,600].includes(+C.subWeight)?+C.subWeight:400;
     C.subColor = pick(C.subColor,["accent","text","sub"],"sub"); C.series = String(C.series??"GROOMING REPORT").slice(0,40);
     C.metaFont = pick(C.metaFont,META_FONTS,"IBM Plex Mono"); C.metaSize = clampN(C.metaSize,16,40,26); C.nextIssue = Math.max(1, Math.round(clampN(C.nextIssue,1,9999,1))); }
@@ -623,9 +643,36 @@ function listBlock(s,p){
   if (p.layout.listStyle === "dash") return `<ul class="s-dash">${items.map(it=>`<li><span class="dm">-</span>${fmt(it.replace(/\s*\|\s*/," "))}</li>`).join("")}</ul>`;
   return `<ol class="s-list">${items.map((it,k)=>{const [h,...r]=it.split("|");return `<li><span class="n">${String(k+1).padStart(2,"0")}</span><div><div class="h">${fmt(h.trim())}</div>${r.length?`<div class="d">${fmt(r.join("|").trim())}</div>`:""}</div></li>`}).join("")}</ol>`;
 }
+const coverLocked = (s,p)=> s.type==="cover" && p.cover.lock && !s.o?.free;
+const TONES = {none:"none", calm:"saturate(.72) brightness(.86) contrast(1.06)", mono:"grayscale(1) brightness(.84) contrast(1.12)"};
+function coverBand(s,p,ph,cpos){ // locked cover: same readable dark band every time, stronger when the photo is bright where the title sits
+  if (!coverLocked(s,p) || ph==="none") return {};
+  const im = photos[s.photo]; if (im && !im.lum) measureLum(s.photo);
+  const zone = cpos==="top" ? "top" : cpos==="center" ? "mid" : "bottom";
+  const L = p.cover.autoContrast && im?.lum ? im.lum[zone] : 0.35;
+  const extra = Math.max(0, Math.min(0.6, (L-0.3)*1.3)), c = p.colors.bg;
+  return {"--cb1":rgba(c,+Math.min(.9,.42+extra*.7).toFixed(3)), "--cb2":rgba(c,+Math.min(.97,.86+extra*.2).toFixed(3)), "--cfil":TONES[p.cover.tone]};
+}
+const lumBusy = new Set();
+function measureLum(key){ // average brightness (0~1) of a photo's top, middle and bottom bands, cached on the photo
+  const im = photos[key]; if (!im || im.lum || lumBusy.has(key)) return;
+  lumBusy.add(key);
+  const img = new Image();
+  img.onload = ()=>{ try {
+      const W = 36, H = 45, cv = document.createElement("canvas"); cv.width = W; cv.height = H;
+      const g = cv.getContext("2d"); const k = Math.max(W/img.naturalWidth, H/img.naturalHeight);
+      g.drawImage(img, (W-img.naturalWidth*k)/2, (H-img.naturalHeight*k)/2, img.naturalWidth*k, img.naturalHeight*k);
+      const d = g.getImageData(0,0,W,H).data, band = (a,b)=>{ let t=0,n=0; for (let y=Math.floor(a*H); y<Math.ceil(b*H); y++) for (let x=0; x<W; x++){ const q=(y*W+x)*4; t += (0.2126*d[q]+0.7152*d[q+1]+0.0722*d[q+2])/255; n++; } return n?t/n:0.35; };
+      im.lum = {top:band(0,.45), mid:band(.3,.7), bottom:band(.55,1)};
+      lumBusy.delete(key); refreshAllThumbs();
+    } catch { im.lum = {top:.35,mid:.35,bottom:.35}; lumBusy.delete(key); } };
+  img.onerror = ()=>{ im.lum = {top:.35,mid:.35,bottom:.35}; lumBusy.delete(key); };
+  img.src = im.local || im.url;
+}
 function buildSlide(s0,i,n,p,lang){
   lang = lang || viewLang; const s = viewOf(s0, lang);
-  const o = oOf(s), L = p.layout, T = p.type, P = p.pageNum, B = p.brand;
+  const L = p.layout, T = p.type, P = p.pageNum, B = p.brand;
+  const o = coverLocked(s,p) ? Object.assign(oOf(s), {dx:0,dy:0,ts:100,tc:"",hc:"",pos:"",align:"",shade:70}) : oOf(s);
   const ph = s.photo && photos[s.photo] ? (s.photoMode||L.photoTreatment) : "none";
   const el = document.createElement("div");
   el.className = `slide t-${s.type||"body"} ph-${ph} al-${o.align||T.align} ${L.divider?"":"d-off"} ${L.kicker?"":"k-off"}${LANGS[lang]?.sans?" cjk":""}`;
@@ -638,7 +685,8 @@ function buildSlide(s0,i,n,p,lang){
   const pad = L.padding;
   const C = p.cover, isCover = s.type==="cover";
   const cpos = isCover ? (o.pos || C.pos) : (o.pos || L.textPosition);
-  if (isCover) el.classList.add(cpos==="top" ? "cv-top" : "cv-bottom");
+  if (isCover) el.classList.add(cpos==="top" ? "cv-top" : cpos==="center" && coverLocked(s,p) ? "cv-center" : "cv-bottom");
+  if (coverLocked(s,p)) el.classList.add("cl");
   const issue = s.issue!=null && String(s.issue).trim()!=="" ? String(s.issue).trim() : String(deck.issue ?? C.nextIssue);
   const showMeta = false;
   let ct = isCover ? pad*1.1 : pad + 40;
@@ -659,6 +707,7 @@ function buildSlide(s0,i,n,p,lang){
     "--mf":fontStack(C.metaFont),"--ms":C.metaSize+"px",
     "--ct":ct+"px","--cb":cb+"px","--dy":((isCover?C.dy:0)+o.dy)+"px","--dx":(isCover?C.dx+o.dx:0)+"px",
     "--ctc":o.tc||C.titleColor||c.text,"--chc":o.hc||C.hlColor||c.accent,
+    ...coverBand(s,p,ph,cpos),
     "--nf":fontStack(P.font),"--ns":P.size+"px","--nw":P.weight,"--nc":colorOf(p,P.color),
     "--lf":fontStack(B.font),"--ls":B.size+"px","--lw":B.weight,"--li":B.italic?"italic":"normal","--lc":colorOf(p,B.color)};
   for (const k in v) el.style.setProperty(k, v[k]);
@@ -726,7 +775,7 @@ document.addEventListener("keydown",e=>{
 function renderDeck(){
   ensureIds();
   if (viewLang!=="ko" && !trOf(viewLang)) viewLang = "ko";
-  renderLangTabs(); renderGenNotes();
+  renderLangTabs(); renderGenNotes(); queueGrid();
   const n = deck.slides.length;
   if (sel >= n) sel = Math.max(0,n-1);
   $("deckCount").textContent = n ? `${sel+1} / ${n}` : "";
@@ -760,7 +809,7 @@ function renderBig(){
   bw.appendChild(f); fit(f.firstChild);
   dropTarget(f, file=>setPhoto(file));
   const cs = deck.slides[sel];
-  if (cs.type==="cover" && f.querySelector(".s-title")){
+  if (cs.type==="cover" && !coverLocked(cs,profile) && f.querySelector(".s-title")){
     const box = document.createElement("div"); box.className = "tbox";
     const h = document.createElement("div"); h.className = "thandle"; h.title = "끌어서 제목 크기 조절"; box.appendChild(h); f.appendChild(box);
     const place = ()=>{ const a = f.querySelector(".s-title").getBoundingClientRect(), b = f.getBoundingClientRect();
@@ -782,7 +831,7 @@ function renderBig(){
   // drag: text block moves (cover: freely, others: vertically), photo pans
   f.addEventListener("pointerdown", e=>{
     const s = deck.slides[sel]; if (!s) return;
-    const onText = !!e.target.closest(".s-content");
+    const onText = !!e.target.closest(".s-content") && !coverLocked(s,profile);
     const hasPhoto = s.photo && photos[s.photo];
     if (!onText && !hasPhoto) return;
     e.preventDefault(); f.setPointerCapture(e.pointerId); f.classList.add("dragging");
@@ -817,7 +866,27 @@ function refreshSelected(){
 function refreshAllThumbs(){
   const tws = $("strip").querySelectorAll(".tw");
   deck.slides.forEach((s,i)=>{ if (tws[i]){ const f = thumb(i); tws[i].replaceChild(f, tws[i].querySelector(".frame")); fit(f.firstChild); } });
-  renderBig();
+  renderBig(); queueGrid();
+}
+let gridRaf = 0;
+function queueGrid(){ cancelAnimationFrame(gridRaf); gridRaf = requestAnimationFrame(renderGrid); }
+function renderGrid(){
+  const wrap = $("pgWrap"), box = $("pgrid"); if (!wrap || !box || !wrap.open) return;
+  const covers = [];
+  if (deck.slides[0]) covers.push({s:deck.slides[0], n:deck.slides.length, now:true});
+  (Array.isArray(feedsList) ? feedsList : []).filter(f=>f.id!==deck.fid).slice(0,8).forEach(f=>{
+    try { const d = JSON.parse(f.data); if (d.slides?.[0]) covers.push({s:d.slides[0], n:d.slides.length}); } catch {}
+  });
+  box.innerHTML = "";
+  const cells = covers.map(c=>{ const el = document.createElement("div"); el.className = "pc"+(c.now?" now":""); box.appendChild(el); return [el,c]; });
+  const W = (cells[0]?.[0].clientWidth) || 128, k = W/1012.5;
+  cells.forEach(([el,c])=>{
+    const sl = buildSlide(c.s,0,c.n,profile,"ko");
+    sl.style.transform = `translateX(${-33.75*k}px) scale(${k})`;
+    el.appendChild(sl); requestAnimationFrame(()=>fit(sl));
+  });
+  const total = Math.max(3, Math.ceil(covers.length/3)*3);
+  for (let i = covers.length; i < total; i++){ const e = document.createElement("div"); e.className = "pc empty-cell"; box.appendChild(e); }
 }
 function dropTarget(el, onFile){
   el.addEventListener("dragover",e=>{ if ([...(e.dataTransfer?.types||[])].includes("Files")){ e.preventDefault(); el.classList.add("over"); } });
@@ -872,10 +941,13 @@ function renderEditor(){
     <div class="kv"><div class="field"><label class="lbl" for="eType">유형</label><select id="eType">${opt}</select></div>
       ${NUMBERED.has(s.type)&&profile.pageNum.style==="bigNumber"?`<div class="field"><label class="lbl" for="eNum">번호 (비우면 자동 ${esc(slideNumberAuto(sel))})</label><input type="text" id="eNum" value="${esc(s.num??"")}"></div>`:""}
       ${profile.layout.kicker?`<div class="field"><label class="lbl" for="eKicker">상단 라벨</label><input type="text" id="eKicker" value="${esc(T.kicker||"")}"></div>`:""}</div>
-    ${s.type==="cover"?`<div class="sub"><div class="lbl">표지 제목</div>
+    ${s.type==="cover" && coverLocked(s,profile)?`<div class="sub"><div class="lbl">표지 제목</div>
+      <p class="hint">표지 고정이 켜져 있어서 모든 표지가 같은 위치·크기·색으로 나와요. 바꾸려면 스타일 패널의 '표지'에서 바꾸세요. 모든 표지에 같이 적용돼요.</p>
+      <div class="row"><button class="btn small" id="eFree">이 표지만 따로 꾸미기</button></div></div>`:""}
+    ${s.type==="cover" && !coverLocked(s,profile)?`<div class="sub"><div class="lbl">표지 제목</div>
       <div class="row"><label class="sw"><input type="color" id="eTc" value="${o.tc||profile.cover.titleColor||profile.colors.text}">제목 색</label><label class="sw"><input type="color" id="eHc" value="${o.hc||profile.cover.hlColor||profile.colors.accent}">강조 색</label><button class="btn small" id="eColReset">색 기본값으로</button></div>
       <p class="hint">미리보기에서 제목을 끌면 위치가, 점선 모서리의 동그라미를 끌면 크기가 바뀌어요.</p>
-      <div class="row"><button class="btn small" id="eCoverSave">이 크기·위치·색을 모든 표지 기본값으로</button></div></div>`:""}
+      <div class="row"><button class="btn small" id="eCoverSave">이 크기·위치·색을 모든 표지 기본값으로</button>${s.o?.free?`<button class="btn small" id="eLock">다시 통일된 표지로</button>`:""}</div></div>`:""}
     ${s.type==="stat"?`<div class="kv"><div class="field"><label class="lbl" for="eStatV">숫자</label><input type="text" id="eStatV" value="${esc(T.stat?.value||"")}"></div><div class="field"><label class="lbl" for="eStatS">출처</label><input type="text" id="eStatS" value="${esc(T.stat?.source||"")}"></div></div>
       <div class="field"><label class="lbl" for="eStatL">숫자 설명</label><input type="text" id="eStatL" value="${esc(T.stat?.label||"")}"></div>`:""}
     <div class="field"><label class="lbl" for="eTitle">${s.type==="quote"?"인용문":"제목"}</label><textarea id="eTitle" rows="2" style="min-height:64px">${esc(T.title||"")}</textarea></div>
@@ -916,7 +988,9 @@ function renderEditor(){
     </div>`;
   $("fPos").value = o.pos; $("fAlign").value = o.align;
   const text = (id,fn)=>{const el=$(id); if(el) el.addEventListener("input",()=>{pushHistory(true);fn(el.value);touchDeck();refreshSelected()})};
-  if (s.type==="cover"){
+  if ($("eFree")) $("eFree").onclick = ()=>{ pushHistory(); s.o = Object.assign({}, s.o||{}, {free:true}); touchDeck(); renderDeck(); };
+  if ($("eLock")) $("eLock").onclick = ()=>{ pushHistory(); s.o = Object.assign({}, s.o||{}, {free:false,dx:0,dy:0,ts:100,tc:"",hc:""}); touchDeck(); renderDeck(); };
+  if (s.type==="cover" && $("eTc")){
     const col = (id,key)=>$(id).addEventListener("input",e=>{pushHistory(true);s.o=Object.assign({},s.o||{},{[key]:e.target.value});touchDeck();refreshSelected()});
     col("eTc","tc"); col("eHc","hc");
     $("eColReset").onclick = ()=>{pushHistory();s.o=Object.assign({},s.o||{},{tc:"",hc:""});touchDeck();renderDeck()};
@@ -1014,7 +1088,7 @@ function renderProfile(){
   $("pNotes").value=p.notes||"";
   { const C = p.cover; $("cFont").value=C.font; $("cWeight").value=String(C.weight); $("cPos").value=C.pos;
     setR("cSize",C.size,"px"); setR("cLH",C.lineHeight,""); setR("cLS",C.letterSpacing,"em");
-    $("cBody").checked=C.body; $("cTitleColor").value=C.titleColor||p.colors.text; $("cHlColor").value=C.hlColor||p.colors.accent; }
+    $("cBody").checked=C.body; $("cLock").checked=C.lock; $("cAuto").checked=C.autoContrast; $("cTone").value=C.tone; $("cTitleColor").value=C.titleColor||p.colors.text; $("cHlColor").value=C.hlColor||p.colors.accent; }
   const v=p.voice, c=p.caption;
   const li = a => Array.isArray(a)&&a.length ? a.map(esc).join(" · ") : "—";
   $("voiceBox").innerHTML = `
@@ -1048,6 +1122,7 @@ bindP("pNotes","input",t=>profile.notes=t.value);
 bindP("cFont","change",t=>profile.cover.font=t.value); bindP("cWeight","change",t=>profile.cover.weight=+t.value); bindP("cPos","change",t=>profile.cover.pos=t.value);
 bindP("cSize","input",t=>profile.cover.size=+t.value,"px"); bindP("cLH","input",t=>profile.cover.lineHeight=+t.value,""); bindP("cLS","input",t=>profile.cover.letterSpacing=+t.value,"em");
 bindP("cBody","change",t=>profile.cover.body=t.checked);
+bindP("cLock","change",t=>{profile.cover.lock=t.checked; renderEditor();}); bindP("cAuto","change",t=>profile.cover.autoContrast=t.checked); bindP("cTone","change",t=>profile.cover.tone=t.value);
 bindP("cTitleColor","input",t=>profile.cover.titleColor=t.value); bindP("cHlColor","input",t=>profile.cover.hlColor=t.value);
 $("cColReset").onclick = ()=>{ profile.cover.titleColor=""; profile.cover.hlColor=""; renderProfile(); profileChanged(); };
 $("pLogoImg").onchange = async e=>{
@@ -1373,8 +1448,15 @@ function renderLib(){
   $("libCount").textContent = lib.length;
   const q = $("libFilter").value.trim();
   const list = q ? libSearch(q,500) : lib;
+  const open = libOpen || !!q, cap = open ? libShown : LIB_PEEK;
   const grid = $("libGrid"); grid.innerHTML = "";
-  list.slice(0,libShown).forEach(p=>{
+  grid.classList.toggle("peek", !open);
+  $("libBar").classList.toggle("hidden", !lib.length);
+  $("libSum").textContent = q ? `검색 결과 ${list.length}장` : open ? `전체 ${lib.length}장` : `최근 ${Math.min(LIB_PEEK,lib.length)}장만 보는 중 · 전체 ${lib.length}장`;
+  $("libToggle").classList.toggle("hidden", !!q || lib.length <= LIB_PEEK);
+  $("libToggle").textContent = libOpen ? "접기" : `전체 보기 (${lib.length}장)`;
+  $("libToggle").setAttribute("aria-expanded", String(libOpen));
+  list.slice(0,cap).forEach(p=>{
     const el = document.createElement("div"); el.className = "lp";
     el.innerHTML = `<img src="${esc(p.url)}" alt="${esc(p.desc||p.name||"라이브러리 사진")}" loading="lazy">${(p.tags||[]).length?(p.source==="feed"?`<span class="badge">피드에서 추가</span>`:""):`<span class="badge">설명 없음</span>`}<div class="cap">${esc(p.desc||"아직 설명이 없어요")}${(p.tags||[]).length?`<br>${esc(p.tags.slice(0,6).join(" · "))}`:""}</div><button class="x" aria-label="사진 지우기">지우기</button>`;
     const x = el.querySelector(".x"); let t;
@@ -1389,13 +1471,14 @@ function renderLib(){
   $("libEmpty").classList.toggle("hidden", lib.length>0);
   if (q && !list.length && lib.length){ $("libEmpty").classList.remove("hidden"); $("libEmpty").textContent = "검색어에 맞는 사진이 없어요."; }
   else $("libEmpty").textContent = "아직 사진이 없어요. 위에서 사진을 넣으면 여기에 쌓이고, 피드를 만들 때 장마다 추천돼요.";
-  $("libMore").classList.toggle("hidden", list.length <= libShown);
+  $("libMore").classList.toggle("hidden", !open || list.length <= libShown);
   const untagged = lib.filter(p=>!(p.tags||[]).length).length;
   $("libRetag").classList.toggle("hidden", !untagged || !sample || !imgLimits);
   $("libRetag").textContent = `설명 없는 사진 ${untagged}장 분석하기`;
 }
 $("libFilter").addEventListener("input",()=>{libShown=60;renderLib()});
 $("libMore").onclick = ()=>{libShown += 60; renderLib();};
+$("libToggle").onclick = ()=>{ libOpen = !libOpen; libShown = 60; try { localStorage.setItem("mfm.libOpen", libOpen?"1":"0"); } catch {} renderLib(); if (!libOpen) $("libGrid").scrollIntoView({block:"nearest"}); };
 function thumbBtn(p,rank,on){
   const b = document.createElement("button"); b.type = "button"; b.className = "rc"+(on?" on":"");
   b.setAttribute("aria-label",(p.desc||"라이브러리 사진")+" 넣기");
@@ -1727,6 +1810,7 @@ function openFeed(f){
   if (!deck.isExample && deck.fid !== f.id) saveFeed(false).then(go); else go();
 }
 function renderArch(){
+  queueGrid();
   $("archCount").textContent = feedsList.length;
   const box = $("archList"); box.innerHTML = "";
   $("archEmpty").classList.toggle("hidden", feedsList.length > 0);
@@ -1749,6 +1833,27 @@ function renderArch(){
   });
 }
 $("archSave").onclick = ()=>saveFeed(true);
+$("pgWrap").addEventListener("toggle", queueGrid);
+{
+  const b = $("genReset"); let t;
+  b.onclick = async ()=>{
+    if (!b.dataset.armed){ b.dataset.armed = "1"; b.textContent = "한 번 더 누르면 비워요"; t = setTimeout(()=>{ delete b.dataset.armed; b.textContent = "새로 시작"; },3000); return; }
+    clearTimeout(t); delete b.dataset.armed; b.textContent = "새로 시작";
+    if (!$("genStop").classList.contains("hidden")) $("genStop").click();
+    const kept = !!(feedCol && !deck.isExample && deck.slides.length);
+    if (kept) await saveFeed(false);
+    clearTimeout(feedSaveTimer); hist = []; fut = []; updUndo();
+    $("gTopic").value = ""; $("gBody").value = "";
+    impCoverFile = null; impPhotoFile = null; $("impCover").value = ""; $("impPhoto").value = "";
+    $("impCoverN").textContent = "선택 안 됨"; $("impPhotoN").textContent = "선택 안 됨"; impReady();
+    ["genStatus","impStatus","trStatus","dlStatus"].forEach(id=>{ if ($(id)) setStatus($(id),""); });
+    $("genNotes").classList.add("hidden");
+    deck = clone(EXAMPLE_DECK); viewLang = "ko"; sel = 0;
+    saveDraft(); renderDeck(); renderArch();
+    setStatus($("genStatus"), kept ? "지금 피드는 보관함에 저장하고 비웠어요. 새 주제를 적어 주세요." : "비웠어요. 새 주제를 적어 주세요.", "ok");
+    $("gTopic").focus();
+  };
+}
 
 /* ---------- import a finished cover ---------- */
 let impCoverFile = null, impPhotoFile = null;

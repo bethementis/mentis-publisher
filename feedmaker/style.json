@@ -70,7 +70,10 @@
     "metaFont": "IBM Plex Mono",
     "metaSize": 26,
     "nextIssue": 1,
-    "meta": false
+    "meta": false,
+    "lock": true,
+    "tone": "calm",
+    "autoContrast": true
   },
   "structure": {
     "typicalSlides": 7,
