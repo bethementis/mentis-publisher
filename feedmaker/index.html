@@ -327,6 +327,7 @@ details.grp > div{display:flex;flex-direction:column;gap:12px}
         </div></details>
 
         <div class="row">
+          <button class="btn small" id="teamReset">팀 기본 스타일로 되돌리기</button>
           <button class="btn small" id="exportProfile">스타일 파일로 저장</button>
           <label class="btn small" for="importProfile">스타일 파일 불러오기</label>
           <input type="file" id="importProfile" accept="application/json,.json" class="hidden">
@@ -432,6 +433,8 @@ details.grp > div{display:flex;flex-direction:column;gap:12px}
   </section>
 </div>
 <div id="exportStage" aria-hidden="true"></div>
+<!-- 팀 기본 스타일: feedmaker/style.json 을 고치면 GitHub Actions 가 이 칸을 자동으로 바꿔요. 여기를 직접 고치지 마세요. -->
+<script type="application/json" id="team-style">{"brandName":"Mentis","handle":"","summary":"어두운 톤의 풀블리드 사진 위에 하단 그라데이션을 깔고 흰색 굵은 고딕 제목과 짧은 본문을 왼쪽 정렬로 얹은 남성 그루밍·자기관리 카드뉴스다. 좌상단의 큰 파란 세리프 숫자와 좌하단의 파란 이탤릭 세리프 로고 'Mentis'가 일관된 시그니처이며, 친구에게 조언하듯 단정적인 반말 톤이다.","colors":{"bg":"#1A1A1A","bg2":"#2A2A2A","text":"#FFFFFF","sub":"#D9D9D9","accent":"#3F4FD8"},"fonts":{"title":"Noto Sans KR","body":"Noto Sans KR"},"type":{"titleWeight":700,"coverTitleSize":64,"titleSize":52,"bodySize":28,"bodyLineHeight":1.5,"align":"left","titleLetterSpacing":"tight"},"layout":{"padding":60,"textPosition":"bottom","divider":false,"kicker":false,"photoTreatment":"full","listStyle":"dash","arrow":false},"pageNum":{"style":"bigNumber","font":"Playfair Display","weight":700,"color":"accent","position":"tl","size":96},"brand":{"show":true,"font":"Playfair Display","italic":true,"weight":700,"color":"accent","position":"bl","size":53,"image":""},"cover":{"font":"Noto Sans KR","weight":800,"size":78,"lineHeight":1.25,"letterSpacing":-0.02,"pos":"bottom","dx":0,"dy":0,"titleColor":"","hlColor":"","body":false,"sub":false,"subFont":"Inter","subSize":44,"subWeight":400,"subColor":"sub","series":"GROOMING REPORT","metaFont":"IBM Plex Mono","metaSize":26,"nextIssue":1,"meta":false},"structure":{"typicalSlides":7,"flow":"훅이 되는 표지 → 번호가 붙은 본문 장들(큰 숫자, 제목, 한 줄 부제, 2~4줄 설명, 필요시 대시 목록) → 마무리. 장마다 전면 사진 위에 하단 텍스트 블록과 로고를 고정한다.","typesUsed":["cover","body","list"]},"voice":{"tone":"친구에게 조언하듯 단정적이고 담백한 반말. 직설적이고 가끔 위트가 있으며 독자를 '당신들'로 부르기도 한다.","endings":"~다, ~이다, ~야, ~해, ~하자, 명사형 종결","titlePattern":"짧은 명사구나 단정형·의문형 제목 아래에 굵은 한 줄 부제를 붙이고, 그 아래 짧은 본문을 둔다. 표지는 숫자나 질문을 활용한 훅이다.","emphasis":"색 강조 없이 굵은 흰 제목과 작고 연한 본문의 크기 대비, 큰 파란 숫자로 위계를 만든다. 대시 목록, 화살표 표기, '포인트 :' 라벨, 괄호 부연을 쓴다.","dos":["장마다 큰 파란 숫자를 좌상단에 둔다","제목, 부제, 본문 3단 위계를 지킨다","본문은 2~4줄로 짧게 끊는다","어두운 사진 위에 하단 그라데이션을 깔아 글자를 읽기 쉽게 한다","모든 장 좌하단에 파란 이탤릭 로고를 고정한다","수치와 구체적 방법을 함께 적는다"],"donts":["쪽수(03 / 07)를 표기하지 않는다","이모지를 쓰지 않는다","화살표 아이콘이나 장식선, 박스를 쓰지 않는다","밝은 배경이나 여러 강조색을 쓰지 않는다","긴 문단을 나열하지 않는다"]},"caption":{"pattern":"한 줄 훅 → 핵심 요약 2~3줄 → 저장·팔로우 유도 → 해시태그","length":"짧음(3~5줄)","emoji":"거의 쓰지 않음(있어도 1~2개)","cta":"저장해두고 필요할 때 다시 보거나 따라 해보라는 권유, 팔로우 유도","hashtags":["#남자자기관리","#남자스킨케어","#그루밍","#멘티스","#Mentis"]},"samples":[{"role":"cover","kicker":"","title":"DEATH FACE\n얼굴에 지방부터 걷어내자","body":""},{"role":"cover","kicker":"","title":"당신들이 놓치는\n매력 포인트 5가지","body":""},{"role":"cover","kicker":"","title":"면도,\n**매일매일**\n대충하지마세요","body":""},{"role":"cover","kicker":"","title":"연예인들이\n목숨걸고 하는\n붓기 관리 루틴 6가지","body":""},{"role":"cover","kicker":"","title":"**Nice** Posture\nMade **Men**","body":""},{"role":"body","kicker":"1","title":"은은한 잔향","body":"향수 냄새로 떡칠한 게 아니고 바디워시, 바디로션, 샴푸, 향수를 같은 향을 계속\n쓰다 보면 그게 너의 체취가 된다\n코를 찌르는 향이 아닌 누군가 옆을 지나갈 때 살짝 나는 부담없는 좋은 향\n\n포인트 : 좋아하는 향과 같은 계열로 샤워용품들을 바꾸고 향수보다 바디스프레\n이 계열로 바꿔보는 것도 좋은 방법"},{"role":"body","kicker":"2","title":"규칙적인 사우나","body":"회복도 실력이야\n건식으로 20분 안으로 이후 냉수마찰\n사우나는 윤기있는 피부는 물론 원활한 혈액순환으로 얼굴과 몸 이곳저곳에 도움이 되는 최고의 관리지"},{"role":"body","kicker":"","title":"잠들기 전에 온열안대 10분","body":"사람은 눈부터 마주친다.\n눈이 건조할수록 눈은 생기를 잃고 총기를 잃는다.\n스마트폰 자주 보고 모니터 자주 들여보면 자기 전 10분 정도는 온열찜질으로 고생한\n눈한테 휴식을 주자."},{"role":"body","kicker":"","title":"100% 해결법은?","body":"화장품 ->트러블 폭탄\n아직까지 100% 해결법은 없어. 없어진 살을 회복하여 끌어올리는\n건 자연적으로는 불가능하거든"},{"role":"body","kicker":"","title":"28일마다 새로워진다","body":"표피 가장 아래 기저층에서 새 세포가 만들어지고, 약 28일에 걸쳐 위로 올라와 각질층이 된 뒤 자연스럽게 떨어져 나가는데 이걸 '턴오버'라고 해\n\n문제는 이 주기가 20대 후반부터 느려지고, 수면 부족·스트레스·건조한 환경에서 더 길어진다는 것. 떨어져야 할 각질이 그대로 남아 쌓여 피부 모공을 막는다."},{"role":"body","kicker":"1","title":"귀에 고무줄 걸기","body":"씻고 나와서 준비하는 20분동안만\n가장 드는 노력이 적지만 효과는 확실한 붓기 제거 루틴이다.\n머리하고 스킨케어하는동안 귀에 고무줄을 걸고만 있어라.\n당신의 아침 잔붓기를 완전히 잡아줄것이다."},{"role":"body","kicker":"","title":"턱보톡스","body":"모두가 인정하는 가성비 1황\n단연컨데 모든 남자가 한가지 시술만은 해야한다면 가격으로 봐도 효과로 봐도 턱보톡스가 1등이다. 양옆 턱근육이 줄어들면서 얼굴이 즉각적으로 갸름해지고 작아진다. 말도안되는 저렴한 가격이 턱보톡스의 강점"},{"role":"body","kicker":"터치 금지","title":"얼굴 만지지 마","body":"우리 손은 생각이상으로 훨씬 더럽다\n깨끗이 씻는 손이든 아닌 손이든 만질일이 없다면 최대한 만지지 마라\n트러블에 직접적인 원인이 될 수있다"},{"role":"body","kicker":"조금은 편한 무드","title":"덜어냄의 미학","body":"어느정도 스타일링을 할 줄 아는 사람들을 위한 이야기이다\n잘꾸미는 것은 물론 중요하지만 헤어, 피부, 패션 모든부분에서 과하게\n꾸민티가 난다면 오히려 역효과가 날 가능성이 매우 크다\n핵심은 너무 힘준티가 나지 않는 것이다"},{"role":"body","kicker":"","title":"유수분 밸런스","body":"왜그래야 할까 바로 \"유수분 밸런스\"를 맞춰야 하기 때문이다.\n외부습도가 높아지면 유분감이 적은 스킨로션을 선택하여\n얼굴의 유수분 밸런스를 맞춰줘야 한다."},{"role":"body","kicker":"","title":"스트레칭만 해서는 절대 안 돌아온다","body":"자세가 무너지는 건 '굳어서'가 아니라 '한쪽은 짧아지고 반대쪽은 약해져서'이다\n하루 종일 앉아 있으면 가슴·목 앞·고관절 앞쪽은 짧아지고, 등 뒤·엉덩이·목 심부 근육은 늘어난 채 힘을 잃게되는데 이게 큰 문제가된다\n짧아진 곳만 풀면 그때뿐이고 약해진 곳을 조여줘야 그 자세가 유지되는거다\n\n뭘 해야할 지 모르겠다면 따라와봐라"},{"role":"list","kicker":"알면서도 누구도 못하는","title":"가장 확실한 루틴","body":"- 저탄고단 식단\n- 주 4~5회 이상의 고강도 웨이트\n- 체지방 감량을 위한 꾸준한 저강도 유산소->경사7,속도3~5 30분\n- 질 높은 수면->취침 전 핸드폰 자제, 블루라이트 차단 안경 착용"},{"role":"list","kicker":"","title":"면도기의 종류는","body":"- 카트리지(질레트 등) — 빠르고 안전, 날 교체 비용 높음, 다중 날이 피부를 당겨 자극 가능\n- 안전 면도기(양날) — 날 하나로 깔끔하게, 날 교체 비용 저렴, 익숙해지면 자극 가장 적음\n- 면도칼(스트레이트) — 가장 밀착 면도, 관리와 숙련 필요, 취미의 영역"},{"role":"list","kicker":"","title":"For skin","body":"- 아연 — 피지 조절, 트러블 회복 (10~15mg)\n  공복 섭취 시 어지러움 유발\n- 비타민C — 콜라겐 합성, 톤 개선 (500~3,000mg)\n  개인에 따라 복용량 상이\n- 오메가3 — 염증성 여드름·건조 완화 (EPA+DHA 1,000mg 이상)\n  성분이 가장 중요"},{"role":"list","kicker":"","title":"정리된 눈썹","body":"눈썹은 얼굴 인상의 70%. 정리만으로 눈이 또렷해 보임\n\n- 기본: 미간 잡털, 눈썹 아래 잔털만 제거. 눈썹산은 건드리지 않기\n- 눈썹 결 정리용 브러시·눈썹칼로 2주에 한 번\n\n지저분한 눈썹털은 이성이 당신의 말에 집중을 하지 못하게 할 거다. 매주 시간을 정해서 깔끔하게 정리하자"},{"role":"list","kicker":"","title":"각질이 쌓이면","body":"피부톤이 어둡고 거칠어 보임\n- 스킨케어 제품이 흡수되지 않고 겉돎\n- 모공 막힘 → 블랙헤드·트러블\n- 면도 후 자극과 인그로운 헤어 증가"},{"role":"list","kicker":"","title":"늘려야 할 4곳","body":"① 가슴(대흉근) — 문틀에 팔꿈치 90도로 대고 한 발 앞으로. 30초 × 2\n② 흉추(등 윗부분) — 폼롤러를 등에 가로로 두고 뒤로 넘어가기. 10회\n③ 고관절 앞(장요근) — 무릎 꿇은 런지 자세에서 골반을 앞으로 밀기. 30초 × 2\n④ 목 옆·뒤(상부승모근) — 한 손으로 반대쪽 머리를 당기고 어깨는 내리기. 20초 × 2"},{"role":"list","kicker":"","title":"이제는 실전","body":"1. 눈썹 주변을 쉐이빙품 목적으로 로션 혹은 바세린을 도포하고 시작한다\n\n2. 준비해둔 아이브로우로 눈썹 머리, 산, 꼬리를 1번 2번 3번 선과 같이 눈썹 옆에 표시해주고 전체적인 가이드라인을 그려준다\n\n3. 가이드라인 바깥의 눈썹들을 알콜로 소독 후 차례로 정리해준다."},{"role":"list","kicker":"완벽한 고정과 과한 디테일","title":"1\n헤어","body":"헤어 스타일링을 잘하는것은 매우 큰 강점이다\n다만 완벽한 고정과 과한 디테일을 준다면 사람이 악착 같아 보일 수 있다\n바람에 약간 흩날리는 머리와 자연스럽게 손질된 머리가\n사람의 여유를 보여준다"}],"captionSamples":[],"notes":"전체적인 무드를 내가 넣은 피드랑 똑같이 해줘, 목록은 빼줘. 그리고 박스로 설명하지말고 내가 첨부한 피드처럼 밑에 글로 설명해주고 브랜드 로고도 첨부한 거랑 똑같이 해줘","analyzedFeeds":17}</script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
@@ -478,6 +481,15 @@ const EXAMPLE_DECK = {
 };
 
 let profile = clone(DEFAULT_PROFILE);
+const TEAM_STYLE = (()=>{ try { const t = JSON.parse(document.getElementById("team-style")?.textContent||"null"); return t && typeof t==="object" && (t.colors||t.cover) ? t : null; } catch { return null; } })();
+function teamProfile(keep){ // keep: personal values that survive a team update (cover issue number, uploaded logo)
+  if (!TEAM_STYLE) return normProfile(clone(DEFAULT_PROFILE));
+  const p = normProfile(Object.assign(clone(TEAM_STYLE), {isExample:false}));
+  p.team = true; delete p.savedAt;
+  if (keep){ if (keep.cover?.nextIssue) p.cover.nextIssue = keep.cover.nextIssue; if (keep.brand?.image && !p.brand.image) p.brand.image = keep.brand.image; }
+  return p;
+}
+function loadSaved(sp){ return sp && sp.team ? Object.assign(teamProfile(sp), {savedAt: sp.savedAt}) : normProfile(sp); }
 let deck = clone(EXAMPLE_DECK);
 let photos = {}; // id -> {url,w,h}
 let sel = 0;
@@ -675,9 +687,14 @@ function buildSlide(s0,i,n,p,lang){
   return el;
 }
 function fit(el){
+  // measure the real text block (first child top → last child bottom); scrollHeight misses overflow above a bottom-aligned block
+  // and counts glyph overhang from tight line-heights as overflow
   const box = el.querySelector(".s-content"); if (!box) return;
+  const kids = [...box.children].filter(k=>k.offsetParent!==null);
+  const over = ()=>{ if (!kids.length) return false; const b = box.getBoundingClientRect(), s = b.height/box.clientHeight || 1;
+    return kids[kids.length-1].getBoundingClientRect().bottom - kids[0].getBoundingClientRect().top > b.height + 2*s; };
   let k = 1; el.style.setProperty("--fit",k);
-  while (box.scrollHeight > box.clientHeight + 2 && k > 0.5){ k = +(k-0.05).toFixed(2); el.style.setProperty("--fit",k); }
+  while (over() && k > 0.5){ k = +(k-0.05).toFixed(2); el.style.setProperty("--fit",k); }
 }
 function framed(i,w,selected){
   const f = document.createElement("div");
@@ -981,7 +998,7 @@ fillSelect("cFont",TITLE_FONTS); fillSelect("pTitleFont",TITLE_FONTS); fillSelec
 const setR = (id,val,unit)=>{$(id).value=val; $(id+"V").textContent=val+unit};
 function renderProfile(){
   const p = profile;
-  $("profileTag").textContent = p.isExample ? "기본 스타일" : (p.analyzedFeeds ? `피드 ${p.analyzedFeeds}개 분석` : p.analyzedCount ? `이미지 ${p.analyzedCount}장 분석` : "내 스타일");
+  $("profileTag").textContent = p.team ? "팀 기본 스타일" : p.isExample ? "기본 스타일" : (p.analyzedFeeds ? `피드 ${p.analyzedFeeds}개 분석` : p.analyzedCount ? `이미지 ${p.analyzedCount}장 분석` : "내 스타일");
   $("pSummary").textContent = p.summary || "";
   const names = {bg:"배경",bg2:"보조 배경",text:"글자",sub:"보조 글자",accent:"포인트"};
   $("swatches").innerHTML = Object.keys(names).map(k=>`<label class="sw"><input type="color" data-c="${k}" value="${p.colors[k]}" aria-label="${names[k]} 색">${names[k]}</label>`).join("");
@@ -1044,7 +1061,8 @@ $("pLogoImg").onchange = async e=>{
 $("pLogoImgDel").onclick = ()=>{profile.brand.image=""; renderProfile(); profileChanged();};
 let pTimer, dTimer;
 function profileChanged(){
-  profile.isExample = false;
+  if (profile.team) $("profileTag").textContent = "내 스타일 (팀 기본에서 수정)";
+  profile.isExample = false; profile.team = false;
   clearTimeout(dTimer); dTimer = setTimeout(refreshAllThumbs,100);
   clearTimeout(pTimer); pTimer = setTimeout(saveProfile,900);
 }
@@ -1838,7 +1856,15 @@ $("dlOne").onclick = async ()=>{
   catch { setStatus($("dlStatus"),"이미지를 만들지 못했어요. 다시 눌러 주세요.","err"); }
   finally { $("dlOne").disabled = false; }
 };
-$("exportProfile").onclick = ()=>save("mentis-style.json", JSON.stringify(profile,null,2));
+$("teamReset").onclick = ()=>{
+  const b = $("teamReset");
+  if (!TEAM_STYLE){ setStatus($("anStatus"),"이 파일에는 팀 기본 스타일이 없어요.","err"); return; }
+  if (!b.dataset.armed){ b.dataset.armed = "1"; b.textContent = "한 번 더 누르면 지금 스타일을 덮어써요"; setTimeout(()=>{ delete b.dataset.armed; b.textContent = "팀 기본 스타일로 되돌리기"; },3000); return; }
+  delete b.dataset.armed; b.textContent = "팀 기본 스타일로 되돌리기";
+  profile = teamProfile(profile); renderProfile(); refreshAllThumbs(); renderEditor(); saveProfile();
+  setStatus($("anStatus"),"팀 기본 스타일로 되돌렸어요. 팀 스타일이 바뀌면 다음에 열 때 자동으로 따라가요.","ok");
+};
+$("exportProfile").onclick = ()=>{ const o = clone(profile); ["savedAt","isExample","team"].forEach(k=>delete o[k]); save("mentis-style.json", JSON.stringify(o,null,2)); };
 $("importProfile").onchange = async e=>{
   const f = e.target.files[0]; e.target.value=""; if (!f) return;
   try { const p = JSON.parse(await f.text()); profile = normProfile(Object.assign(p,{isExample:false})); renderProfile(); refreshAllThumbs(); renderEditor(); saveProfile(); setStatus($("anStatus"),"스타일을 불러왔어요.","ok"); }
@@ -1850,7 +1876,8 @@ try { const v = localStorage.getItem("mfm.libAuto"); if (v!==null) $("libAuto").
 $("libAuto").addEventListener("change",e=>{ try { localStorage.setItem("mfm.libAuto", e.target.checked?"1":"0"); } catch {} });
 try { const v = localStorage.getItem("mfm.think"); if (v!==null) $("gThink").checked = v==="1"; } catch {}
 $("gThink").addEventListener("change",e=>{ try { localStorage.setItem("mfm.think", e.target.checked?"1":"0"); } catch {} });
-try { const s = localStorage.getItem("mfm.profile"); if (s) profile = normProfile(JSON.parse(s)); } catch {}
+profile = teamProfile();
+try { const s = localStorage.getItem("mfm.profile"); if (s) profile = loadSaved(JSON.parse(s)); } catch {}
 try { const s = localStorage.getItem("mfm.deck"); if (s){ const d = JSON.parse(s); if (Array.isArray(d.slides)&&d.slides.length) deck = d; } } catch {}
 renderProfile(); renderDeck(); renderFeeds(); updUndo();
 let rw = 0; new ResizeObserver(()=>{ const w = bigWidth(); if (w !== rw){ rw = w; renderBig(); } }).observe($("bigwrap"));
@@ -1890,7 +1917,7 @@ document.fonts && document.fonts.ready.then(()=>refreshAllThumbs());
         if (snap?.exists){
           const data = snap.data();
           if (data?.profile && (!profile.savedAt || (data.savedAt||0) >= profile.savedAt)){
-            profile = normProfile(JSON.parse(data.profile)); renderProfile(); refreshAllThumbs(); renderEditor();
+            profile = loadSaved(JSON.parse(data.profile)); renderProfile(); refreshAllThumbs(); renderEditor();
           }
         }
       }
