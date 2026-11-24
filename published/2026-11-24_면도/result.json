@@ -1,0 +1,33 @@
+{
+  "instagram": {
+    "ok": true,
+    "media_id": "18649830109013982",
+    "permalink": "https://www.instagram.com/p/DgHzKgxjZbE/"
+  },
+  "threads": {
+    "ok": true,
+    "thread_id": "18073871792787455",
+    "permalink": "https://www.threads.com/@bethementis/post/DgHzL__IAqM"
+  },
+  "youtube": {
+    "ok": true,
+    "video_id": "sTAQqWpxWNk",
+    "url": "https://youtube.com/shorts/sTAQqWpxWNk",
+    "privacy": "public",
+    "music": "never-gonna-leave-my-mind.mp3"
+  },
+  "tiktok": {
+    "ok": true,
+    "publish_id": "v_inbox_file~v2.7711691611067287570",
+    "mode": "inbox"
+  },
+  "outbox": {
+    "ok": true,
+    "path": "outbox/2026-11-24_면도",
+    "platforms": [
+      "naver"
+    ],
+    "skipped": []
+  },
+  "updated_at": "2026-11-24T20:02:17+09:00"
+}

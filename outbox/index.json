@@ -1,6 +1,14 @@
 {
   "items": [
     {
+      "date": "2026-11-24",
+      "folder": "2026-11-24_면도",
+      "platforms": [
+        "naver"
+      ],
+      "base_url": "https://raw.githubusercontent.com/bethementis/mentis-publisher/main/outbox/2026-11-24_면도/"
+    },
+    {
       "date": "2026-11-11",
       "folder": "2026-11-11_좋은자세",
       "platforms": [
@@ -31,39 +39,6 @@
         "naver"
       ],
       "base_url": "https://raw.githubusercontent.com/bethementis/mentis-publisher/main/outbox/2026-11-10_거북목-교정/"
-    },
-    {
-      "date": "2026-11-09",
-      "folder": "2026-11-09_모공-기구로-관리하자",
-      "platforms": [
-        "naver"
-      ],
-      "base_url": "https://raw.githubusercontent.com/bethementis/mentis-publisher/main/outbox/2026-11-09_모공-기구로-관리하자/"
-    },
-    {
-      "date": "2026-11-08",
-      "folder": "2026-11-08_너만빼고다발라",
-      "platforms": [
-        "naver"
-      ],
-      "base_url": "https://raw.githubusercontent.com/bethementis/mentis-publisher/main/outbox/2026-11-08_너만빼고다발라/"
-    },
-    {
-      "date": "2026-11-07",
-      "folder": "2026-11-07_데스페이스",
-      "platforms": [
-        "naver"
-      ],
-      "base_url": "https://raw.githubusercontent.com/bethementis/mentis-publisher/main/outbox/2026-11-07_데스페이스/"
-    },
-    {
-      "date": "2026-11-02",
-      "folder": "2026-11-02_TEST-face-peeling",
-      "platforms": [
-        "naver",
-        "xhs"
-      ],
-      "base_url": "https://raw.githubusercontent.com/bethementis/mentis-publisher/main/outbox/2026-11-02_TEST-face-peeling/"
     }
   ]
 }
