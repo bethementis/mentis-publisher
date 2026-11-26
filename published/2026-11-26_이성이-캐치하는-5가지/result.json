@@ -1,0 +1,33 @@
+{
+  "instagram": {
+    "ok": true,
+    "media_id": "18651807292023898",
+    "permalink": "https://www.instagram.com/p/DgM9SkRoe94/"
+  },
+  "threads": {
+    "ok": true,
+    "thread_id": "18118036837860012",
+    "permalink": "https://www.threads.com/@bethementis/post/DgM9TtNHM8G"
+  },
+  "youtube": {
+    "ok": true,
+    "video_id": "4Mc9zaLskI4",
+    "url": "https://youtube.com/shorts/4Mc9zaLskI4",
+    "privacy": "public",
+    "music": "vlog.mp3"
+  },
+  "tiktok": {
+    "ok": true,
+    "publish_id": "v_inbox_file~v2.7712434888746436615",
+    "mode": "inbox"
+  },
+  "outbox": {
+    "ok": true,
+    "path": "outbox/2026-11-26_이성이-캐치하는-5가지",
+    "platforms": [
+      "naver"
+    ],
+    "skipped": []
+  },
+  "updated_at": "2026-11-26T20:06:58+09:00"
+}
